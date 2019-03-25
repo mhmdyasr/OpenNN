@@ -5,9 +5,8 @@
 /*                                                                                                              */
 /*   C O N J U G A T E   G R A D I E N T   C L A S S   H E A D E R                                              */
 /*                                                                                                              */
-/*   Roberto Lopez                                                                                              */
-/*   Artelnics - Making intelligent use of data                                                                 */
-/*   robertolopez@artelnics.com                                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
+/*   artelnics@artelnics.com                                                                                    */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
@@ -30,21 +29,21 @@
 
 #include "loss_index.h"
 
-#include "training_algorithm.h"
-#include "training_rate_algorithm.h"
+#include "optimization_algorithm.h"
+#include "learning_rate_algorithm.h"
 
 // TinyXml includes
 
-#include "../tinyxml2/tinyxml2.h"
+#include "tinyxml2.h"
 
 namespace OpenNN
 {
 
 ///
-/// This concrete class represents a conjugate gradient training algorithm for a loss functional of a neural network. 
+/// This concrete class represents a conjugate gradient training algorithm for a loss index of a neural network.
 ///
 
-class ConjugateGradient : public TrainingAlgorithm
+class ConjugateGradient : public OptimizationAlgorithm
 {
 
 public:
@@ -57,7 +56,7 @@ public:
 
    // DEFAULT CONSTRUCTOR
 
-   explicit ConjugateGradient(void); 
+   explicit ConjugateGradient(); 
 
 
    // GENERAL CONSTRUCTOR
@@ -72,7 +71,7 @@ public:
 
    // DESTRUCTOR
 
-   virtual ~ConjugateGradient(void);
+   virtual ~ConjugateGradient();
 
 
    // STRUCTURES
@@ -81,13 +80,13 @@ public:
    /// This structure contains the conjugate gradient results. 
    ///
 
-   struct ConjugateGradientResults : public TrainingAlgorithm::TrainingAlgorithmResults
+   struct ConjugateGradientResults : public OptimizationAlgorithm::OptimizationAlgorithmResults
    {
        /// Default constructor.
 
-       ConjugateGradientResults(void)
+       ConjugateGradientResults()
        {
-           conjugate_gradient_pointer = NULL;
+           conjugate_gradient_pointer = nullptr;
        }
 
        /// Conjugate gradient constructor.
@@ -99,7 +98,7 @@ public:
 
        /// Destructor.
 
-       virtual ~ConjugateGradientResults(void)
+       virtual ~ConjugateGradientResults()
        {
        }
 
@@ -121,9 +120,9 @@ public:
 
       Vector<double> loss_history;
 
-      /// History of the selection loss over the training iterations.
+      /// History of the selection error over the training iterations.
 
-      Vector<double> selection_loss_history;
+      Vector<double> selection_error_history;
 
       /// History of the loss function gradient over the training iterations. 
 
@@ -159,9 +158,9 @@ public:
 
       double final_loss;
 
-      /// Final selection loss.
+      /// Final selection error.
 
-      double final_selection_loss;
+      double final_selection_error;
 
       /// Final loss function gradient. 
 
@@ -188,9 +187,9 @@ public:
       size_t iterations_number;
 
       void resize_training_history(const size_t&);
-      std::string to_string(void) const;
+      string object_to_string() const;
 
-      Matrix<std::string> write_final_results(const size_t& precision = 3) const;
+      Matrix<string> write_final_results(const int& precision = 3) const;
    };
 
 
@@ -198,62 +197,63 @@ public:
 
    // Get methods
 
-   const TrainingRateAlgorithm& get_training_rate_algorithm(void) const;
-   TrainingRateAlgorithm* get_training_rate_algorithm_pointer(void);
+   const LearningRateAlgorithm& get_learning_rate_algorithm() const;
+   LearningRateAlgorithm* get_learning_rate_algorithm_pointer();
 
    // Training operators
 
-   const TrainingDirectionMethod& get_training_direction_method(void) const;
-   std::string write_training_direction_method(void) const;
+   const TrainingDirectionMethod& get_training_direction_method() const;
+   string write_training_direction_method() const;
 
    // Training parameters
 
-   const double& get_warning_parameters_norm(void) const;
-   const double& get_warning_gradient_norm(void) const;
-   const double& get_warning_training_rate(void) const;
+   const double& get_warning_parameters_norm() const;
+   const double& get_warning_gradient_norm() const;
+   const double& get_warning_training_rate() const;
 
-   const double& get_error_parameters_norm(void) const;
-   const double& get_error_gradient_norm(void) const;
-   const double& get_error_training_rate(void) const;
+   const double& get_error_parameters_norm() const;
+   const double& get_error_gradient_norm() const;
+   const double& get_error_training_rate() const;
 
    // Stopping criteria
 
-   const double& get_minimum_parameters_increment_norm(void) const;
+   const double& get_minimum_parameters_increment_norm() const;
 
-   const double& get_minimum_loss_increase(void) const;
-   const double& get_loss_goal(void) const;
-   const size_t& get_maximum_selection_loss_decreases(void) const;
-   const double& get_gradient_norm_goal(void) const;
+   const double& get_minimum_loss_increase() const;
+   const double& get_loss_goal() const;
+   const size_t& get_maximum_selection_error_increases() const;
+   const double& get_gradient_norm_goal() const;
 
-   const size_t& get_maximum_iterations_number(void) const;
-   const double& get_maximum_time(void) const;
+   const size_t& get_maximum_epochs_number() const;
+   const double& get_maximum_time() const;
 
-   const bool& get_return_minimum_selection_error_neural_network(void) const;
+   const bool& get_return_minimum_selection_error_neural_network() const;
+   const bool& get_apply_early_stopping() const;
 
    // Reserve training history
 
-   const bool& get_reserve_parameters_history(void) const;
-   const bool& get_reserve_parameters_norm_history(void) const;
+   const bool& get_reserve_parameters_history() const;
+   const bool& get_reserve_parameters_norm_history() const;
 
-   const bool& get_reserve_loss_history(void) const;
-   const bool& get_reserve_selection_loss_history(void) const;
-   const bool& get_reserve_gradient_history(void) const;
-   const bool& get_reserve_gradient_norm_history(void) const;
+   const bool& get_reserve_error_history() const;
+   const bool& get_reserve_selection_error_history() const;
+   const bool& get_reserve_gradient_history() const;
+   const bool& get_reserve_gradient_norm_history() const;
 
-   const bool& get_reserve_training_direction_history(void) const;
-   const bool& get_reserve_training_rate_history(void) const;
-   const bool& get_reserve_elapsed_time_history(void) const;
+   const bool& get_reserve_training_direction_history() const;
+   const bool& get_reserve_training_rate_history() const;
+   const bool& get_reserve_elapsed_time_history() const;
 
    // Set methods
 
-   void set_default(void);
+   void set_default();
 
    void set_loss_index_pointer(LossIndex*);
 
    // Training operators
 
    void set_training_direction_method(const TrainingDirectionMethod&);
-   void set_training_direction_method(const std::string&);
+   void set_training_direction_method(const string&);
 
    // Training parameters
 
@@ -270,22 +270,23 @@ public:
    void set_minimum_parameters_increment_norm(const double&);
 
    void set_loss_goal(const double&);
-   void set_minimum_loss_increase(const double&);
-   void set_maximum_selection_loss_decreases(const size_t&);
+   void set_minimum_loss_decrease(const double&);
+   void set_maximum_selection_error_increases(const size_t&);
    void set_gradient_norm_goal(const double&);
 
-   void set_maximum_iterations_number(const size_t&);
+   void set_maximum_epochs_number(const size_t&);
    void set_maximum_time(const double&);
 
    void set_return_minimum_selection_error_neural_network(const bool&);
+   void set_apply_early_stopping(const bool&);
 
    // Reserve training history
 
    void set_reserve_parameters_history(const bool&);
    void set_reserve_parameters_norm_history(const bool&);
 
-   void set_reserve_loss_history(const bool&);
-   void set_reserve_selection_loss_history(const bool&);
+   void set_reserve_error_history(const bool&);
+   void set_reserve_selection_error_history(const bool&);
    void set_reserve_gradient_history(const bool&);
    void set_reserve_gradient_norm_history(const bool&);
 
@@ -314,15 +315,17 @@ public:
 
    // Training methods
 
-   ConjugateGradientResults* perform_training(void);
+   ConjugateGradientResults* perform_training();
 
-   std::string write_training_algorithm_type(void) const;
+   void perform_training_void();
+
+   string write_optimization_algorithm_type() const;
 
    // Serialization methods
 
-   Matrix<std::string> to_string_matrix(void) const;
+   Matrix<string> to_string_matrix() const;
 
-   tinyxml2::XMLDocument* to_XML(void) const;
+   tinyxml2::XMLDocument* to_XML() const;
    void from_XML(const tinyxml2::XMLDocument&);
 
    void write_XML(tinyxml2::XMLPrinter&) const;
@@ -336,7 +339,7 @@ private:
 
    /// Training rate algorithm object for one-dimensional minimization. 
 
-   TrainingRateAlgorithm training_rate_algorithm;
+   LearningRateAlgorithm learning_rate_algorithm;
 
    /// Value for the parameters norm at which a warning message is written to the screen. 
 
@@ -371,24 +374,24 @@ private:
 
    /// Minimum loss improvement between two successive iterations. It is used as a stopping criterion.
 
-   double minimum_loss_increase;
+   double minimum_loss_decrease;
 
    /// Goal value for the loss. It is used as a stopping criterion.
 
    double loss_goal;
 
-   /// Goal value for the norm of the objective function gradient. It is used as a stopping criterion.
+   /// Goal value for the norm of the error function gradient. It is used as a stopping criterion.
 
    double gradient_norm_goal;
 
-   /// Maximum number of iterations at which the selection loss increases.
+   /// Maximum number of iterations at which the selection error increases.
    /// This is an early stopping method for improving selection.
 
-   size_t maximum_selection_loss_decreases;
+   size_t maximum_selection_error_decreases;
 
    /// Maximum number of iterations to perform_training. It is used as a stopping criterion.
 
-   size_t maximum_iterations_number;
+   size_t maximum_epochs_number;
 
    /// Maximum training time. It is used as a stopping criterion.
 
@@ -397,6 +400,10 @@ private:
    /// True if the final model will be the neural network with the minimum selection error, false otherwise.
 
    bool return_minimum_selection_error_neural_network;
+
+   /// True if the selection error decrease stopping criteria has to be taken in account, false otherwise.
+
+   bool apply_early_stopping;
 
    // TRAINING HISTORY
 
@@ -408,9 +415,9 @@ private:
 
    bool reserve_parameters_norm_history;
 
-   /// True if the loss history vector is to be reserved, false otherwise.
+   /// True if the error history vector is to be reserved, false otherwise.
 
-   bool reserve_loss_history;
+   bool reserve_error_history;
 
    /// True if the gradient history matrix is to be reserved, false otherwise.
 
@@ -432,9 +439,9 @@ private:
 
    bool reserve_elapsed_time_history;
 
-   /// True if the selection loss history vector is to be reserved, false otherwise.
+   /// True if the selection error history vector is to be reserved, false otherwise.
 
-   bool reserve_selection_loss_history;
+   bool reserve_selection_error_history;
 
 
 };
@@ -445,7 +452,7 @@ private:
 
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (c) 2005-2016 Roberto Lopez.
+// Copyright(C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

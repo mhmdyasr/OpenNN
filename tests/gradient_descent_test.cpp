@@ -5,9 +5,9 @@
 /*                                                                                                              */
 /*   G R A D I E N T   D E S C E N T   T E S T   C L A S S                                                      */
 /*                                                                                                              */
-/*   Roberto Lopez                                                                                              */
-/*   Artelnics - Making intelligent use of data                                                                 */
-/*   robertolopez@artelnics.com                                                                                 */
+
+/*   Artificial Intelligence Techniques SL                                                                      */
+/*   artelnics@artelnics.com                                                                                    */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
@@ -20,25 +20,25 @@ using namespace OpenNN;
 
 // GENERAL CONSTRUCTOR 
 
-GradientDescentTest::GradientDescentTest(void) : UnitTesting()
+GradientDescentTest::GradientDescentTest() : UnitTesting()
 {
 }
 
 
 // DESTRUCTOR
 
-GradientDescentTest::~GradientDescentTest(void)
+GradientDescentTest::~GradientDescentTest()
 {
 }
 
 
 // METHODS
 
-void GradientDescentTest::test_constructor(void)
+void GradientDescentTest::test_constructor()
 {
    message += "test_constructor\n"; 
 
-   LossIndex pf;
+   SumSquaredError sse;
 
    // Default constructor
 
@@ -47,18 +47,18 @@ void GradientDescentTest::test_constructor(void)
 
    // Loss index constructor
 
-   GradientDescent gd2(&pf); 
+   GradientDescent gd2(&sse);
    assert_true(gd2.has_loss_index() == true, LOG);
 }
 
 
-void GradientDescentTest::test_destructor(void)
+void GradientDescentTest::test_destructor()
 {
    message += "test_destructor\n"; 
 }
 
 
-void GradientDescentTest::test_set_reserve_all_training_history(void)
+void GradientDescentTest::test_set_reserve_all_training_history()
 {
    message += "test_set_reserve_all_training_history\n";
 
@@ -69,44 +69,41 @@ void GradientDescentTest::test_set_reserve_all_training_history(void)
    assert_true(gd.get_reserve_elapsed_time_history() == true, LOG);
    assert_true(gd.get_reserve_parameters_history() == true, LOG);
    assert_true(gd.get_reserve_parameters_norm_history() == true, LOG);
-   assert_true(gd.get_reserve_loss_history() == true, LOG);
+   assert_true(gd.get_reserve_error_history() == true, LOG);
    assert_true(gd.get_reserve_gradient_history() == true, LOG);
    assert_true(gd.get_reserve_gradient_norm_history() == true, LOG);
    assert_true(gd.get_reserve_training_direction_history() == true, LOG);
    assert_true(gd.get_reserve_training_rate_history() == true, LOG);
-   assert_true(gd.get_reserve_selection_loss_history() == true, LOG);
+   assert_true(gd.get_reserve_selection_error_history() == true, LOG);
 }
 
 
-void GradientDescentTest::test_perform_training(void)
+void GradientDescentTest::test_perform_training()
 {
    message += "test_perform_training\n";
-
+/*
    DataSet ds(1, 1, 2);
    ds.randomize_data_normal();
 
-   NeuralNetwork nn(1, 1);
+   NeuralNetwork nn(1, 2);
    nn.randomize_parameters_normal();
 
-   LossIndex pf(&nn, &ds);
+   SumSquaredError sse(&nn, &ds);
 
-   pf.destruct_all_terms();
-   pf.set_error_type(LossIndex::SUM_SQUARED_ERROR);
-
-   GradientDescent gd(&pf);
+   GradientDescent gd(&sse);
 
    // Test
 
-   double old_loss = pf.calculate_loss();
+   //double old_loss = sse.calculate_error({0});
 
    gd.set_display(false);
-   gd.set_maximum_iterations_number(1);
+   gd.set_maximum_epochs_number(1);
 
    gd.perform_training();
 
-   double loss = pf.calculate_loss();
+   //double loss = sse.calculate_error({0});
 
-   assert_true(loss < old_loss, LOG);
+   //assert_true(loss < old_loss, LOG);
 
    // Minimum parameters increment norm
 
@@ -116,9 +113,9 @@ void GradientDescentTest::test_perform_training(void)
 
    gd.set_minimum_parameters_increment_norm(minimum_parameters_increment_norm);
    gd.set_loss_goal(0.0);
-   gd.set_minimum_loss_increase(0.0);
+   gd.set_minimum_loss_decrease(0.0);
    gd.set_gradient_norm_goal(0.0);
-   gd.set_maximum_iterations_number(1000);
+   gd.set_maximum_epochs_number(1000);
    gd.set_maximum_time(1000.0);
 
    gd.perform_training();
@@ -131,14 +128,14 @@ void GradientDescentTest::test_perform_training(void)
 
    gd.set_minimum_parameters_increment_norm(0.0);
    gd.set_loss_goal(loss_goal);
-   gd.set_minimum_loss_increase(0.0);
+   gd.set_minimum_loss_decrease(0.0);
    gd.set_gradient_norm_goal(0.0);
-   gd.set_maximum_iterations_number(1000);
+   gd.set_maximum_epochs_number(1000);
    gd.set_maximum_time(1000.0);
 
    gd.perform_training();
 
-   loss = pf.calculate_loss();
+   //loss = sse.calculate_error({0});
 
    // Minimum loss increase
 
@@ -148,9 +145,9 @@ void GradientDescentTest::test_perform_training(void)
 
    gd.set_minimum_parameters_increment_norm(0.0);
    gd.set_loss_goal(0.0);
-   gd.set_minimum_loss_increase(minimum_loss_increase);
+   gd.set_minimum_loss_decrease(minimum_loss_increase);
    gd.set_gradient_norm_goal(0.0);
-   gd.set_maximum_iterations_number(1000);
+   gd.set_maximum_epochs_number(1000);
    gd.set_maximum_time(1000.0);
 
    gd.perform_training();
@@ -163,19 +160,20 @@ void GradientDescentTest::test_perform_training(void)
 
    gd.set_minimum_parameters_increment_norm(0.0);
    gd.set_loss_goal(0.0);
-   gd.set_minimum_loss_increase(0.0);
+   gd.set_minimum_loss_decrease(0.0);
    gd.set_gradient_norm_goal(gradient_norm_goal);
-   gd.set_maximum_iterations_number(1000);
+   gd.set_maximum_epochs_number(1000);
    gd.set_maximum_time(1000.0);
 
    gd.perform_training();
 
-   double gradient_norm = pf.calculate_gradient().calculate_norm();
+   double gradient_norm = sse.calculate_error_gradient({0}).calculate_L2_norm();
    assert_true(gradient_norm < gradient_norm_goal, LOG);
+*/
 }
 
 
-void GradientDescentTest::test_resize_training_history(void)
+void GradientDescentTest::test_resize_training_history()
 {
    message += "test_resize_training_history\n";
 
@@ -193,7 +191,7 @@ void GradientDescentTest::test_resize_training_history(void)
    assert_true(gdtr.loss_history.size() == 1, LOG);
    assert_true(gdtr.gradient_history.size() == 1, LOG);
    assert_true(gdtr.gradient_norm_history.size() == 1, LOG);
-   assert_true(gdtr.selection_loss_history.size() == 1, LOG);
+   assert_true(gdtr.selection_error_history.size() == 1, LOG);
 
    assert_true(gdtr.training_direction_history.size() == 1, LOG);
    assert_true(gdtr.training_rate_history.size() == 1, LOG);
@@ -201,7 +199,7 @@ void GradientDescentTest::test_resize_training_history(void)
 }
 
 
-void GradientDescentTest::test_to_XML(void)
+void GradientDescentTest::test_to_XML()
 {
    message += "test_to_XML\n";
 
@@ -212,13 +210,13 @@ void GradientDescentTest::test_to_XML(void)
    // Test
 
    document = gd.to_XML();
-   assert_true(document != NULL, LOG);
+   assert_true(document != nullptr, LOG);
 
    delete document;
 }
 
 
-void GradientDescentTest::test_from_XML(void)
+void GradientDescentTest::test_from_XML()
 {
    message += "test_from_XML\n";
 
@@ -242,7 +240,7 @@ void GradientDescentTest::test_from_XML(void)
 }
 
 
-void GradientDescentTest::run_test_case(void)
+void GradientDescentTest::run_test_case()
 {
    message += "Running gradient descent test case...\n";
 
@@ -273,7 +271,7 @@ void GradientDescentTest::run_test_case(void)
 
 
  // OpenNN: Open Neural Networks Library.
-// Copyright (C) 2005-2016 Roberto Lopez.
+// Copyright (C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

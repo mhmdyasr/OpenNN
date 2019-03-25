@@ -6,7 +6,7 @@
 /*   I N C R E M E N T A L   O R D E R   T E S T   C L A S S   H E A D E R                                      */
 /*                                                                                                              */
 /*   Fernando Gomez                                                                                             */
-/*   Artelnics - Making intelligent use of data                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
 /*   fernandogomez@artelnics.com                                                                                */
 /*                                                                                                              */
 /****************************************************************************************************************/
@@ -22,14 +22,14 @@ using namespace OpenNN;
 
 // CONSTRUCTOR
 
-IncrementalOrderTest::IncrementalOrderTest(void) : UnitTesting()
+IncrementalOrderTest::IncrementalOrderTest() : UnitTesting()
 {
 }
 
 
 // DESTRUCTOR
 
-IncrementalOrderTest::~IncrementalOrderTest(void)
+IncrementalOrderTest::~IncrementalOrderTest()
 {
 }
 
@@ -38,7 +38,7 @@ IncrementalOrderTest::~IncrementalOrderTest(void)
 
 // Constructor and destructor methods
 
-void IncrementalOrderTest::test_constructor(void)
+void IncrementalOrderTest::test_constructor()
 {
     message += "test_constructor\n";
 
@@ -53,7 +53,7 @@ void IncrementalOrderTest::test_constructor(void)
     assert_true(!io2.has_training_strategy(), LOG);
 }
 
-void IncrementalOrderTest::test_destructor(void)
+void IncrementalOrderTest::test_destructor()
 {
     message += "test_destructor\n";
 
@@ -65,7 +65,7 @@ void IncrementalOrderTest::test_destructor(void)
 
 // Set methods
 
-void IncrementalOrderTest::test_set_default(void)
+void IncrementalOrderTest::test_set_default()
 {
     message += "test_set_default\n";
 
@@ -73,11 +73,11 @@ void IncrementalOrderTest::test_set_default(void)
 
 // Order selection methods
 
-void IncrementalOrderTest::test_perform_order_selection(void)
+void IncrementalOrderTest::test_perform_order_selection()
 {
     message += "test_perform_order_selection\n";
 
-    std::string str;
+    string str;
     Matrix<double> data;
 
     Vector<Instances::Use> uses;
@@ -86,13 +86,13 @@ void IncrementalOrderTest::test_perform_order_selection(void)
 
     DataSet ds;
 
-    LossIndex pf(&nn, &ds);
+    SumSquaredError sse(&nn, &ds);
 
-    TrainingStrategy ts(&pf);
+    TrainingStrategy ts(&sse);
 
     IncrementalOrder io(&ts);
 
-    IncrementalOrder::IncrementalOrderResults* results;
+    IncrementalOrder::IncrementalOrderResults* results = nullptr;
 
     // Test
 
@@ -131,22 +131,22 @@ void IncrementalOrderTest::test_perform_order_selection(void)
     nn.set(1,3,1);
     nn.initialize_parameters(0.0);
 
-    pf.set_error_type(LossIndex::SUM_SQUARED_ERROR);
+    ts.set_loss_method(TrainingStrategy::SUM_SQUARED_ERROR);
 
-    ts.set_main_type(TrainingStrategy::QUASI_NEWTON_METHOD);
+    ts.set_training_method(TrainingStrategy::QUASI_NEWTON_METHOD);
 
     ts.set_display(false);
 
     io.set_trials_number(1);
     io.set_maximum_order(7);
-    io.set_selection_loss_goal(1.0e-3);
+    io.set_selection_error_goal(1.0e-3);
     io.set_display(false);
 
     results = io.perform_order_selection();
 
-    assert_true(nn.get_multilayer_perceptron_pointer()->arrange_layers_perceptrons_numbers()[0] == 1, LOG);
+    assert_true(nn.get_multilayer_perceptron_pointer()->get_layers_perceptrons_numbers()[0] == 1, LOG);
     assert_true(results->stopping_condition ==
-                OrderSelectionAlgorithm::SelectionLossGoal, LOG);
+                OrderSelectionAlgorithm::SelectionErrorGoal, LOG);
 
     // Test
 
@@ -185,45 +185,42 @@ void IncrementalOrderTest::test_perform_order_selection(void)
     nn.set(1,3,1);
     nn.initialize_parameters(0.0);
 
-    pf.set_error_type(LossIndex::SUM_SQUARED_ERROR);
+    ts.set_loss_method(TrainingStrategy::SUM_SQUARED_ERROR);
 
-    ts.set_main_type(TrainingStrategy::QUASI_NEWTON_METHOD);
+    ts.set_training_method(TrainingStrategy::QUASI_NEWTON_METHOD);
 
     ts.set_display(false);
 
     io.set_trials_number(1);
     io.set_maximum_order(7);
-    io.set_selection_loss_goal(0.0);
+    io.set_selection_error_goal(0.0);
     io.set_maximum_selection_failures(1);
     io.set_display(false);
 
-
     results = io.perform_order_selection();
 
-    assert_true(nn.get_multilayer_perceptron_pointer()->arrange_layers_perceptrons_numbers()[0] == 1, LOG);
+    assert_true(nn.get_multilayer_perceptron_pointer()->get_layers_perceptrons_numbers()[0] == 1, LOG);
     assert_true(results->stopping_condition ==
                 OrderSelectionAlgorithm::MaximumSelectionFailures, LOG);
-
-
 
 }
 
 // Serialization methods
 
-void IncrementalOrderTest::test_to_XML(void)
+void IncrementalOrderTest::test_to_XML()
 {
     message += "test_to_XML\n";
 
     IncrementalOrder io;
 
     tinyxml2::XMLDocument* document = io.to_XML();
-    assert_true(document != NULL, LOG);
+    assert_true(document != nullptr, LOG);
 
     delete document;
 
 }
 
-void IncrementalOrderTest::test_from_XML(void)
+void IncrementalOrderTest::test_from_XML()
 {
     message += "test_from_XML\n";
 
@@ -238,7 +235,7 @@ void IncrementalOrderTest::test_from_XML(void)
 
 // Unit testing methods
 
-void IncrementalOrderTest::run_test_case(void)
+void IncrementalOrderTest::run_test_case()
 {
     message += "Running incremental order test case...\n";
 

@@ -6,7 +6,7 @@
 /*   P R I N C I P A L   C O M P O N E N T S   L A Y E R   C L A S S   H E A D E R                              */
 /*                                                                                                              */
 /*   Pablo Martin                                                                                               */
-/*   Artelnics - Making intelligent use of data                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
 /*   pablomartin@artelnics.com                                                                                  */
 /*                                                                                                              */
 /****************************************************************************************************************/
@@ -30,7 +30,7 @@
 
 // TinyXml includes
 
-#include "../tinyxml2/tinyxml2.h"
+#include "tinyxml2.h"
 
 namespace OpenNN
 {
@@ -45,7 +45,7 @@ public:
 
    // DEFAULT CONSTRUCTOR
 
-   explicit PrincipalComponentsLayer(void);
+   explicit PrincipalComponentsLayer();
 
    // INPUTS AND PRINCIPAL COMPONENTS NUMBER CONSTRUCTOR
 
@@ -57,7 +57,7 @@ public:
 
    // DESTRUCTOR
 
-   virtual ~PrincipalComponentsLayer(void);
+   virtual ~PrincipalComponentsLayer();
 
    // ENUMERATIONS
 
@@ -67,32 +67,30 @@ public:
 
    // Principal components state methods
 
-   const PrincipalComponentsMethod& get_principal_components_method(void) const;
+   const PrincipalComponentsMethod& get_principal_components_method() const;
 
-   std::string write_principal_components_method(void) const;
-   std::string write_principal_components_method_text(void) const;
+   string write_principal_components_method() const;
+   string write_principal_components_method_text() const;
 
    // GET METHODS
 
-   Matrix<double> get_principal_components(void) const;
-   Vector<double> get_means(void) const;
+   Matrix<double> get_principal_components() const;
+   Vector<double> get_means() const;
 
-   Vector<double> get_explained_variance(void) const;
+   Vector<double> get_explained_variance() const;
 
-   size_t get_inputs_number(void) const;
-   size_t get_principal_components_number(void) const;
+   size_t get_inputs_number() const;
+   size_t get_principal_components_number() const;
 
    // Inputs principal components function
 
-//    Vector<double> calculate_ouputs(const Vector<double>&) const;
-
    // Display messages
 
-   const bool& get_display(void) const;
+   const bool& get_display() const;
 
    // SET METHODS
 
-   void set(void);
+   void set();
    void set(const size_t&, const size_t&);
    void set(const PrincipalComponentsLayer&);
 
@@ -107,10 +105,10 @@ public:
 
    void set_explained_variance(const Vector<double>&);
 
-   virtual void set_default(void);
+   virtual void set_default();
 
    void set_principal_components_method(const PrincipalComponentsMethod&);
-   void set_principal_components_method(const std::string&);
+   void set_principal_components_method(const string&);
 
    // Display messages
 
@@ -120,19 +118,19 @@ public:
 
    // Inputs principal components function
 
-   Vector<double> calculate_outputs(const Vector<double>&) const;
-   Matrix<double> calculate_Jacobian(const Vector<double>&) const;
+   Matrix<double> calculate_outputs(const Matrix<double>&) const;
+   Vector< Matrix<double> > calculate_Jacobian(const Matrix<double>&) const;
 
    // Expression methods
 
-   std::string write_expression(const Vector<std::string>&, const Vector<std::string>&) const;
+   string write_expression(const Vector<string>&, const Vector<string>&) const;
 
-   std::string write_no_principal_components_expression(const Vector<std::string>&, const Vector<std::string>&) const;
-   std::string write_principal_components_expression(const Vector<std::string>&, const Vector<std::string>&) const;
+   string write_no_principal_components_expression(const Vector<string>&, const Vector<string>&) const;
+   string write_principal_components_expression(const Vector<string>&, const Vector<string>&) const;
 
    // Serialization methods
 
-   tinyxml2::XMLDocument* to_XML(void) const;
+   tinyxml2::XMLDocument* to_XML() const;
    virtual void from_XML(const tinyxml2::XMLDocument&);
 
    void write_XML(tinyxml2::XMLPrinter&) const;
@@ -154,7 +152,7 @@ protected:
 
    Vector<double> means;
 
-   /// Contains all the principal components arranged in rows and sorted
+   /// Contains all the principal components getd in rows and sorted
    /// according to their relative explained variance.
 
    Matrix<double> principal_components;
@@ -177,7 +175,7 @@ protected:
 #endif
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (c) 2005-2016 Roberto Lopez.
+// Copyright(C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

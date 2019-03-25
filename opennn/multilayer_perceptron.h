@@ -5,9 +5,8 @@
 /*                                                                                                              */
 /*   M U L T I L A Y E R   P E R C E P T R O N   C L A S S   H E A D E R                                        */
 /*                                                                                                              */
-/*   Roberto Lopez                                                                                              */
-/*   Artelnics - Making intelligent use of data                                                                 */
-/*   robertolopez@artelnics.com                                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
+/*   artelnics@artelnics.com                                                                                    */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
@@ -25,7 +24,6 @@
 
 // OpenNN includes
 
-#include "perceptron.h"
 #include "perceptron_layer.h"
 #include "inputs.h"
 #include "outputs.h"
@@ -36,7 +34,7 @@
 
 // TinyXml includes
 
-#include "../tinyxml2/tinyxml2.h"
+#include "tinyxml2.h"
 
 
 namespace OpenNN
@@ -53,7 +51,7 @@ public:
 
    // DEFAULT CONSTRUCTOR
 
-   explicit MultilayerPerceptron(void);
+   explicit MultilayerPerceptron();
 
    // LAYER CONSTRUCTOR
 
@@ -78,7 +76,7 @@ public:
 
    // DESTRUCTOR
 
-   virtual ~MultilayerPerceptron(void);
+   virtual ~MultilayerPerceptron();
 
    // ASSIGNMENT OPERATOR
 
@@ -87,6 +85,120 @@ public:
    // EQUAL TO OPERATOR
 
    bool operator == (const MultilayerPerceptron&) const;
+
+   struct LayersParameters
+   {
+       /// Default constructor.
+
+       LayersParameters(const Vector<size_t> architecture, const Vector<double>& parameters)
+       {
+           const size_t layers_number = architecture.size()-1;
+
+           biases.set(layers_number);
+           synaptic_weights.set(layers_number);
+
+           size_t layer_parameters_number;
+           size_t inputs_number;
+           size_t perceptrons_number;
+           size_t weight_position = 0;
+           size_t bias_position = 0;
+
+           for(size_t i = 0; i < layers_number; i++)
+           {
+               inputs_number = architecture[i];
+               perceptrons_number = architecture[i+1];
+
+               layer_parameters_number = perceptrons_number*(inputs_number+1);
+
+               synaptic_weights[i].set(inputs_number, perceptrons_number);
+               biases[i].set(perceptrons_number);
+
+               bias_position += perceptrons_number*inputs_number;
+
+               for(size_t k = 0; k < perceptrons_number; k++)
+               {
+                   for(size_t j = 0; j < inputs_number; j++)
+                   {
+                       synaptic_weights[i](j,k) = parameters[weight_position];
+
+                       weight_position++;
+                   }
+
+                   biases[i][k] = parameters[k + bias_position];
+               }
+
+               weight_position += perceptrons_number;
+               bias_position += perceptrons_number;
+           }
+       }
+
+       LayersParameters(const size_t& layers_number)
+       {
+           biases.set(layers_number);
+           synaptic_weights.set(layers_number);
+       }
+
+       virtual ~LayersParameters()
+       {
+       }
+
+       Vector< Vector<double> > biases;
+       Vector< Matrix<double> > synaptic_weights;
+   };
+
+
+   struct Pointers
+   {
+       Pointers()
+       {
+       }
+
+       virtual ~Pointers();
+
+       Vector<double> get_parameters() const;
+
+       void update_parameters(const Vector<double>&);
+
+       void update_parameters_sgd(const Vector<double*>&, const double&, const bool&, const double&,
+                                  const double&, const size_t&, const Vector<double>&);
+
+       Vector<double*> biases_pointers;
+       Vector<double*> weights_pointers;
+
+       size_t layers_number;
+       Vector<size_t> architecture;
+       Vector<string> layer_activations;
+
+       bool CUDA_initialized = false;
+   };
+
+
+   struct FirstOrderForwardPropagation
+   {
+       /// Default constructor.
+
+       FirstOrderForwardPropagation(const size_t layers_number)
+       {
+           layers_activations.set(layers_number);
+           layers_activation_derivatives.set(layers_number);
+       }
+
+       virtual ~FirstOrderForwardPropagation()
+       {
+       }
+
+       void print() const
+       {
+           cout << "Layers activations:" << endl;
+           cout << layers_activations << endl;
+           cout << "Layers activation derivatives:" << endl;
+           cout << layers_activation_derivatives << endl;
+       }
+
+       Vector< Matrix<double> > layers_activations;
+       Vector< Matrix<double> > layers_activation_derivatives;
+   };
+
 
    // GET METHODS
 
@@ -99,7 +211,7 @@ public:
    /// <LI> Number of output perceptrons.</LI>
    /// </UL>
 
-   inline Vector<size_t> arrange_architecture(void) const
+   inline Vector<size_t> get_architecture() const
    {
       const size_t layers_number = get_layers_number();
 
@@ -112,7 +224,7 @@ public:
 
          architecture[0] = inputs_number;
          
-         Vector<size_t> layers_size = arrange_layers_perceptrons_numbers();
+         Vector<size_t> layers_size = get_layers_perceptrons_numbers();
 
          for(size_t i = 0; i < layers_number; i++)
          {
@@ -132,7 +244,7 @@ public:
    /// <LI> Number of output perceptrons.</LI>
    /// </UL>
 
-   inline Vector<int> arrange_architecture_int(void) const
+   inline Vector<int> get_architecture_int() const
    {
       const size_t layers_number = get_layers_number();
 
@@ -145,7 +257,7 @@ public:
 
          architecture[0] = (int)inputs_number;
 
-         Vector<size_t> layers_size = arrange_layers_perceptrons_numbers();
+         Vector<size_t> layers_size = get_layers_perceptrons_numbers();
 
          for(size_t i = 0; i < layers_number; i++)
          {
@@ -158,7 +270,7 @@ public:
 
    /// Returns a vector with the sizes of the hidden layers in the multilayer perceptron.
 
-   inline Vector<size_t> arrange_complexity(void) const
+   inline Vector<size_t> get_complexity() const
    {
       const size_t layers_number = get_layers_number();
 
@@ -168,7 +280,7 @@ public:
       {
          complexity.resize(layers_number-1);
 
-         Vector<size_t> layers_size = arrange_layers_perceptrons_numbers();
+         Vector<size_t> layers_size = get_layers_perceptrons_numbers();
 
          for(size_t i = 0; i < layers_number-1; i++)
          {
@@ -182,7 +294,7 @@ public:
 
    /// Returns the number of inputs to the multilayer perceptron.
 
-   inline size_t get_inputs_number(void) const
+   inline size_t get_inputs_number() const
    {
       const size_t layers_number = get_layers_number();
 
@@ -198,14 +310,15 @@ public:
 
    /// Returns the number of layers in the multilayer perceptron. 
 
-   inline size_t get_layers_number(void) const
+   inline size_t get_layers_number() const
    {
       return(layers.size());
    }
 
+
    /// Returns a vector with the number of inputs of each layer. 
 
-   inline Vector<size_t> get_layers_inputs_number(void) const
+   inline Vector<size_t> get_layers_inputs_number() const
    {
       const size_t layers_number = get_layers_number();
 
@@ -222,7 +335,7 @@ public:
 
    /// Returns a vector with the size of each layer. 
 
-   inline Vector<size_t> arrange_layers_perceptrons_numbers(void) const
+   inline Vector<size_t> get_layers_perceptrons_numbers() const
    {
       const size_t layers_number = get_layers_number();
 
@@ -239,7 +352,7 @@ public:
 
    /// Returns the number of outputs neurons in the multilayer perceptron 
 
-   inline size_t get_outputs_number(void) const
+   inline size_t get_outputs_number() const
    {
       const size_t layers_number = get_layers_number();
 
@@ -253,29 +366,27 @@ public:
       }
    }
 
-   const Vector<PerceptronLayer>& get_layers(void) const;
+   const Vector<PerceptronLayer>& get_layers() const;
    const PerceptronLayer& get_layer(const size_t&) const;
    PerceptronLayer* get_layer_pointer(const size_t&);
 
-   size_t count_perceptrons_number(void) const;
-   Vector<size_t> count_cumulative_perceptrons_number(void) const;
+   size_t get_perceptrons_number() const;
+   Vector<size_t> count_cumulative_perceptrons_number() const;
  
    // Parameters
    
-   Vector<size_t> arrange_layers_parameters_number(void) const;
-   Vector<size_t> arrange_layers_cumulative_parameters_number(void) const;
+   Vector<size_t> get_layers_parameters_number() const;
+   Vector<size_t> count_layers_cumulative_parameters_number() const;
 
-   Vector< Vector<double> > arrange_layers_biases(void) const;
-   Vector< Matrix<double> > arrange_layers_synaptic_weights(void) const;
+   Vector< Vector<double> > get_layers_biases() const;
+   Vector< Matrix<double> > get_layers_synaptic_weights() const;
 
-   Vector< Vector<double> > get_layers_parameters(void) const;
-
-   size_t count_parameters_number(void) const;
-   Vector<double> arrange_parameters(void) const;   
+   size_t get_parameters_number() const;
+   Vector<double> get_parameters() const;   
    
-   Vector<double> arrange_parameters_statistics(void) const;
+   Vector<double> get_parameters_statistics() const;
 
-   Vector<size_t> count_layers_parameters_numbers(void) const;
+   Vector<size_t> get_layers_parameters_numbers() const;
 
    size_t get_layer_index(const size_t&) const;
    size_t get_perceptron_index(const size_t&, const size_t&) const;
@@ -283,21 +394,21 @@ public:
    size_t get_layer_bias_index(const size_t&, const size_t&) const;
    size_t get_layer_synaptic_weight_index(const size_t&, const size_t&, const size_t&) const;
    
-   Vector<size_t> arrange_parameter_indices(const size_t&) const;
-   Matrix<size_t> arrange_parameters_indices(void) const;
+   Vector<size_t> get_parameter_indices(const size_t&) const;
+   Matrix<size_t> get_parameters_indices() const;
 
    // Activation functions
 
-   Vector<Perceptron::ActivationFunction> get_layers_activation_function(void) const;
-   Vector<std::string> write_layers_activation_function(void) const;
+   Vector<PerceptronLayer::ActivationFunction> get_layers_activation_function() const;
+   Vector<string> write_layers_activation_function() const;
 
    // Display messages
 
-   const bool& get_display(void) const;
+   const bool& get_display() const;
 
    // SET METHODS
 
-   void set(void);
+   void set();
    void set(const Vector<PerceptronLayer>&);
    void set(const Vector<size_t>&);
    void set(const Vector<int>&);
@@ -305,7 +416,7 @@ public:
    void set(const size_t&, const size_t&, const size_t&);
    void set(const MultilayerPerceptron&);
 
-   virtual void set_default(void);
+   virtual void set_default();
 
    // Architecture
 
@@ -329,31 +440,31 @@ public:
 
    void initialize_biases(const double&); 
    void initialize_synaptic_weights(const double&);
+   void initialize_synaptic_weights_Glorot();
    void initialize_parameters(const double&);
 
-   void randomize_parameters_uniform(void);
+   void randomize_parameters_uniform();
    void randomize_parameters_uniform(const double&, const double&);
    void randomize_parameters_uniform(const Vector<double>&, const Vector<double>&);
    void randomize_parameters_uniform(const Vector< Vector<double> >&);
 
-   void randomize_parameters_normal(void);
+   void randomize_parameters_normal();
    void randomize_parameters_normal(const double&, const double&);
    void randomize_parameters_normal(const Vector<double>&, const Vector<double>&);
    void randomize_parameters_normal(const Vector< Vector<double> >&);
  
-   void initialize_parameters(void);
+   void initialize_parameters();
 
    void perturbate_parameters(const double&);
 
-   double calculate_parameters_norm(void) const;
+   double calculate_parameters_norm() const;
 
    // Activation functions
 
-   void set_layers_activation_function(const Vector<Perceptron::ActivationFunction>&);
-   void set_layers_activation_function(const Vector<std::string>&);
+   void set_layers_activation_function(const Vector<PerceptronLayer::ActivationFunction>&);
+   void set_layers_activation_function(const Vector<string>&);
 
-   void set_layer_activation_function(const size_t&, const Perceptron::ActivationFunction&);
-
+   void set_layer_activation_function(const size_t&, const PerceptronLayer::ActivationFunction&);
 
    // Display messages
 
@@ -361,11 +472,11 @@ public:
 
    // Check methods
 
-   bool is_empty(void) const;
+   bool is_empty() const;
 
    // Growing and pruning
 
-   void grow_input(void);
+   void grow_input();
 
    void prune_input(const size_t&);
    void prune_output(const size_t&);
@@ -375,78 +486,39 @@ public:
 
    // Multilayer perceptron initialization methods
 
-   void initialize_random(void);
-
-   // PerceptronLayer combination-combination
-
-   Vector<double> calculate_layer_combination_combination(const size_t&, const Vector<double>&) const;
-   Matrix<double> calculate_layer_combination_combination_Jacobian(const size_t&, const Vector<double>&) const;
-
-   // Layers multilayer_perceptron_pointer outputs delta
-
-   Vector<double> calculate_output_layer_combination(const size_t&, const Vector<double>&) const;
-
-   Vector< Matrix<double> > calculate_output_layers_delta(const Vector< Vector<double> >&) const;
-//   Vector< Matrix<double> > calculate_output_layers_delta(const Vector< Vector<double> >&, const Vector<double>&, const Vector<double>&) const;
-
-   // Interlayers multilayer_perceptron_pointer outputs Delta
-
-   Matrix< Vector< Matrix<double> > > calculate_output_interlayers_Delta(const Vector< Vector< Vector<double> > >&, const Matrix< Matrix<double> >&, const Vector< Matrix<double> >&) const;
-
-   // Interlayer combination-combination
-
-   Vector<double> calculate_interlayer_combination_combination(const size_t&, const size_t&, const Vector<double>&) const;
-   Matrix<double> calculate_interlayer_combination_combination_Jacobian(const size_t&, const size_t&, const Vector<double>&) const;
-
-   // Forward propagation inputs
-
-   Vector< Vector<double> > calculate_layers_input(const Vector<double>&) const;
-   Vector< Vector<double> > arrange_layers_input(const Vector<double>&, const Vector< Vector<double> >&) const;
-   Vector< Vector<double> > arrange_layers_input(const Vector<double>&, const Vector< Vector< Vector<double> > >&) const;
+   void initialize_random();
 
    // Forward propagation combination
 
-   Vector< Vector<double> > calculate_layers_combination(const Vector<double>&) const;
-   Vector< Matrix<double> > calculate_layers_combination_Jacobian(const Vector<double>&) const;
+   Vector< Matrix<double> > calculate_layers_combinations(const Matrix<double>&) const;
 
-   Vector< Matrix<double> > calculate_layers_combination_parameters_Jacobian(const Vector< Vector<double> >&) const;
+   Vector < Matrix<double> > calculate_layers_combination_Jacobian(const size_t&, const Matrix<double>&) const;
+
+   Vector < Vector< Matrix<double> > > calculate_layers_combination_parameters_Jacobian(const Vector< Matrix<double> >&) const;
 
    Vector< Vector< Vector<double> > > calculate_perceptrons_combination_parameters_gradient(const Vector< Vector<double> >&) const;
 
    // Forward propagation activation
 
-   Vector< Vector<double> > calculate_layers_activation(const Vector<double>&) const;
-   Vector< Vector<double> > calculate_layers_activation_derivative(const Vector<double>&) const;
-   Vector< Vector<double> > calculate_layers_activation_second_derivative(const Vector<double>&) const;
+   Vector< Matrix<double> > calculate_layers_activations_derivatives(const Matrix<double>&) const;
 
    // Forward propagation outputs
 
-   //Vector< Vector<double> > calculate_layers_output(const Vector<double>&) const;
-   Vector< Matrix<double> > calculate_layers_Jacobian(const Vector<double>&) const;
-   Vector< Vector< Matrix<double> > > calculate_layers_Hessian_form(const Vector<double>&) const;
-
-   Matrix <Matrix<double> > calculate_interlayers_combination_combination_Jacobian(const Vector<double>&) const;   
-   Matrix <Matrix<double> > calculate_interlayers_combination_combination_Jacobian(const Vector< Vector<double> >&) const;   
-
-   // Forward propagation
-
-   //Vector< Vector< Vector<double> > > calculate_zero_order_forward_propagation(const Vector<double>&) const;
-   Vector< Vector< Vector<double> > > calculate_first_order_forward_propagation(const Vector<double>&) const;
-   Vector< Vector< Vector<double> > > calculate_second_order_forward_propagation(const Vector<double>&) const;
+   FirstOrderForwardPropagation calculate_first_order_forward_propagation(const Matrix<double>&) const;
 
    // Output 
 
-   Vector<double> calculate_outputs(const Vector<double>&) const;
-   Matrix<double> calculate_Jacobian(const Vector<double>&) const;
-   Vector< Matrix<double> > calculate_Hessian_form(const Vector<double>&) const;
+   Vector< Vector< Matrix<double> > > calculate_layers_Jacobian(const Matrix<double>&) const;
+   Vector< Matrix<double> > calculate_Jacobian(const Matrix<double>&) const;
 
-   Vector<double> calculate_outputs(const Vector<double>&, const Vector<double>&) const;
-   Matrix<double> calculate_Jacobian(const Vector<double>&, const Vector<double>&) const;
-   Vector< Matrix<double> > calculate_Hessian_form(const Vector<double>&, const Vector<double>&) const;
+   Matrix<double> calculate_outputs(const Matrix<double>&) const;
+   Matrix<double> calculate_outputs(const Matrix<double>&,  const Vector<double>&) const;
 
    // Serialization methods
 
-   tinyxml2::XMLDocument* to_XML(void) const;
+   Pointers host_to_device() const;
+
+   tinyxml2::XMLDocument* to_XML() const;
    void from_XML(const tinyxml2::XMLDocument&);
 
    void write_XML(tinyxml2::XMLPrinter&) const;
@@ -460,14 +532,14 @@ public:
 
    // Information
 
-   Matrix<std::string> write_information(void) const;
+   Matrix<string> write_information() const;
 
    // Expression methods
 
-   std::string write_expression(const Vector<std::string>&, const Vector<std::string>&) const;
+   string write_expression(const Vector<string>&, const Vector<string>&) const;
+   string write_expression_php(const Vector<string>&, const Vector<string>&) const;
 
-   std::string to_string(void) const;
-
+   string object_to_string() const;
 
 protected:
 
@@ -490,7 +562,7 @@ protected:
 
 
 // OpenNN: Open Neural MultilayerPerceptrons Library.
-// Copyright (c) 2005-2016 Roberto Lopez.
+// Copyright(C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

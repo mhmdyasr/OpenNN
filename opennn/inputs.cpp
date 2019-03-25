@@ -5,9 +5,8 @@
 /*                                                                                                              */
 /*   I N P U T S   C L A S S                                                                                    */
 /*                                                                                                              */
-/*   Roberto Lopez                                                                                              */
-/*   Artelnics - Making intelligent use of data                                                                 */
-/*   robertolopez@artelnics.com                                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
+/*   artelnics@artelnics.com                                                                                    */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
@@ -15,8 +14,8 @@
 
 #include "inputs.h"
 
-#define numeric_to_string( x ) static_cast< std::ostringstream & >( \
-    ( std::ostringstream() << std::dec << x ) ).str()
+#define numeric_to_string( x ) static_cast< ostringstream & >( \
+   ( ostringstream() << dec << x ) ).str()
 
 namespace OpenNN
 {
@@ -26,7 +25,7 @@ namespace OpenNN
 /// Default constructor. 
 /// It creates an inputs object with zero inputs.
 
-Inputs::Inputs(void)
+Inputs::Inputs()
 {
     set();
 }
@@ -73,7 +72,7 @@ Inputs::Inputs(const Inputs& other_inputs)
 
 /// Destructor.
 
-Inputs::~Inputs(void)
+Inputs::~Inputs()
 {
 }
 
@@ -102,7 +101,6 @@ Inputs& Inputs::operator = (const Inputs& other_inputs)
 
 // EQUAL TO OPERATOR
 
-// bool operator == (const Inputs&) const method
 
 /// Equal to operator. 
 /// It compares this object with another object of the same class. 
@@ -123,11 +121,9 @@ bool Inputs::operator == (const Inputs& other_inputs) const
 }
 
 
-// bool is_empty(void) const method
-
 /// Returns true if the number of inputs is zero, and false otherwise.
 
-bool Inputs::is_empty(void) const
+bool Inputs::is_empty() const
 {
     const size_t inputs_number = get_inputs_number();
 
@@ -142,16 +138,14 @@ bool Inputs::is_empty(void) const
 }
 
 
-// Vector<std::string> arrange_names(void) const method
-
 /// Returns the names of the input variables.
 /// Such names are only used to give the user basic information about the problem at hand.
 
-Vector<std::string> Inputs::arrange_names(void) const
+Vector<string> Inputs::get_names() const
 {
     const size_t inputs_number = get_inputs_number();
 
-    Vector<std::string> names(inputs_number);
+    Vector<string> names(inputs_number);
 
     for(size_t i = 0; i < inputs_number; i++)
     {
@@ -162,15 +156,13 @@ Vector<std::string> Inputs::arrange_names(void) const
 }
 
 
-// const std::string& get_name(const size_t&) const method
-
 /// Returns the name of a single input variable. 
 /// Such a name is only used to give the user basic information about the problem at hand.
 /// @param i Index of input variable.
 
-const std::string& Inputs::get_name(const size_t& i) const
+const string& Inputs::get_name(const size_t& i) const
 {
-    // Control sentence (if debug)
+    // Control sentence(if debug)
 
 #ifdef __OPENNN_DEBUG__
 
@@ -178,13 +170,13 @@ const std::string& Inputs::get_name(const size_t& i) const
 
     if(i >= inputs_number)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: Inputs class.\n"
-               << "const std::string get_name(const size_t&) const method.\n"
+               << "const string get_name(const size_t&) const method.\n"
                << "Input variable index must be less than number of inputs.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -193,16 +185,14 @@ const std::string& Inputs::get_name(const size_t& i) const
 }
 
 
-// Vector<std::string> arrange_units(void) const method
-
 /// Returns the units of the input variables as strings. 
 /// Such units are only used to give the user basic information about the problem at hand.
 
-Vector<std::string> Inputs::arrange_units(void) const
+Vector<string> Inputs::get_units() const
 {
     const size_t inputs_number = get_inputs_number();
 
-    Vector<std::string> units(inputs_number);
+    Vector<string> units(inputs_number);
 
     for(size_t i = 0; i < inputs_number; i++)
     {
@@ -213,15 +203,13 @@ Vector<std::string> Inputs::arrange_units(void) const
 }
 
 
-// const std::string& get_unit(const size_t&) const method
-
 /// Returns the units of a single input variable as a string. 
 /// Such units are only used to give the user basic information about the problem at hand.
 /// @param index Index of input variable.
 
-const std::string& Inputs::get_unit(const size_t& index) const
+const string& Inputs::get_unit(const size_t& index) const
 {
-    // Control sentence (if debug)
+    // Control sentence(if debug)
 
 #ifdef __OPENNN_DEBUG__
 
@@ -229,13 +217,13 @@ const std::string& Inputs::get_unit(const size_t& index) const
 
     if(index >= inputs_number)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: Inputs class.\n"
-               << "const std::string get_unit(const size_t&) const method.\n"
+               << "const string get_unit(const size_t&) const method.\n"
                << "Index of input variable must be less than number of inputs.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -244,16 +232,14 @@ const std::string& Inputs::get_unit(const size_t& index) const
 }
 
 
-// Vector<std::string> arrange_descriptions(void) const method
-
 /// Returns the description of the input variables as strings. 
 /// Such descriptions are only used to give the user basic information about the problem at hand.
 
-Vector<std::string> Inputs::arrange_descriptions(void) const
+Vector<string> Inputs::get_descriptions() const
 {
     const size_t inputs_number = get_inputs_number();
 
-    Vector<std::string> descriptions(inputs_number);
+    Vector<string> descriptions(inputs_number);
 
     for(size_t i = 0; i < inputs_number; i++)
     {
@@ -264,15 +250,13 @@ Vector<std::string> Inputs::arrange_descriptions(void) const
 }
 
 
-// const std::string get_description(const size_t&) const method
-
 /// Returns the description of a single input variable as a string. 
 /// Such a description is only used to give the user basic information about the problem at hand.
 /// @param index Index of input variable.
 
-const std::string& Inputs::get_description(const size_t& index) const
+const string& Inputs::get_description(const size_t& index) const
 {
-    // Control sentence (if debug)
+    // Control sentence(if debug)
 
 #ifdef __OPENNN_DEBUG__
 
@@ -280,13 +264,13 @@ const std::string& Inputs::get_description(const size_t& index) const
 
     if(index >= inputs_number)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: Inputs class.\n"
-               << "const std::string& get_description(const size_t&) const method.\n"
+               << "const string& get_description(const size_t&) const method.\n"
                << "Index of input variable must be less than number of inputs.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -295,18 +279,16 @@ const std::string& Inputs::get_description(const size_t& index) const
 }
 
 
-// Matrix<std::string> arrange_information(void) const method
-
 /// Returns the information of all input variables from a single matrix of strings.
 /// The information contains names, inputs and descriptions.
 /// The number of rows in the matris is the number of inputs, and the number of columns is three.
 /// Each row contains the information of a single input variable.
 
-Matrix<std::string> Inputs::arrange_information(void) const
+Matrix<string> Inputs::get_information() const
 {
     const size_t inputs_number = get_inputs_number();
 
-    Matrix<std::string> information(inputs_number, 3);
+    Matrix<string> information(inputs_number, 3);
 
     for(size_t i = 0; i < inputs_number; i++)
     {
@@ -319,31 +301,25 @@ Matrix<std::string> Inputs::arrange_information(void) const
 }
 
 
-// const bool& get_display(void) const method
-
 /// Returns true if messages from this class are to be displayed on the screen, or false if messages 
 /// from this class are not to be displayed on the screen.
 
-const bool& Inputs::get_display(void) const
+const bool& Inputs::get_display() const
 {
     return(display);
 }
 
 
-// void set(void) method
-
 /// Sets zero inputs.
 /// It also sets the rest of members to their default values. 
 
-void Inputs::set(void)
+void Inputs::set()
 {
     set_inputs_number(0);
 
     set_default();
 }
 
-
-// void set(const size_t&, const size_t&) method
 
 /// Sets a new number of inputs.
 /// It also sets the rest of members to their default values. 
@@ -357,8 +333,6 @@ void Inputs::set(const size_t& new_inputs_number)
 }
 
 
-// void set(const Inputs&) method
-
 /// Sets the members of this inputs object with those from another object of the same class.
 /// @param other_inputs Inputs object to be copied.
 
@@ -369,7 +343,13 @@ void Inputs::set(const Inputs& other_inputs)
 }
 
 
-// void set(const Vector< Vector<std::string> >&) method
+void Inputs::set(const Vector<bool>& new_uses)
+{
+    const Vector<size_t> indices = new_uses.calculate_equal_to_indices(true);
+
+    items = items.get_subvector(indices);
+}
+
 
 /// Sets all the inputs from a single vector.
 /// @param new_inputs_information Inputs information.
@@ -380,9 +360,9 @@ void Inputs::set(const Inputs& other_inputs)
 /// <li> Inputs description.
 /// </ul>
 
-void Inputs::set(const Vector< Vector<std::string> >& new_inputs_information)
+void Inputs::set(const Vector< Vector<string> >& new_inputs_information)
 {
-    // Control sentence (if debug)
+    // Control sentence(if debug)
 
 #ifdef __OPENNN_DEBUG__
 
@@ -390,13 +370,13 @@ void Inputs::set(const Vector< Vector<std::string> >& new_inputs_information)
 
     if(new_inputs_information_size != 3)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: Inputs class.\n"
-               << "void set(const Vector< Vector<std::string> >&) method.\n"
+               << "void set(const Vector< Vector<string> >&) method.\n"
                << "Size of inputs information must be three.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -407,8 +387,6 @@ void Inputs::set(const Vector< Vector<std::string> >& new_inputs_information)
 }
 
 
-// void set_inputs_number(const size_t&) method
-
 /// Sets a new number of inputs.
 /// @param new_inputs_number Number of inputs. 
 
@@ -418,13 +396,11 @@ void Inputs::set_inputs_number(const size_t& new_inputs_number)
 }
 
 
-// void set_default(void) method
-
 /// Sets the members of this object to their default values.
 
-void Inputs::set_default(void)
+void Inputs::set_default()
 {
-    std::ostringstream buffer;
+    ostringstream buffer;
 
     const size_t inputs_number = get_inputs_number();
 
@@ -442,17 +418,15 @@ void Inputs::set_default(void)
 }
 
 
-// void set_names(const Vector<std::string>&) method
-
 /// Sets the names for the input variables.
 /// Such values are only used to give the user basic information on the problem at hand.
 /// @param new_names New names for the input variables.
 
-void Inputs::set_names(const Vector<std::string>& new_names)
+void Inputs::set_names(const Vector<string>& new_names)
 {
     const size_t inputs_number = get_inputs_number();
 
-    // Control sentence (if debug)
+    // Control sentence(if debug)
 
 #ifdef __OPENNN_DEBUG__
 
@@ -460,13 +434,13 @@ void Inputs::set_names(const Vector<std::string>& new_names)
 
     if(size != inputs_number)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: Inputs class.\n"
-               << "void set_names(const Vector<std::string>&) method.\n"
+               << "void set_names(const Vector<string>&) method.\n"
                << "Size of name of input variables vector must be equal to number of inputs.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -480,16 +454,14 @@ void Inputs::set_names(const Vector<std::string>& new_names)
 }
 
 
-// void set_name(const size_t&, const std::string&) method
-
 /// Sets the name of a single input variable.
 /// Such value is only used to give the user basic information on the problem at hand.
 /// @param i Index of input variable.
 /// @param new_name New name for the input variable with index i.
 
-void Inputs::set_name(const size_t& i, const std::string& new_name)
+void Inputs::set_name(const size_t& i, const string& new_name)
 {
-    // Control sentence (if debug)
+    // Control sentence(if debug)
 
 #ifdef __OPENNN_DEBUG__
 
@@ -497,13 +469,13 @@ void Inputs::set_name(const size_t& i, const std::string& new_name)
 
     if(i >= inputs_number)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: Inputs class.\n"
-               << "void set_name(const size_t&, const std::string&) method.\n"
+               << "void set_name(const size_t&, const string&) method.\n"
                << "Index of input variable must be less than number of inputs.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -514,17 +486,15 @@ void Inputs::set_name(const size_t& i, const std::string& new_name)
 }
 
 
-// void set_units(const Vector<std::string>&) method
-
 /// Sets new units for all the input variables.
 /// Such values are only used to give the user basic information on the problem at hand.
 /// @param new_units New units for the input variables.
 
-void Inputs::set_units(const Vector<std::string>& new_units)
+void Inputs::set_units(const Vector<string>& new_units)
 {
     const size_t inputs_number = get_inputs_number();
 
-    // Control sentence (if debug)
+    // Control sentence(if debug)
 
 #ifdef __OPENNN_DEBUG__
 
@@ -532,13 +502,13 @@ void Inputs::set_units(const Vector<std::string>& new_units)
 
     if(size != inputs_number)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: Inputs class.\n"
-               << "void set_units(const Vector<std::string>&) method.\n"
+               << "void set_units(const Vector<string>&) method.\n"
                << "Size must be equal to number of input variables.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -552,16 +522,14 @@ void Inputs::set_units(const Vector<std::string>& new_units)
 }
 
 
-// void set_unit(const size_t&, const std::string&) method
-
 /// Sets new units for a single input variable.
 /// Such value is only used to give the user basic information on the problem at hand.
 /// @param index Index of input variable.
 /// @param new_unit New units for that input variable.
 
-void Inputs::set_unit(const size_t& index, const std::string& new_unit)
+void Inputs::set_unit(const size_t& index, const string& new_unit)
 {
-    // Control sentence (if debug)
+    // Control sentence(if debug)
 
 #ifdef __OPENNN_DEBUG__
 
@@ -569,13 +537,13 @@ void Inputs::set_unit(const size_t& index, const std::string& new_unit)
 
     if(index >= inputs_number)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: Inputs class.\n"
-               << "void set_unit(const size_t&, const std::string&) method.\n"
+               << "void set_unit(const size_t&, const string&) method.\n"
                << "Index of input must be less than number of inputs.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -586,17 +554,15 @@ void Inputs::set_unit(const size_t& index, const std::string& new_unit)
 }
 
 
-// void set_descriptions(const Vector<std::string>&) method
-
 /// Sets new descriptions for all the input variables.
 /// Such values are only used to give the user basic information on the problem at hand.
 /// @param new_descriptions New description for the input variables.
 
-void Inputs::set_descriptions(const Vector<std::string>& new_descriptions)
+void Inputs::set_descriptions(const Vector<string>& new_descriptions)
 {
     const size_t inputs_number = get_inputs_number();
 
-    // Control sentence (if debug)
+    // Control sentence(if debug)
 
 #ifdef __OPENNN_DEBUG__
 
@@ -604,13 +570,13 @@ void Inputs::set_descriptions(const Vector<std::string>& new_descriptions)
 
     if(size != inputs_number)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: Inputs class.\n"
-               << "void set_descriptions(const Vector<std::string>&) method.\n"
+               << "void set_descriptions(const Vector<string>&) method.\n"
                << "Size must be equal to number of input variables.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -624,17 +590,15 @@ void Inputs::set_descriptions(const Vector<std::string>& new_descriptions)
 }
 
 
-// void set_description(const size_t&, const std::string&) method
-
 /// Sets a new description for a single input variable.
 /// Such value is only used to give the user basic information on the problem at hand.
 ///
 /// @param index Index of input variable.
 /// @param new_description New description for the input variable with index i.
 
-void Inputs::set_description(const size_t& index, const std::string& new_description)
+void Inputs::set_description(const size_t& index, const string& new_description)
 {
-    // Control sentence (if debug)
+    // Control sentence(if debug)
 
 #ifdef __OPENNN_DEBUG__
 
@@ -642,13 +606,13 @@ void Inputs::set_description(const size_t& index, const std::string& new_descrip
 
     if(index >= inputs_number)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: Inputs class.\n"
-               << "void set_description(const size_t&, const std::string&) method.\n"
+               << "void set_description(const size_t&, const string&) method.\n"
                << "Index of input variable must be less than number of inputs.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -659,8 +623,6 @@ void Inputs::set_description(const size_t& index, const std::string& new_descrip
 }
 
 
-// void set_information(const Matrix<std::string>&) method
-
 /// Sets all the possible information about the input variables.
 /// The format is a vector of vectors of size three:
 /// <ul>
@@ -670,9 +632,9 @@ void Inputs::set_description(const size_t& index, const std::string& new_descrip
 /// </ul>
 /// @param new_information Input variables information.
 
-void Inputs::set_information(const Matrix<std::string>& new_information)
+void Inputs::set_information(const Matrix<string>& new_information)
 {
-    // Control sentence (if debug)
+    // Control sentence(if debug)
 
 #ifdef __OPENNN_DEBUG__
 
@@ -680,13 +642,13 @@ void Inputs::set_information(const Matrix<std::string>& new_information)
 
     if(columns_number != 3)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: Inputs class.\n"
-               << "void set_information(const Matrix<std::string>&) method.\n"
+               << "void set_information(const Matrix<string>&) method.\n"
                << "Number of columns in matrix must be 3.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -703,7 +665,23 @@ void Inputs::set_information(const Matrix<std::string>& new_information)
     }
 }
 
-// void set_display(const bool&) method
+void Inputs::set_information_vector_of_vector(const vector< vector<string> >& new_information)
+{
+    const size_t inputs_number = new_information.size();
+
+    Matrix<string> inputs_information(inputs_number, 3);
+
+    for(size_t i = 0; i < inputs_number; i++)
+    {
+
+        inputs_information(i,0) = new_information[i][0];
+        inputs_information(i,1) = new_information[i][1];
+        inputs_information(i,2) = new_information[i][2];
+    }
+
+    set_information(inputs_information);
+}
+
 
 /// Sets a new display value. 
 /// If it is set to true messages from this class are to be displayed on the screen;
@@ -716,11 +694,9 @@ void Inputs::set_display(const bool& new_display)
 }
 
 
-// void grow_input(void) method
-
 /// Appends a new item to the inputs.
 
-void Inputs::grow_input(void)
+void Inputs::grow_input()
 {
     const Item item;
 
@@ -728,14 +704,12 @@ void Inputs::grow_input(void)
 }
 
 
-// void prune_input(const size_t&) method
-
 /// Removes a given item from the inputs.
 /// @param index Index of item to be pruned.
 
 void Inputs::prune_input(const size_t& index)
 {
-    // Control sentence (if debug)
+    // Control sentence(if debug)
 
 #ifdef __OPENNN_DEBUG__
 
@@ -743,22 +717,20 @@ void Inputs::prune_input(const size_t& index)
 
     if(index >= inputs_number)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: Inputs class.\n"
                << "void prune_input(const size_t&) method.\n"
                << "Index of input is equal or greater than number of inputs.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
 
-    items.erase(items.begin()+index);
+    items.erase(items.begin()+ static_cast<unsigned>(index));
 }
 
-
-// Vector<std::string> write_default_names(void) const method
 
 /// Returns the default names for the input variables:
 /// <ul>
@@ -767,13 +739,13 @@ void Inputs::prune_input(const size_t& index)
 /// <li> n
 /// </ul>
 
-Vector<std::string> Inputs::write_default_names(void) const
+Vector<string> Inputs::write_default_names() const
 {
     const size_t inputs_number = get_inputs_number();
 
-    Vector<std::string> default_names(inputs_number);
+    Vector<string> default_names(inputs_number);
 
-    std::ostringstream buffer;
+    ostringstream buffer;
 
     for(size_t i = 0; i < inputs_number; i++)
     {
@@ -787,13 +759,11 @@ Vector<std::string> Inputs::write_default_names(void) const
 }
 
 
-// std::string to_string(void) const method
-
 /// Returns a string representation of the current inputs object.
 
-std::string Inputs::to_string(void) const
+string Inputs::object_to_string() const
 {
-    std::ostringstream buffer;
+    ostringstream buffer;
 
     const size_t inputs_number = get_inputs_number();
 
@@ -814,26 +784,24 @@ std::string Inputs::to_string(void) const
 }
 
 
-// tinyxml2::XMLDocument* to_XML(void) const method
-
 /// Serializes the inputs object into a XML document of the TinyXML library.
 /// See the OpenNN manual for more information about the format of this document.
 
-tinyxml2::XMLDocument* Inputs::to_XML(void) const
+tinyxml2::XMLDocument* Inputs::to_XML() const
 {
     tinyxml2::XMLDocument* document = new tinyxml2::XMLDocument;
 
     const size_t inputs_number = get_inputs_number();
 
-    std::ostringstream buffer;
+    ostringstream buffer;
 
     // Inputs
 
     tinyxml2::XMLElement* inputsElement = document->NewElement("Inputs");
     document->InsertFirstChild(inputsElement);
 
-    tinyxml2::XMLElement* element = NULL;
-    tinyxml2::XMLText* text = NULL;
+    tinyxml2::XMLElement* element = nullptr;
+    tinyxml2::XMLText* text = nullptr;
 
     // Inputs number
     {
@@ -850,7 +818,7 @@ tinyxml2::XMLDocument* Inputs::to_XML(void) const
     for(size_t i = 0; i < inputs_number; i++)
     {
         element = document->NewElement("Item");
-        element->SetAttribute("Index", (unsigned)i+1);
+        element->SetAttribute("Index",static_cast<unsigned>(i)+1);
         inputsElement->LinkEndChild(element);
 
         // Name
@@ -894,8 +862,6 @@ tinyxml2::XMLDocument* Inputs::to_XML(void) const
 }
 
 
-// void write_XML(tinyxml2::XMLPrinter&) const method
-
 /// Serializes the inputs object into a XML document of the TinyXML library without keep the DOM tree in memory.
 /// See the OpenNN manual for more information about the format of this document.
 
@@ -903,7 +869,7 @@ void Inputs::write_XML(tinyxml2::XMLPrinter& file_stream) const
 {
     const size_t inputs_number = get_inputs_number();
 
-    std::ostringstream buffer;
+    ostringstream buffer;
 
     file_stream.OpenElement("Inputs");
 
@@ -924,7 +890,7 @@ void Inputs::write_XML(tinyxml2::XMLPrinter& file_stream) const
     {
         file_stream.OpenElement("Item");
 
-        file_stream.PushAttribute("Index", (unsigned)i+1);
+        file_stream.PushAttribute("Index",static_cast<unsigned>(i)+1);
 
         // Name
 
@@ -934,21 +900,21 @@ void Inputs::write_XML(tinyxml2::XMLPrinter& file_stream) const
 
         file_stream.CloseElement();
 
-        // Units
+//        // Units
 
-        file_stream.OpenElement("Units");
+//        file_stream.OpenElement("Units");
 
-        file_stream.PushText(items[i].units.c_str());
+//        file_stream.PushText(items[i].units.c_str());
 
-        file_stream.CloseElement();
+//        file_stream.CloseElement();
 
-        // Description
+//        // Description
 
-        file_stream.OpenElement("Description");
+//        file_stream.OpenElement("Description");
 
-        file_stream.PushText(items[i].description.c_str());
+//        file_stream.PushText(items[i].description.c_str());
 
-        file_stream.CloseElement();
+//        file_stream.CloseElement();
 
 
         file_stream.CloseElement();
@@ -958,14 +924,12 @@ void Inputs::write_XML(tinyxml2::XMLPrinter& file_stream) const
 }
 
 
-// void from_XML(const tinyxml2::XMLDocument&) method
-
 /// Deserializes a TinyXML document into this inputs object.
 /// @param document XML document containing the member data.
 
 void Inputs::from_XML(const tinyxml2::XMLDocument& document)
 {
-    std::ostringstream buffer;
+    ostringstream buffer;
 
     const tinyxml2::XMLElement* inputsElement = document.FirstChildElement("Inputs");
 
@@ -973,9 +937,9 @@ void Inputs::from_XML(const tinyxml2::XMLDocument& document)
     {
         buffer << "OpenNN Exception: Inputs class.\n"
                << "void from_XML(const tinyxml2::XMLDocument&) method.\n"
-               << "Inputs element is NULL.\n";
+               << "Inputs element is nullptr.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
     // Inputs number
@@ -986,12 +950,12 @@ void Inputs::from_XML(const tinyxml2::XMLDocument& document)
     {
         buffer << "OpenNN Exception: Inputs class.\n"
                << "void from_XML(const tinyxml2::XMLDocument&) method.\n"
-               << "Inputs number element is NULL.\n";
+               << "Inputs number element is nullptr.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
-    const size_t inputs_number = atoi(inputs_number_element->GetText());
+    const size_t inputs_number = static_cast<size_t>(atoi(inputs_number_element->GetText()));
 
     set(inputs_number);
 
@@ -1008,9 +972,9 @@ void Inputs::from_XML(const tinyxml2::XMLDocument& document)
         {
             buffer << "OpenNN Exception: Inputs class.\n"
                    << "void from_XML(const tinyxml2::XMLElement*) method.\n"
-                   << "Item " << i+1 << " is NULL.\n";
+                   << "Item " << i+1 << " is nullptr.\n";
 
-            throw std::logic_error(buffer.str());
+            throw logic_error(buffer.str());
         }
 
         item_element->QueryUnsignedAttribute("Index", &index);
@@ -1021,7 +985,7 @@ void Inputs::from_XML(const tinyxml2::XMLDocument& document)
                    << "void from_XML(const tinyxml2::XMLElement*) method.\n"
                    << "Index " << index << " is not correct.\n";
 
-            throw std::logic_error(buffer.str());
+            throw logic_error(buffer.str());
         }
 
         // Name
@@ -1064,7 +1028,6 @@ void Inputs::from_XML(const tinyxml2::XMLDocument& document)
     }
 }
 
-// void to_PMML(tinyxml2::XMLElement*, const bool&, const Vector< Statistics<double> >&) method
 
 /// Serializes the inputs object into a PMML document.
 /// @param element XML element to append the inputs object.
@@ -1073,7 +1036,7 @@ void Inputs::from_XML(const tinyxml2::XMLDocument& document)
 
 void Inputs::to_PMML(tinyxml2::XMLElement* element, const bool& is_data_scaled, const Vector< Statistics<double> >& inputs_statistics ) const
 {
-    std::string element_name(element->Name());
+    string element_name(element->Name());
 
     tinyxml2::XMLDocument* pmml_document = element->GetDocument();
 
@@ -1107,7 +1070,7 @@ void Inputs::to_PMML(tinyxml2::XMLElement* element, const bool& is_data_scaled, 
 
     if(element_name == "MiningSchema")
     {
-        for(size_t i = 0 ; i< inputs_number; i++)
+        for(size_t i = 0; i < inputs_number; i++)
         {
             tinyxml2::XMLElement* mining_field = pmml_document->NewElement("MiningField");
             element->LinkEndChild(mining_field);
@@ -1119,7 +1082,7 @@ void Inputs::to_PMML(tinyxml2::XMLElement* element, const bool& is_data_scaled, 
 
     if(element_name == "NeuralInputs")
     {
-        for(size_t i = 0; i < inputs_number ; i++)
+        for(size_t i = 0; i < inputs_number; i++)
         {
             // Neural input
             tinyxml2::XMLElement* neural_input = pmml_document->NewElement("NeuralInput");
@@ -1138,7 +1101,7 @@ void Inputs::to_PMML(tinyxml2::XMLElement* element, const bool& is_data_scaled, 
             tinyxml2::XMLElement* field_ref = pmml_document->NewElement("FieldRef");
             derived_field->InsertFirstChild(field_ref);
 
-            std::string field_ref_name(get_name(i));
+            string field_ref_name(get_name(i));
 
             if(is_data_scaled)
             {
@@ -1151,8 +1114,6 @@ void Inputs::to_PMML(tinyxml2::XMLElement* element, const bool& is_data_scaled, 
 
 }
 
-
-// void write_PMML_data_dictionary(tinyxml2::XMLPrinter, const Vector< Statistics<double> >& inputs_statistics = Vector< Statistics<double> >() ) method
 
 /// Serializes the inputs data dictonary into a PMML document.
 /// @param file_stream TinyXML file to append the data dictionary.
@@ -1186,8 +1147,6 @@ void Inputs::write_PMML_data_dictionary(tinyxml2::XMLPrinter& file_stream, const
 }
 
 
-// void write_PMML_mining_schema(tinyxml2::XMLPrinter) method
-
 /// Serializes the inputs mining schema into a PMML document.
 /// @param file_stream TinyXML file to append the mining schema.
 
@@ -1195,7 +1154,7 @@ void Inputs::write_PMML_mining_schema(tinyxml2::XMLPrinter& file_stream) const
 {
     const size_t inputs_number = get_inputs_number();
 
-    for(size_t i = 0 ; i< inputs_number; i++)
+    for(size_t i = 0; i < inputs_number; i++)
     {
         file_stream.OpenElement("MiningField");
 
@@ -1206,8 +1165,6 @@ void Inputs::write_PMML_mining_schema(tinyxml2::XMLPrinter& file_stream) const
 }
 
 
-// void write_PMML_neural_inputs(tinyxml2::XMLPrinter, const bool& is_data_scaled = false) method
-
 /// Serializes the neural inputs into a PMML document.
 /// @param file_stream TinyXML file to append the neural inputs.
 /// @param is_data_scaled True if the data is scaled, false otherwise.
@@ -1216,7 +1173,7 @@ void Inputs::write_PMML_neural_inputs(tinyxml2::XMLPrinter& file_stream, const b
 {
     const size_t inputs_number = get_inputs_number();
 
-    for(size_t i = 0; i < inputs_number ; i++)
+    for(size_t i = 0; i < inputs_number; i++)
     {
         file_stream.OpenElement("NeuralInput");
 
@@ -1229,7 +1186,7 @@ void Inputs::write_PMML_neural_inputs(tinyxml2::XMLPrinter& file_stream, const b
 
         file_stream.OpenElement("FieldRef");
 
-        std::string field_ref_name(get_name(i));
+        string field_ref_name(get_name(i));
 
         if(is_data_scaled)
         {
@@ -1252,7 +1209,7 @@ void Inputs::write_PMML_neural_inputs(tinyxml2::XMLPrinter& file_stream, const b
 }
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (c) 2005-2016 Roberto Lopez.
+// Copyright(C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

@@ -6,7 +6,7 @@
 /*   P R U N I N G   I N P U T S   C L A S S                                                                    */
 /*                                                                                                              */
 /*   Fernando Gomez                                                                                             */
-/*   Artelnics - Making intelligent use of data                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
 /*   fernandogomez@artelnics.com                                                                                */
 /*                                                                                                              */
 /****************************************************************************************************************/
@@ -21,7 +21,7 @@ namespace OpenNN {
 
 /// Default constructor.
 
-PruningInputs::PruningInputs(void)
+PruningInputs::PruningInputs()
     : InputsSelectionAlgorithm()
 {
     set_default();
@@ -45,7 +45,7 @@ PruningInputs::PruningInputs(TrainingStrategy* new_training_strategy_pointer)
 /// File constructor.
 /// @param file_name Name of XML pruning inputs file.
 
-PruningInputs::PruningInputs(const std::string& file_name)
+PruningInputs::PruningInputs(const string& file_name)
     : InputsSelectionAlgorithm(file_name)
 {
     load(file_name);
@@ -68,47 +68,60 @@ PruningInputs::PruningInputs(const tinyxml2::XMLDocument& pruning_inputs_documen
 
 /// Destructor.
 
-PruningInputs::~PruningInputs(void)
+PruningInputs::~PruningInputs()
 {
 }
 
 // METHODS
 
-// const size_t& get_minimum_inputs_number(void) const method
+// const size_t& get_minimum_inputs_number() const method
 
 /// Returns the minimum number of inputs in the pruning inputs selection algorithm.
 
-const size_t& PruningInputs::get_minimum_inputs_number(void) const
+const size_t& PruningInputs::get_minimum_inputs_number() const
 {
     return(minimum_inputs_number);
 }
 
-// const size_t& get_maximum_selection_failures(void) const method
+// const size_t& get_maximum_inputs_number() const method
+
+/// Returns the maximum number of inputs in the pruning inputs selection algorithm.
+
+const size_t& PruningInputs::get_maximum_inputs_number() const
+{
+    return(maximum_inputs_number);
+}
+
+// const size_t& get_maximum_selection_failures() const method
 
 /// Returns the maximum number of selection failures in the pruning inputs algorithm.
 
-const size_t& PruningInputs::get_maximum_selection_failures(void) const
+const size_t& PruningInputs::get_maximum_selection_failures() const
 {
     return(maximum_selection_failures);
 }
 
-// void set_default(void) method
+// void set_default() method
 
 /// Sets the members of the pruning inputs object to their default values.
 
-void PruningInputs::set_default(void)
+void PruningInputs::set_default()
 {
-    size_t inputs_number ;
+    size_t inputs_number;
 
-    if(training_strategy_pointer == NULL
+    if(training_strategy_pointer == nullptr
             || !training_strategy_pointer->has_loss_index())
     {
         maximum_selection_failures = 3;
+
+        maximum_inputs_number = 20;
     }
     else
     {
         inputs_number = training_strategy_pointer->get_loss_index_pointer()->get_neural_network_pointer()->get_inputs_number();
-        maximum_selection_failures = (size_t)std::max(3.,inputs_number/5.);
+        maximum_selection_failures = static_cast<size_t>(max(3.,inputs_number/5.));
+
+        maximum_inputs_number = inputs_number;
     }
 
     minimum_inputs_number = 1;
@@ -125,18 +138,43 @@ void PruningInputs::set_minimum_inputs_number(const size_t& new_minimum_inputs_n
 
     if(new_minimum_inputs_number <= 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: PruningInputs class.\n"
                << "void set_minimum_inputs_number(const size_t&) method.\n"
                << "Minimum inputs number must be greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
 
     minimum_inputs_number = new_minimum_inputs_number;
+}
+
+// void set_maximum_inputs_number(const size_t&) method
+
+/// Sets the maximum inputs for the pruning inputs algorithm.
+/// @param new_maximum_inputs_number Maximum number of inputs in the pruning inputs algorithm.
+
+void PruningInputs::set_maximum_inputs_number(const size_t& new_maximum_inputs_number)
+{
+#ifdef __OPENNN_DEBUG__
+
+    if(new_maximum_inputs_number <= 0)
+    {
+        ostringstream buffer;
+
+        buffer << "OpenNN Exception: PruningInputs class.\n"
+               << "void set_maximum_inputs_number(const size_t&) method.\n"
+               << "Maximum inputs number must be greater than 0.\n";
+
+        throw logic_error(buffer.str());
+    }
+
+#endif
+
+    maximum_inputs_number = new_maximum_inputs_number;
 }
 
 // void set_maximum_selection_failures(const size_t&) method
@@ -150,13 +188,13 @@ void PruningInputs::set_maximum_selection_failures(const size_t& new_maximum_los
 
     if(new_maximum_loss_failures <= 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: PruningInputs class.\n"
                << "void set_maximum_selection_failures(const size_t&) method.\n"
                << "Maximum selection failures must be greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -164,11 +202,11 @@ void PruningInputs::set_maximum_selection_failures(const size_t& new_maximum_los
     maximum_selection_failures = new_maximum_loss_failures;
 }
 
-// PruningInputsResults* perform_inputs_selection(void) method
+// PruningInputsResults* perform_inputs_selection() method
 
 /// Perform the inputs selection with the pruning inputs method.
 
-PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection(void)
+PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection()
 {
 
 #ifdef __OPENNN_DEBUG__
@@ -181,7 +219,7 @@ PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection(voi
 
     size_t index;
 
-    size_t original_index;
+    size_t original_index = 0;
 
     const LossIndex* loss_index_pointer = training_strategy_pointer->get_loss_index_pointer();
 
@@ -191,28 +229,17 @@ PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection(voi
 
     Variables* variables = data_set_pointer->get_variables_pointer();
 
-    const size_t inputs_number = variables->count_inputs_number();
+    const size_t inputs_number = variables->get_inputs_number();
 
-    const size_t targets_number = variables->count_targets_number();
-
-    Vector< Statistics<double> > original_statistics;
-    ScalingLayer::ScalingMethod original_scaling_method;
-
-    bool has_scaling_layer = neural_network_pointer->has_scaling_layer();
-
-    if(has_scaling_layer)
-    {
-        original_statistics = neural_network_pointer->get_scaling_layer_pointer()->get_statistics();
-        original_scaling_method = neural_network_pointer->get_scaling_layer_pointer()->get_scaling_method();
-    }
+    const size_t targets_number = variables->get_targets_number();
 
     Vector<bool> current_inputs(inputs_number, true);
 
-    Vector<Variables::Use> current_uses = variables->arrange_uses();
+    Vector<Variables::Use> current_uses = variables->get_uses();
     const Vector<Variables::Use> original_uses = current_uses;
 
     double optimum_selection_error = 1e10;
-    double optimum_loss_error;
+    double optimum_loss_error = 1e10;
     Vector<bool> optimal_inputs;
     Vector<double> optimal_parameters;
 
@@ -221,52 +248,71 @@ PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection(voi
     Vector<double> final(2);
     Vector<double> history_row;
 
-    double current_training_loss, current_selection_loss;
-    double previous_selection_loss;
+    double current_training_loss, current_selection_error;
+    double previous_selection_error = -1;
 
     bool end = false;
     size_t iterations = 0;
     size_t selection_failures = 0;
 
     time_t beginning_time, current_time;
-    double elapsed_time;
+    double elapsed_time = 0.0;
 
     if(display)
     {
-        std::cout << "Performing pruning inputs selection..." << std::endl;
-        std::cout << std::endl << "Calculating correlations..." << std::endl;
+        cout << "Performing pruning inputs selection..." << endl;
+        cout << endl << "Calculating correlations..." << endl;
     }
 
-    final_correlations = calculate_final_correlations();
+    final_correlations = data_set_pointer->calculate_total_input_correlations();
 
     if(display)
     {
-        std::cout << "Correlations : \n";
+        cout << "Correlations:" << endl;
 
         for(size_t i = 0; i < final_correlations.size(); i++)
         {
             original_index = get_input_index(original_uses, i);
 
-            std::cout << "Input: " << variables->arrange_names()[original_index] << "; Correlation: " << final_correlations[i] << std::endl;
+            cout << "Input: " << variables->get_names()[original_index] << "; Correlation: " << final_correlations[i] << endl;
 
             if(i == 9)
             {
-                std::cout << "...\n";
+                cout << "..." << endl;
+
                 break;
             }
         }
     }
 
-    set_neural_inputs(current_inputs);
+    neural_network_pointer->set_inputs(current_inputs);
 
     current_inputs.set(inputs_number, true);
 
     time(&beginning_time);
 
+    if(maximum_inputs_number < inputs_number)
+    {
+        for(size_t i = 0; i < inputs_number-maximum_inputs_number; i++)
+        {
+            index = final_correlations.calculate_minimal_index();
+
+            final_correlations[index] = 1e20;
+
+            original_index = get_input_index(original_uses, index);
+
+            current_uses[original_index] = Variables::Unused;
+
+            current_inputs[index] = false;
+
+            variables->set_uses(current_uses);
+        }
+    }
+
     for(size_t i = 0; i < final_correlations.size(); i++)
     {
         if(final_correlations[i] <= minimum_correlation*targets_number &&
-           current_inputs.count_occurrences(true) > 1)
+           current_inputs.count_equal_to(true) > 1)
         {
             final_correlations[i] = 1e20;
 
@@ -280,16 +326,16 @@ PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection(voi
 
             if(display)
             {
-                std::cout << "Remove input "<< variables->arrange_names()[original_index] << std::endl;
+                cout << "Remove input "<< variables->get_names()[original_index] << endl;
             }
 
-            if(current_inputs.count_occurrences(true) <= minimum_inputs_number)
+            if(current_inputs.count_equal_to(true) <= minimum_inputs_number)
             {
                 end = true;
 
                 if(display)
                 {
-                    std::cout << "Minimum inputs ("<< minimum_inputs_number <<") reached." << std::endl;
+                    cout << "Minimum inputs("<< minimum_inputs_number <<") reached." << endl;
                 }
 
                 results->stopping_condition = InputsSelectionAlgorithm::MinimumInputs;
@@ -302,14 +348,14 @@ PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection(voi
 
                 results->inputs_data.push_back(current_inputs);
 
-                if(reserve_loss_data)
+                if(reserve_error_data)
                 {
                     results->loss_data.push_back(optimum_loss_error);
                 }
 
-                if(reserve_selection_loss_data)
+                if(reserve_selection_error_data)
                 {
-                    results->selection_loss_data.push_back(optimum_selection_error);
+                    results->selection_error_data.push_back(optimum_selection_error);
                 }
 
                 if(reserve_parameters_data)
@@ -327,7 +373,7 @@ PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection(voi
 
     if(display)
     {
-        std::cout << std::endl;
+        cout << endl;
     }
 
     while(!end)
@@ -340,7 +386,7 @@ PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection(voi
 
             if(display)
             {
-                std::cout << "Correlation goal reached." << std::endl << std::endl;
+                cout << "Correlation goal reached." << endl << endl;
             }
 
             results->stopping_condition = InputsSelectionAlgorithm::CorrelationGoal;
@@ -364,16 +410,16 @@ PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection(voi
             final = perform_model_evaluation(current_inputs);
 
             current_training_loss = final[0];
-            current_selection_loss = final[1];
+            current_selection_error = final[1];
 
-            if(fabs(optimum_selection_error - current_selection_loss) > tolerance &&
-                    optimum_selection_error > current_selection_loss)
+            if(fabs(optimum_selection_error - current_selection_error) > tolerance &&
+                    optimum_selection_error > current_selection_error)
             {
                 optimal_inputs = current_inputs;
                 optimum_loss_error = current_training_loss;
-                optimum_selection_error = current_selection_loss;
+                optimum_selection_error = current_selection_error;
             }
-            else if(previous_selection_loss < current_selection_loss)
+            else if(previous_selection_error < current_selection_error)
             {
                 selection_failures++;
             }
@@ -381,19 +427,19 @@ PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection(voi
             time(&current_time);
             elapsed_time = difftime(current_time, beginning_time);
 
-            previous_selection_loss = current_selection_loss;
+            previous_selection_error = current_selection_error;
             iterations++;
 
             results->inputs_data.push_back(current_inputs);
 
-            if(reserve_loss_data)
+            if(reserve_error_data)
             {
                 results->loss_data.push_back(current_training_loss);
             }
 
-            if(reserve_selection_loss_data)
+            if(reserve_selection_error_data)
             {
-                results->selection_loss_data.push_back(current_selection_loss);
+                results->selection_error_data.push_back(current_selection_error);
             }
 
             if(reserve_parameters_data)
@@ -410,21 +456,21 @@ PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection(voi
 
                 if(display)
                 {
-                    std::cout << "Maximum time reached." << std::endl;
+                    cout << "Maximum time reached." << endl;
                 }
 
                 results->stopping_condition = InputsSelectionAlgorithm::MaximumTime;
             }
-            else if(final[1] < selection_loss_goal)
+            else if(final[1] < selection_error_goal)
             {
                 end = true;
 
                 if(display)
                 {
-                    std::cout << "Selection loss reached." << std::endl;
+                    cout << "Selection loss reached." << endl;
                 }
 
-                results->stopping_condition = InputsSelectionAlgorithm::SelectionLossGoal;
+                results->stopping_condition = InputsSelectionAlgorithm::SelectionErrorGoal;
             }
             else if(iterations >= maximum_iterations_number)
             {
@@ -432,7 +478,7 @@ PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection(voi
 
                 if(display)
                 {
-                    std::cout << "Maximum number of iterations reached." << std::endl;
+                    cout << "Maximum number of iterations reached." << endl;
                 }
 
                 results->stopping_condition = InputsSelectionAlgorithm::MaximumIterations;
@@ -443,29 +489,29 @@ PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection(voi
 
                 if(display)
                 {
-                    std::cout << "Maximum selection failures (" << selection_failures << ") reached." << std::endl;
+                    cout << "Maximum selection failures(" << selection_failures << ") reached." << endl;
                 }
 
                 results->stopping_condition = InputsSelectionAlgorithm::MaximumSelectionFailures;
             }
-            else if(current_inputs.count_occurrences(true) <= minimum_inputs_number)
+            else if(current_inputs.count_equal_to(true) <= minimum_inputs_number)
             {
                 end = true;
 
                 if(display)
                 {
-                    std::cout << "Minimum inputs (" << minimum_inputs_number << ") reached." << std::endl;
+                    cout << "Minimum inputs(" << minimum_inputs_number << ") reached." << endl;
                 }
 
                 results->stopping_condition = InputsSelectionAlgorithm::MinimumInputs;
             }
-            else if(current_inputs.count_occurrences(true) == 1)
+            else if(current_inputs.count_equal_to(true) == 1)
             {
                 end = true;
 
                 if(display)
                 {
-                    std::cout << "Algorithm finished" << std::endl;
+                    cout << "Algorithm finished" << endl;
                 }
 
                 results->stopping_condition = InputsSelectionAlgorithm::AlgorithmFinished;
@@ -473,20 +519,20 @@ PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection(voi
 
             if(display)
             {
-                std::cout << "Iteration: " << iterations << std::endl;
+                cout << "Iteration: " << iterations << endl;
 
                 if(iterations != 1)
                 {
-                    std::cout << "Remove input: " << variables->arrange_names()[original_index] << std::endl;
+                    cout << "Remove input: " << variables->get_names()[original_index] << endl;
                 }
 
-                std::cout << "Current inputs: " << variables->arrange_inputs_name().to_string() << std::endl;
-                std::cout << "Number of inputs: " << current_inputs.count_occurrences(true) << std::endl;
-                std::cout << "Training loss: " << final[0] << std::endl;
-                std::cout << "Selection loss: " << final[1] << std::endl;
-                std::cout << "Elapsed time: " << elapsed_time << std::endl;
+                cout << "Current inputs: " << variables->get_inputs_name().vector_to_string() << endl;
+                cout << "Number of inputs: " << current_inputs.count_equal_to(true) << endl;
+                cout << "Training loss: " << final[0] << endl;
+                cout << "Selection error: " << final[1] << endl;
+                cout << "Elapsed time: " << write_elapsed_time(elapsed_time) << endl;
 
-                std::cout << std::endl;
+                cout << endl;
             }
         }
     }
@@ -499,24 +545,18 @@ PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection(voi
 
 
     results->optimal_inputs = optimal_inputs;
-    results->final_selection_loss = optimum_selection_error;
+    results->final_selection_error = optimum_selection_error;
     results->final_loss = perform_model_evaluation(optimal_inputs)[0];
     results->iterations_number = iterations;
     results->elapsed_time = elapsed_time;
 
-    Vector< Statistics<double> > statistics;
-
-    for (size_t i = 0; i < optimal_inputs.size(); i++)
+    for(size_t i = 0; i < optimal_inputs.size(); i++)
     {
         original_index = get_input_index(original_uses, i);
 
         if(optimal_inputs[i] == 1)
         {
             current_uses[original_index] = Variables::Input;
-            if(has_scaling_layer)
-            {
-                statistics.push_back(original_statistics[i]);
-            }
         }
         else
         {
@@ -525,19 +565,12 @@ PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection(voi
     }
     variables->set_uses(current_uses);
 
-    set_neural_inputs(optimal_inputs);
+    neural_network_pointer->set_inputs(optimal_inputs);
     neural_network_pointer->set_parameters(optimal_parameters);
 
     if(neural_network_pointer->has_inputs())
     {
-        neural_network_pointer->get_inputs_pointer()->set_names(variables->arrange_inputs_name());
-    }
-
-    if(has_scaling_layer)
-    {
-        ScalingLayer scaling_layer(statistics);
-        scaling_layer.set_scaling_method(original_scaling_method);
-        neural_network_pointer->set_scaling_layer(scaling_layer);
+        neural_network_pointer->get_inputs_pointer()->set_names(variables->get_inputs_name());
     }
 
     time(&current_time);
@@ -547,29 +580,29 @@ PruningInputs::PruningInputsResults* PruningInputs::perform_inputs_selection(voi
     {
         if(neural_network_pointer->has_inputs())
         {
-            std::cout << "Optimal inputs: " << neural_network_pointer->get_inputs_pointer()->arrange_names().to_string() << std::endl;
+            cout << "Optimal inputs: " << neural_network_pointer->get_inputs_pointer()->get_names().vector_to_string() << endl;
         }
 
-        std::cout << "Optimal number of inputs: " << optimal_inputs.count_occurrences(true) << std::endl;
-        std::cout << "Optimum training loss: " << optimum_loss_error << std::endl;
-        std::cout << "Optimum selection loss: " << optimum_selection_error << std::endl;
-        std::cout << "Elapsed time: " << elapsed_time << std::endl;;
+        cout << "Optimal number of inputs: " << optimal_inputs.count_equal_to(true) << endl;
+        cout << "Optimum training loss: " << optimum_loss_error << endl;
+        cout << "Optimum selection error: " << optimum_selection_error << endl;
+        cout << "Elapsed time: " << write_elapsed_time(elapsed_time) << endl;;
     }
 
     return results;
 }
 
 
-// Matrix<std::string> to_string_matrix(void) const method
+// Matrix<string> to_string_matrix() const method
 
 /// Writes as matrix of strings the most representative atributes.
 
-Matrix<std::string> PruningInputs::to_string_matrix(void) const
+Matrix<string> PruningInputs::to_string_matrix() const
 {
-    std::ostringstream buffer;
+    ostringstream buffer;
 
-    Vector<std::string> labels;
-    Vector<std::string> values;
+    Vector<string> labels;
+    Vector<string> values;
 
    // Trials number
 
@@ -594,7 +627,7 @@ Matrix<std::string> PruningInputs::to_string_matrix(void) const
    labels.push_back("Selection loss goal");
 
    buffer.str("");
-   buffer << selection_loss_goal;
+   buffer << selection_error_goal;
 
    values.push_back(buffer.str());
 
@@ -658,7 +691,7 @@ Matrix<std::string> PruningInputs::to_string_matrix(void) const
 
    buffer.str("");
 
-   if(reserve_loss_data)
+   if(reserve_error_data)
    {
        buffer << "true";
    }
@@ -669,13 +702,13 @@ Matrix<std::string> PruningInputs::to_string_matrix(void) const
 
    values.push_back(buffer.str());
 
-   // Plot selection loss history
+   // Plot selection error history
 
-   labels.push_back("Plot selection loss history");
+   labels.push_back("Plot selection error history");
 
    buffer.str("");
 
-   if(reserve_selection_loss_data)
+   if(reserve_selection_error_data)
    {
        buffer << "true";
    }
@@ -689,22 +722,22 @@ Matrix<std::string> PruningInputs::to_string_matrix(void) const
    const size_t rows_number = labels.size();
    const size_t columns_number = 2;
 
-   Matrix<std::string> string_matrix(rows_number, columns_number);
+   Matrix<string> string_matrix(rows_number, columns_number);
 
-   string_matrix.set_column(0, labels);
-   string_matrix.set_column(1, values);
+   string_matrix.set_column(0, labels, "name");
+   string_matrix.set_column(1, values, "value");
 
     return(string_matrix);
 }
 
-// tinyxml2::XMLDocument* to_XML(void) const method
+// tinyxml2::XMLDocument* to_XML() const method
 
 /// Prints to the screen the pruning inputs parameters, the stopping criteria
 /// and other user stuff concerning the pruning inputs object.
 
-tinyxml2::XMLDocument* PruningInputs::to_XML(void) const
+tinyxml2::XMLDocument* PruningInputs::to_XML() const
 {
-   std::ostringstream buffer;
+   ostringstream buffer;
 
    tinyxml2::XMLDocument* document = new tinyxml2::XMLDocument;
 
@@ -714,8 +747,8 @@ tinyxml2::XMLDocument* PruningInputs::to_XML(void) const
 
    document->InsertFirstChild(root_element);
 
-   tinyxml2::XMLElement* element = NULL;
-   tinyxml2::XMLText* text = NULL;
+   tinyxml2::XMLElement* element = nullptr;
+   tinyxml2::XMLText* text = nullptr;
 
    // Regression
 //   {
@@ -753,13 +786,13 @@ tinyxml2::XMLDocument* PruningInputs::to_XML(void) const
    element->LinkEndChild(text);
    }
 
-   // selection loss goal
+   // selection error goal
    {
-   element = document->NewElement("SelectionLossGoal");
+   element = document->NewElement("SelectionErrorGoal");
    root_element->LinkEndChild(element);
 
    buffer.str("");
-   buffer << selection_loss_goal;
+   buffer << selection_error_goal;
 
    text = document->NewText(buffer.str().c_str());
    element->LinkEndChild(text);
@@ -784,6 +817,18 @@ tinyxml2::XMLDocument* PruningInputs::to_XML(void) const
 
    buffer.str("");
    buffer << minimum_inputs_number;
+
+   text = document->NewText(buffer.str().c_str());
+   element->LinkEndChild(text);
+   }
+
+   // Maximum inputs number
+   {
+   element = document->NewElement("MaximumInputsNumber");
+   root_element->LinkEndChild(element);
+
+   buffer.str("");
+   buffer << maximum_inputs_number;
 
    text = document->NewText(buffer.str().c_str());
    element->LinkEndChild(text);
@@ -837,25 +882,25 @@ tinyxml2::XMLDocument* PruningInputs::to_XML(void) const
    element->LinkEndChild(text);
    }
 
-   // Reserve loss data
+   // Reserve error data
    {
-   element = document->NewElement("ReservePerformanceHistory");
+   element = document->NewElement("ReserveErrorHistory");
    root_element->LinkEndChild(element);
 
    buffer.str("");
-   buffer << reserve_loss_data;
+   buffer << reserve_error_data;
 
    text = document->NewText(buffer.str().c_str());
    element->LinkEndChild(text);
    }
 
-   // Reserve selection loss data
+   // Reserve selection error data
    {
-   element = document->NewElement("ReserveSelectionLossHistory");
+   element = document->NewElement("ReserveSelectionErrorHistory");
    root_element->LinkEndChild(element);
 
    buffer.str("");
-   buffer << reserve_selection_loss_data;
+   buffer << reserve_selection_error_data;
 
    text = document->NewText(buffer.str().c_str());
    element->LinkEndChild(text);
@@ -863,7 +908,7 @@ tinyxml2::XMLDocument* PruningInputs::to_XML(void) const
 
    // Performance calculation method
 //   {
-//   element = document->NewElement("PerformanceCalculationMethod");
+//   element = document->NewElement("LossCalculationMethod");
 //   root_element->LinkEndChild(element);
 
 //   text = document->NewText(write_loss_calculation_method().c_str());
@@ -917,7 +962,7 @@ tinyxml2::XMLDocument* PruningInputs::to_XML(void) const
 
 void PruningInputs::write_XML(tinyxml2::XMLPrinter& file_stream) const
 {
-    std::ostringstream buffer;
+    ostringstream buffer;
 
     //file_stream.OpenElement("PruningInputs");
 
@@ -943,12 +988,12 @@ void PruningInputs::write_XML(tinyxml2::XMLPrinter& file_stream) const
 
     file_stream.CloseElement();
 
-    // selection loss goal
+    // selection error goal
 
-    file_stream.OpenElement("SelectionLossGoal");
+    file_stream.OpenElement("SelectionErrorGoal");
 
     buffer.str("");
-    buffer << selection_loss_goal;
+    buffer << selection_error_goal;
 
     file_stream.PushText(buffer.str().c_str());
 
@@ -971,6 +1016,17 @@ void PruningInputs::write_XML(tinyxml2::XMLPrinter& file_stream) const
 
     buffer.str("");
     buffer << minimum_inputs_number;
+
+    file_stream.PushText(buffer.str().c_str());
+
+    file_stream.CloseElement();
+
+    // Maximum inputs number
+
+    file_stream.OpenElement("MaximumInputsNumber");
+
+    buffer.str("");
+    buffer << maximum_inputs_number;
 
     file_stream.PushText(buffer.str().c_str());
 
@@ -1022,21 +1078,21 @@ void PruningInputs::write_XML(tinyxml2::XMLPrinter& file_stream) const
 
     // Reserve loss data
 
-    file_stream.OpenElement("ReservePerformanceHistory");
+    file_stream.OpenElement("ReserveErrorHistory");
 
     buffer.str("");
-    buffer << reserve_loss_data;
+    buffer << reserve_error_data;
 
     file_stream.PushText(buffer.str().c_str());
 
     file_stream.CloseElement();
 
-    // Reserve selection loss data
+    // Reserve selection error data
 
-    file_stream.OpenElement("ReserveSelectionLossHistory");
+    file_stream.OpenElement("ReserveSelectionErrorHistory");
 
     buffer.str("");
-    buffer << reserve_selection_loss_data;
+    buffer << reserve_selection_error_data;
 
     file_stream.PushText(buffer.str().c_str());
 
@@ -1058,13 +1114,13 @@ void PruningInputs::from_XML(const tinyxml2::XMLDocument& document)
 
     if(!root_element)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: PruningInputs class.\n"
                << "void from_XML(const tinyxml2::XMLDocument&) method.\n"
-               << "PruningInputs element is NULL.\n";
+               << "PruningInputs element is nullptr.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
     // Regression
@@ -1073,15 +1129,15 @@ void PruningInputs::from_XML(const tinyxml2::XMLDocument& document)
 
         if(element)
         {
-            const std::string new_approximation = element->GetText();
+            const string new_approximation = element->GetText();
 
             try
             {
                set_approximation(new_approximation != "0");
             }
-            catch(const std::logic_error& e)
+            catch(const logic_error& e)
             {
-               std::cout << e.what() << std::endl;
+               cerr << e.what() << endl;
             }
         }
     }
@@ -1092,34 +1148,34 @@ void PruningInputs::from_XML(const tinyxml2::XMLDocument& document)
 
         if(element)
         {
-           const size_t new_trials_number = atoi(element->GetText());
+           const size_t new_trials_number = static_cast<size_t>(atoi(element->GetText()));
 
            try
            {
               set_trials_number(new_trials_number);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
 
     // Performance calculation method
     {
-        const tinyxml2::XMLElement* element = root_element->FirstChildElement("PerformanceCalculationMethod");
+        const tinyxml2::XMLElement* element = root_element->FirstChildElement("LossCalculationMethod");
 
         if(element)
         {
-           const std::string new_loss_calculation_method = element->GetText();
+           const string new_loss_calculation_method = element->GetText();
 
            try
            {
               set_loss_calculation_method(new_loss_calculation_method);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1130,53 +1186,53 @@ void PruningInputs::from_XML(const tinyxml2::XMLDocument& document)
 
         if(element)
         {
-           const std::string new_reserve_parameters_data = element->GetText();
+           const string new_reserve_parameters_data = element->GetText();
 
            try
            {
               set_reserve_parameters_data(new_reserve_parameters_data != "0");
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
 
     // Reserve loss data
     {
-        const tinyxml2::XMLElement* element = root_element->FirstChildElement("ReservePerformanceHistory");
+        const tinyxml2::XMLElement* element = root_element->FirstChildElement("ReserveErrorHistory");
 
         if(element)
         {
-           const std::string new_reserve_loss_data = element->GetText();
+           const string new_reserve_error_data = element->GetText();
 
            try
            {
-              set_reserve_loss_data(new_reserve_loss_data != "0");
+              set_reserve_error_data(new_reserve_error_data != "0");
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
 
-    // Reserve selection loss data
+    // Reserve selection error data
     {
-        const tinyxml2::XMLElement* element = root_element->FirstChildElement("ReserveSelectionLossHistory");
+        const tinyxml2::XMLElement* element = root_element->FirstChildElement("ReserveSelectionErrorHistory");
 
         if(element)
         {
-           const std::string new_reserve_selection_loss_data = element->GetText();
+           const string new_reserve_selection_error_data = element->GetText();
 
            try
            {
-              set_reserve_selection_loss_data(new_reserve_selection_loss_data != "0");
+              set_reserve_selection_error_data(new_reserve_selection_error_data != "0");
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1187,15 +1243,15 @@ void PruningInputs::from_XML(const tinyxml2::XMLDocument& document)
 
         if(element)
         {
-           const std::string new_reserve_minimal_parameters = element->GetText();
+           const string new_reserve_minimal_parameters = element->GetText();
 
            try
            {
               set_reserve_minimal_parameters(new_reserve_minimal_parameters != "0");
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1206,34 +1262,34 @@ void PruningInputs::from_XML(const tinyxml2::XMLDocument& document)
 
         if(element)
         {
-           const std::string new_display = element->GetText();
+           const string new_display = element->GetText();
 
            try
            {
               set_display(new_display != "0");
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
 
-    // selection loss goal
+    // selection error goal
     {
-        const tinyxml2::XMLElement* element = root_element->FirstChildElement("SelectionLossGoal");
+        const tinyxml2::XMLElement* element = root_element->FirstChildElement("SelectionErrorGoal");
 
         if(element)
         {
-           const double new_selection_loss_goal = atof(element->GetText());
+           const double new_selection_error_goal = atof(element->GetText());
 
            try
            {
-              set_selection_loss_goal(new_selection_loss_goal);
+              set_selection_error_goal(new_selection_error_goal);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1244,15 +1300,15 @@ void PruningInputs::from_XML(const tinyxml2::XMLDocument& document)
 
         if(element)
         {
-           const size_t new_maximum_iterations_number = atoi(element->GetText());
+           const size_t new_maximum_iterations_number = static_cast<size_t>(atoi(element->GetText()));
 
            try
            {
               set_maximum_iterations_number(new_maximum_iterations_number);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1269,9 +1325,9 @@ void PruningInputs::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_maximum_correlation(new_maximum_correlation);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1288,9 +1344,9 @@ void PruningInputs::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_minimum_correlation(new_minimum_correlation);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1307,9 +1363,9 @@ void PruningInputs::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_maximum_time(new_maximum_time);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1326,9 +1382,9 @@ void PruningInputs::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_tolerance(new_tolerance);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1339,15 +1395,34 @@ void PruningInputs::from_XML(const tinyxml2::XMLDocument& document)
 
         if(element)
         {
-           const size_t new_minimum_inputs_number = atoi(element->GetText());
+           const size_t new_minimum_inputs_number = static_cast<size_t>(atoi(element->GetText()));
 
            try
            {
               set_minimum_inputs_number(new_minimum_inputs_number);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
+           }
+        }
+    }
+
+    // Maximum inputs number
+    {
+        const tinyxml2::XMLElement* element = root_element->FirstChildElement("MaximumInputsNumber");
+
+        if(element)
+        {
+           const size_t new_maximum_inputs_number = static_cast<size_t>(atoi(element->GetText()));
+
+           try
+           {
+              set_maximum_inputs_number(new_maximum_inputs_number);
+           }
+           catch(const logic_error& e)
+           {
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1358,27 +1433,27 @@ void PruningInputs::from_XML(const tinyxml2::XMLDocument& document)
 
         if(element)
         {
-           const size_t new_maximum_selection_failures = atoi(element->GetText());
+           const size_t new_maximum_selection_failures = static_cast<size_t>(atoi(element->GetText()));
 
            try
            {
               set_maximum_selection_failures(new_maximum_selection_failures);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
 
 }
 
-// void save(const std::string&) const method
+// void save(const string&) const method
 
 /// Saves to a XML-type file the members of the pruning inputs object.
 /// @param file_name Name of pruning inputs XML-type file.
 
-void PruningInputs::save(const std::string& file_name) const
+void PruningInputs::save(const string& file_name) const
 {
    tinyxml2::XMLDocument* document = to_XML();
 
@@ -1388,12 +1463,12 @@ void PruningInputs::save(const std::string& file_name) const
 }
 
 
-// void load(const std::string&) method
+// void load(const string&) method
 
 /// Loads a pruning inputs object from a XML-type file.
 /// @param file_name Name of pruning inputs XML-type file.
 
-void PruningInputs::load(const std::string& file_name)
+void PruningInputs::load(const string& file_name)
 {
    set_default();
 
@@ -1401,13 +1476,13 @@ void PruningInputs::load(const std::string& file_name)
 
    if(document.LoadFile(file_name.c_str()))
    {
-      std::ostringstream buffer;
+      ostringstream buffer;
 
       buffer << "OpenNN Exception: PruningInputs class.\n"
-             << "void load(const std::string&) method.\n"
+             << "void load(const string&) method.\n"
              << "Cannot load XML file " << file_name << ".\n";
 
-      throw std::logic_error(buffer.str());
+      throw logic_error(buffer.str());
    }
 
    from_XML(document);
@@ -1415,7 +1490,7 @@ void PruningInputs::load(const std::string& file_name)
 }
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (c) 2005-2016 Roberto Lopez.
+// Copyright(C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

@@ -5,9 +5,8 @@
 /*                                                                                                              */
 /*   O P E N   N E U R A L   N E T W O R K S   L I B R A R Y                                                    */
 /*                                                                                                              */ 
-/*   Roberto Lopez                                                                                              */ 
-/*   Artelnics - Making intelligent use of data                                                                 */
-/*   robertolopez@artelnics.com                                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
+/*   artelnics@artelnics.com                                                                                    */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
@@ -21,13 +20,37 @@
 #include "variables.h"
 #include "missing_values.h"
 
+// Neural network
 
-// Mathematical model
+#include "bounding_layer.h"
+#include "inputs.h"
+#include "outputs.h"
+#include "perceptron_layer.h"
+#include "multilayer_perceptron.h"
+#include "probabilistic_layer.h"
+#include "scaling_layer.h"
+#include "unscaling_layer.h"
+#include "inputs_trending_layer.h"
+#include "outputs_trending_layer.h"
+#include "neural_network.h"
 
-#include "mathematical_model.h"
-#include "ordinary_differential_equations.h"
-#include "plug_in.h"
+// Training strategy
 
+#include "loss_index.h"
+
+#include "cross_entropy_error.h"
+#include "mean_squared_error.h"
+#include "minkowski_error.h"
+#include "normalized_squared_error.h"
+#include "sum_squared_error.h"
+#include "weighted_squared_error.h"
+
+#include "conjugate_gradient.h"
+#include "gradient_descent.h"
+#include "levenberg_marquardt_algorithm.h"
+#include "quasi_newton_method.h"
+#include "optimization_algorithm.h"
+#include "learning_rate_algorithm.h"
 
 // Model selection
 
@@ -41,72 +64,37 @@
 #include "growing_inputs.h"
 #include "pruning_inputs.h"
 #include "genetic_algorithm.h"
-#include "ant_colony_optimization.h"
-#include "threshold_selection_algorithm.h"
-#include "f1_score_optimization_threshold.h"
-#include "matthew_correlation_optimization_threshold.h"
-#include "youden_index_optimization_threshold.h"
-#include "kappa_coefficient_optimization_threshold.h"
-#include "roc_curve_optimization_threshold.h"
-
-// Neural network
-
-#include "conditions_layer.h"
-#include "bounding_layer.h"
-#include "independent_parameters.h"
-#include "inputs.h"
-#include "outputs.h"
-#include "perceptron_layer.h"
-#include "multilayer_perceptron.h"
-#include "perceptron.h"
-#include "probabilistic_layer.h"
-#include "scaling_layer.h"
-#include "unscaling_layer.h"
-#include "neural_network.h"
-
-// Loss index
-
-#include "loss_index.h"
-#include "error_term.h"
-#include "regularization_term.h"
-
-#include "neural_parameters_norm.h"
-
-#include "cross_entropy_error.h"
-#include "mean_squared_error.h"
-#include "minkowski_error.h"
-#include "normalized_squared_error.h"
-#include "root_mean_squared_error.h"
-#include "sum_squared_error.h"
+//#include "ant_colony_optimization.h"
+//#include "threshold_selection_algorithm.h"
+//#include "f1_score_optimization_threshold.h"
+//#include "matthew_correlation_optimization_threshold.h"
+//#include "youden_index_optimization_threshold.h"
+//#include "kappa_coefficient_optimization_threshold.h"
+//#include "roc_curve_optimization_threshold.h"
 
 // Testing analysis
 
 #include "testing_analysis.h"
 
-// Training strategy
-
-#include "conjugate_gradient.h"
-#include "evolutionary_algorithm.h"
-#include "gradient_descent.h"
-#include "levenberg_marquardt_algorithm.h"
-#include "newton_method.h"
-#include "quasi_newton_method.h"
-#include "random_search.h"
-#include "training_algorithm.h"
-#include "training_rate_algorithm.h"
-
 // Utilities
 
+#include "file_utilities.h"
+#include "math.h"
 #include "matrix.h"
+#include "sparse_matrix.h"
 #include "numerical_differentiation.h"
 #include "numerical_integration.h"
+#include "association_rules.h"
+#include "text_analytics.h"
 #include "vector.h"
-#include "math.h"
+#include "tinyxml2.h"
+#include "correlation_analysis.h"
+//#include "k_nearest_neighbors.h"
 
 #endif
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (c) 2005-2016 Roberto Lopez.
+// Copyright(C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the s of the GNU Lesser General Public

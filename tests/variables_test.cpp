@@ -5,9 +5,9 @@
 /*                                                                                                              */
 /*   V A R I A B L E S   T E S T   C L A S S                                                                    */
 /*                                                                                                              */ 
-/*   Roberto Lopez                                                                                              */ 
-/*   Artelnics - Making intelligent use of data                                                                 */
-/*   robertolopez@artelnics.com                                                                                 */
+ 
+/*   Artificial Intelligence Techniques SL                                                                      */
+/*   artelnics@artelnics.com                                                                                    */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
@@ -20,14 +20,14 @@ using namespace OpenNN;
 
 // GENERAL CONSTRUCTOR
 
-VariablesTest::VariablesTest(void) : UnitTesting()
+VariablesTest::VariablesTest() : UnitTesting()
 {
 }
 
 
 // DESTRUCTOR
 
-VariablesTest::~VariablesTest(void)
+VariablesTest::~VariablesTest()
 {
 }
 
@@ -35,7 +35,7 @@ VariablesTest::~VariablesTest(void)
 // METHODS
 
 
-void VariablesTest::test_constructor(void)
+void VariablesTest::test_constructor()
 {
    message += "test_constructor\n";
 
@@ -44,16 +44,16 @@ void VariablesTest::test_constructor(void)
    Variables v1;
 
    assert_true(v1.get_variables_number() == 0, LOG);
-   assert_true(v1.count_inputs_number() == 0, LOG);
-   assert_true(v1.count_targets_number() == 0, LOG);
+   assert_true(v1.get_inputs_number() == 0, LOG);
+   assert_true(v1.get_targets_number() == 0, LOG);
 
    // Variables number constructor
 
    Variables v2(1);
 
    assert_true(v2.get_variables_number() == 1, LOG);
-   assert_true(v2.count_inputs_number() == 0, LOG);
-   assert_true(v2.count_targets_number() == 0, LOG);
+   assert_true(v2.get_inputs_number() == 0, LOG);
+   assert_true(v2.get_targets_number() == 0, LOG);
 
    // XML constructor
 
@@ -62,8 +62,8 @@ void VariablesTest::test_constructor(void)
    Variables v3(*v1_document);
 
    assert_true(v3.get_variables_number() == 0, LOG);
-   assert_true(v3.count_inputs_number() == 0, LOG);
-   assert_true(v3.count_targets_number() == 0, LOG);
+   assert_true(v3.get_inputs_number() == 0, LOG);
+   assert_true(v3.get_targets_number() == 0, LOG);
 
    // Copy constructor 
 
@@ -72,12 +72,12 @@ void VariablesTest::test_constructor(void)
    Variables v6(v5);
 
    assert_true(v6.get_variables_number() == 2, LOG);
-   assert_true(v6.count_inputs_number() == 1, LOG);
-   assert_true(v6.count_targets_number() == 1, LOG);
+   assert_true(v6.get_inputs_number() == 1, LOG);
+   assert_true(v6.get_targets_number() == 1, LOG);
 }
 
 
-void VariablesTest::test_destructor(void)
+void VariablesTest::test_destructor()
 {
    message += "test_destructor\n";
 
@@ -87,19 +87,19 @@ void VariablesTest::test_destructor(void)
 }
 
 
-void VariablesTest::test_assignment_operator(void)
+void VariablesTest::test_assignment_operator()
 {
    message += "test_assignment_operator\n";
 
    Variables v1(2);
    Variables v2 = v1;
 
-   assert_true(v2.count_inputs_number() == 1, LOG);
-   assert_true(v2.count_targets_number() == 1, LOG);
+   assert_true(v2.get_inputs_number() == 1, LOG);
+   assert_true(v2.get_targets_number() == 1, LOG);
 }
 
 
-void VariablesTest::test_get_variables_number(void)
+void VariablesTest::test_get_variables_number()
 {
    message += "test_get_variables_number\n";
 
@@ -109,175 +109,176 @@ void VariablesTest::test_get_variables_number(void)
 }
 
 
-void VariablesTest::test_count_inputs_number(void)
+void VariablesTest::test_get_inputs_number()
 {
-   message += "test_count_inputs_number\n";
+   message += "test_get_inputs_number\n";
 
    Variables v;
 
-   assert_true(v.count_inputs_number() == 0, LOG);
+   assert_true(v.get_inputs_number() == 0, LOG);
 }
 
 
-void VariablesTest::test_count_targets_number(void)
+void VariablesTest::test_get_targets_number()
 {
-   message += "test_count_targets_number\n";
+   message += "test_get_targets_number\n";
 
    Variables v;
 
-   assert_true(v.count_targets_number() == 0, LOG);
+   assert_true(v.get_targets_number() == 0, LOG);
 }
 
 
-void VariablesTest::test_arrange_inputs_indices(void)
+void VariablesTest::test_get_inputs_indices()
 {
-   message += "test_arrange_inputs_indices\n";
+   message += "test_get_inputs_indices\n";
 
    Variables v;
 
-   Vector<size_t> inputs_indices = v.arrange_inputs_indices();
+   Vector<size_t> inputs_indices = v.get_inputs_indices();
 
    assert_true(inputs_indices.size() == 0, LOG);
 }
 
 
-void VariablesTest::test_arrange_targets_indices(void)
+void VariablesTest::test_get_targets_indices()
 {
-   message += "test_arrange_targets_indices\n";
+   message += "test_get_targets_indices\n";
 
    Variables v;
 
-   Vector<size_t> targets_indices = v.arrange_targets_indices();
+   Vector<size_t> targets_indices = v.get_targets_indices();
 
    assert_true(targets_indices.size() == 0, LOG);
 }
 
 
-void VariablesTest::test_arrange_used_indices(void)
+void VariablesTest::test_get_used_indices()
 {
-    message += "test_arrange_used_indices\n";
+    message += "test_get_used_indices\n";
 
     Variables v;
 
     Vector<size_t> used_indices;
 
-    used_indices = v.arrange_used_indices();
+    used_indices = v.get_used_indices();
 
     assert_true(used_indices.size() == 0, LOG);
 }
 
 
 
-void VariablesTest::test_arrange_names(void)
+void VariablesTest::test_get_names()
 {
    message += "test_get_names\n";
 
    Variables v;
 
-   Vector<std::string> names = v.arrange_names();
+   Vector<string> names = v.get_names();
 
    assert_true(names.size() == 0, LOG);
 }
 
 
-void VariablesTest::test_get_name(void)
+void VariablesTest::test_get_name()
 {
    message += "test_get_name\n";
 }
 
 
-void VariablesTest::test_arrange_inputs_name(void)
+void VariablesTest::test_get_inputs_name()
 {
-   message += "test_arrange_inputs_name\n";
+   message += "test_get_inputs_name\n";
 }
 
 
-void VariablesTest::test_arrange_targets_name(void)
+void VariablesTest::test_get_targets_name()
 {
-   message += "test_arrange_targets_name\n";
+   message += "test_get_targets_name\n";
 }
 
 
-void VariablesTest::test_arrange_units(void)
+void VariablesTest::test_get_units()
 {
-   message += "test_arrange_units\n";
+   message += "test_get_units\n";
 
    Variables v;
 
-   Vector<std::string> units = v.arrange_units();
+   Vector<string> units = v.get_units();
 
    assert_true(units.size() == 0, LOG);
 
 }
 
 
-void VariablesTest::test_get_unit(void)
+void VariablesTest::test_get_unit()
 {
    message += "test_get_unit\n";
 }
 
 
-void VariablesTest::test_arrange_inputs_units(void)
+void VariablesTest::test_get_inputs_units()
 {
-   message += "test_arrange_inputs_units\n";
+   message += "test_get_inputs_units\n";
 }
 
 
-void VariablesTest::test_arrange_targets_units(void)
+void VariablesTest::test_get_targets_units()
 {
-   message += "test_arrange_targets_units\n";
+   message += "test_get_targets_units\n";
 }
 
 
-void VariablesTest::test_arrange_descriptions(void)
+void VariablesTest::test_get_descriptions()
 {
-   message += "test_arrange_descriptions\n";
+   message += "test_get_descriptions\n";
 
    Variables v;
 
-   Vector<std::string> descriptions = v.arrange_descriptions();
+   Vector<string> descriptions = v.get_descriptions();
 
    assert_true(descriptions.size() == 0, LOG);
 
 }
 
 
-void VariablesTest::test_get_description(void)
+void VariablesTest::test_get_description()
 {
    message += "test_get_description\n";
 }
 
 
-void VariablesTest::test_arrange_inputs_description(void)
+void VariablesTest::test_get_inputs_description()
 {
-   message += "test_arrange_inputs_description\n";
+   message += "test_get_inputs_description\n";
 }
 
 
-void VariablesTest::test_arrange_target_descriptions(void)
+void VariablesTest::test_get_target_descriptions()
 {
-   message += "test_arrange_target_descriptions\n";
+   message += "test_get_target_descriptions\n";
 }
 
 
+// @todo Columns number
 
-void VariablesTest::test_arrange_information(void)
+void VariablesTest::test_get_information()
 {
-   message += "test_arrange_information\n";
+   message += "test_get_information\n";
 
    Variables v(1);
 
-   Matrix<std::string> information = v.arrange_information();
+   Matrix<string> information = v.get_information();
 
    size_t rows_number = information.get_rows_number();
-   size_t columns_number = information.get_columns_number();
+//   size_t columns_number = information.get_columns_number();
 
    assert_true(rows_number == 1, LOG);
-   assert_true(columns_number == 4, LOG);
+//   assert_true(columns_number == 4, LOG);
 }
 
 
-void VariablesTest::test_get_display(void)
+void VariablesTest::test_get_display()
 {
    message += "test_get_display\n";
 
@@ -293,7 +294,7 @@ void VariablesTest::test_get_display(void)
 }
 
 
-void VariablesTest::test_set(void)
+void VariablesTest::test_set()
 {
    message += "test_set\n";
 
@@ -303,12 +304,12 @@ void VariablesTest::test_set(void)
 
    v.set(1);
 
-   assert_true(v.count_inputs_number() == 0, LOG);
-   assert_true(v.count_targets_number() == 0, LOG);
+   assert_true(v.get_inputs_number() == 0, LOG);
+   assert_true(v.get_targets_number() == 0, LOG);
 }
 
 
-void VariablesTest::test_set_variables_number(void)
+void VariablesTest::test_set_variables_number()
 {
    message += "test_set_variables_number\n";
 
@@ -320,61 +321,63 @@ void VariablesTest::test_set_variables_number(void)
 }
 
 
-void VariablesTest::test_set_input(void)
+void VariablesTest::test_set_input()
 {
    message += "test_set_input\n";
 }
 
 
-void VariablesTest::test_set_target(void)
+void VariablesTest::test_set_target()
 {
    message += "test_set_target\n";
 }
 
 
-void VariablesTest::test_set_names(void)
+void VariablesTest::test_set_names()
 {
    message += "test_set_names\n";
 }
 
 
-void VariablesTest::test_set_name(void)
+void VariablesTest::test_set_name()
 {
    message += "test_set_name\n";
 }
 
 
-void VariablesTest::test_set_units(void)
+void VariablesTest::test_set_units()
 {
    message += "test_set_units\n";
 }
 
 
-void VariablesTest::test_set_unit(void)
+void VariablesTest::test_set_unit()
 {
    message += "test_set_unit\n";
 }
 
 
-void VariablesTest::test_set_descriptions(void)
+void VariablesTest::test_set_descriptions()
 {
    message += "test_set_descriptions\n";
 }
 
 
-void VariablesTest::test_set_description(void)
+void VariablesTest::test_set_description()
 {
    message += "test_set_description\n";
 }
 
 
-void VariablesTest::test_set_display(void)
+void VariablesTest::test_set_display()
 {
    message += "test_set_display\n";
 }
 
 
-void VariablesTest::test_convert_time_series(void)
+// @todo
+
+void VariablesTest::test_convert_time_series()
 {
     message += "test_convert_time_series\n";
 
@@ -384,15 +387,15 @@ void VariablesTest::test_convert_time_series(void)
 
     v.set(1);
 
-    v.convert_time_series(1);
+//    v.convert_time_series(1);
 
-    assert_true(v.get_variables_number() == 2, LOG);
-    assert_true(v.count_inputs_number() == 1, LOG);
-    assert_true(v.count_targets_number() == 1, LOG);
+//    assert_true(v.get_variables_number() == 2, LOG);
+//    assert_true(v.get_inputs_number() == 1, LOG);
+//    assert_true(v.get_targets_number() == 1, LOG);
 }
 
 
-void VariablesTest::test_to_XML(void)
+void VariablesTest::test_to_XML()
 {
    message += "test_to_XML\n";
 
@@ -406,7 +409,7 @@ void VariablesTest::test_to_XML(void)
 
    document = v.to_XML();
 
-   assert_true(document != NULL, LOG);
+   assert_true(document != nullptr, LOG);
 
    // Test
 
@@ -428,7 +431,7 @@ void VariablesTest::test_to_XML(void)
 }
 
 
-void VariablesTest::test_from_XML(void)
+void VariablesTest::test_from_XML()
 {
    message += "test_from_XML\n";
 
@@ -444,7 +447,7 @@ void VariablesTest::test_from_XML(void)
 }
 
 
-void VariablesTest::run_test_case(void)
+void VariablesTest::run_test_case()
 {
    message += "Running variables test case...\n";
 
@@ -463,34 +466,34 @@ void VariablesTest::run_test_case(void)
 
    // Variables methods
 
-   test_count_inputs_number();
-   test_arrange_inputs_indices();
+   test_get_inputs_number();
+   test_get_inputs_indices();
 
-   test_count_targets_number();
-   test_arrange_targets_indices();
-   test_arrange_used_indices();
+   test_get_targets_number();
+   test_get_targets_indices();
+   test_get_used_indices();
 
    // Information methods
 
-   test_arrange_names();
+   test_get_names();
    test_get_name();
 
-   test_arrange_inputs_name();
-   test_arrange_targets_name();
+   test_get_inputs_name();
+   test_get_targets_name();
 
-   test_arrange_units();
+   test_get_units();
    test_get_unit();
 
-   test_arrange_inputs_units();
-   test_arrange_targets_units();
+   test_get_inputs_units();
+   test_get_targets_units();
 
-   test_arrange_descriptions();
+   test_get_descriptions();
    test_get_description();
 
-   test_arrange_inputs_description();
-   test_arrange_target_descriptions();
+   test_get_inputs_description();
+   test_get_target_descriptions();
  
-   test_arrange_information();
+   test_get_information();
 
    test_get_display();
 
@@ -532,7 +535,7 @@ void VariablesTest::run_test_case(void)
 
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (C) 2005-2016 Roberto Lopez.
+// Copyright (C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

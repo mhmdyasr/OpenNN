@@ -5,9 +5,9 @@
 /*                                                                                                              */
 /*   M O D E L   S E L E C T I O N   T E S T   C L A S S                                                        */
 /*                                                                                                              */
-/*   Roberto Lopez                                                                                              */
-/*   Artelnics - Making intelligent use of data                                                                 */
-/*   robertolopez@artelnics.com                                                                                 */
+
+/*   Artificial Intelligence Techniques SL                                                                      */
+/*   artelnics@artelnics.com                                                                                    */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
@@ -19,17 +19,17 @@
 using namespace OpenNN;
 
 
-ModelSelectionTest::ModelSelectionTest(void) : UnitTesting() 
+ModelSelectionTest::ModelSelectionTest() : UnitTesting() 
 {
 }
 
 
-ModelSelectionTest::~ModelSelectionTest(void) 
+ModelSelectionTest::~ModelSelectionTest() 
 {
 }
 
 
-void ModelSelectionTest::test_constructor(void)
+void ModelSelectionTest::test_constructor()
 {
     message += "test_constructor\n";
 
@@ -45,7 +45,7 @@ void ModelSelectionTest::test_constructor(void)
 }
 
 
-void ModelSelectionTest::test_destructor(void)
+void ModelSelectionTest::test_destructor()
 {
     message += "test_destructor\n";
 
@@ -55,18 +55,18 @@ void ModelSelectionTest::test_destructor(void)
 }
 
 
-void ModelSelectionTest::test_get_training_strategy_pointer(void)
+void ModelSelectionTest::test_get_training_strategy_pointer()
 {
-    message += "test_get_training_algorithm_pointer\n";
+    message += "test_get_optimization_algorithm_pointer\n";
 
     TrainingStrategy ts;
 
     ModelSelection ms(&ts);
 
-    assert_true(ms.get_training_strategy_pointer() != NULL, LOG);
+    assert_true(ms.get_training_strategy_pointer() != nullptr, LOG);
 }
 
-void ModelSelectionTest::test_set_training_strategy_pointer(void)
+void ModelSelectionTest::test_set_training_strategy_pointer()
 {
     message += "test_set_training_strategy_pointer\n";
 
@@ -76,16 +76,16 @@ void ModelSelectionTest::test_set_training_strategy_pointer(void)
 
     ms.set_training_strategy_pointer(&ts);
 
-    assert_true(ms.get_training_strategy_pointer() != NULL, LOG);
+    assert_true(ms.get_training_strategy_pointer() != nullptr, LOG);
 }
 
 
-void ModelSelectionTest::test_set_default(void)
+void ModelSelectionTest::test_set_default()
 {
     message += "test_set_default\n";
 }
 
-void ModelSelectionTest::test_perform_order_selection(void)
+void ModelSelectionTest::test_perform_order_selection()
 {
     message += "test_order_selection\n";
 
@@ -95,26 +95,26 @@ void ModelSelectionTest::test_perform_order_selection(void)
 }
 
 
-void ModelSelectionTest::test_to_XML(void)   
+void ModelSelectionTest::test_to_XML()   
 {
     message += "test_to_XML\n";
 
     ModelSelection ms;
 
     tinyxml2::XMLDocument* document = ms.to_XML();
-    assert_true(document != NULL, LOG);
+    assert_true(document != nullptr, LOG);
 
     delete document;
 }
 
-void ModelSelectionTest::test_from_XML(void)
+void ModelSelectionTest::test_from_XML()
 {
     message += "test_from_XML\n";
 
     ModelSelection ms1;
     ModelSelection ms2;
 
-    ms1.set_order_selection_type(ModelSelection::INCREMENTAL_ORDER);
+    ms1.set_order_selection_method(ModelSelection::INCREMENTAL_ORDER);
 
     tinyxml2::XMLDocument* document = ms1.to_XML();
 
@@ -122,29 +122,29 @@ void ModelSelectionTest::test_from_XML(void)
 
     delete document;
 
-    assert_true(ms2.get_order_selection_type() == ModelSelection::INCREMENTAL_ORDER, LOG);
+    assert_true(ms2.get_order_selection_method() == ModelSelection::INCREMENTAL_ORDER, LOG);
 }
 
-void ModelSelectionTest::test_save(void)
+void ModelSelectionTest::test_save()
 {
     message += "test_save\n";
 
-    std::string file_name = "../data/model_selection.xml";
+    string file_name = "../data/model_selection.xml";
 
     ModelSelection ms;
 
     ms.save(file_name);
 }
 
-void ModelSelectionTest::test_load(void)
+void ModelSelectionTest::test_load()
 {
     message += "test_load\n";
 
-    std::string file_name = "../data/model_selection.xml";
+    string file_name = "../data/model_selection.xml";
 
     ModelSelection ms;
 
-    ms.set_order_selection_type(ModelSelection::INCREMENTAL_ORDER);
+    ms.set_order_selection_method(ModelSelection::INCREMENTAL_ORDER);
 
     // Test
 
@@ -154,7 +154,7 @@ void ModelSelectionTest::test_load(void)
 }
 
 
-void ModelSelectionTest::run_test_case(void)
+void ModelSelectionTest::run_test_case()
 {
     message += "Running model selection test case...\n";
 

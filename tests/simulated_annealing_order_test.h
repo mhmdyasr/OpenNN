@@ -6,7 +6,7 @@
 /*   S I M U L A T E D   A N N E A L I N G   O R D E R   T E S T   C L A S S   H E A D E R                      */
 /*                                                                                                              */
 /*   Fernando Gomez                                                                                             */
-/*   Artelnics - Making intelligent use of data                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
 /*   fernandogomez@artelnics.com                                                                                */
 /*                                                                                                              */
 /****************************************************************************************************************/
@@ -32,38 +32,38 @@ public:
 
    // CONSTRUCTOR
 
-   explicit SimulatedAnnealingOrderTest(void);
+   explicit SimulatedAnnealingOrderTest();
 
 
    // DESTRUCTOR
 
-   virtual ~SimulatedAnnealingOrderTest(void);
+   virtual ~SimulatedAnnealingOrderTest();
 
 
    // METHODS
 
    // Constructor and destructor methods
 
-   void test_constructor(void);
-   void test_destructor(void);
+   void test_constructor();
+   void test_destructor();
 
    // Set methods
 
-   void test_set_default(void);
+   void test_set_default();
 
    // Order selection methods
 
-   void test_perform_order_selection(void);
+   void test_perform_order_selection();
 
    // Serialization methods
 
-   void test_to_XML(void);
+   void test_to_XML();
 
-   void test_from_XML(void);
+   void test_from_XML();
 
    // Unit testing methods
 
-   void run_test_case(void);
+   void run_test_case();
 
 };
 

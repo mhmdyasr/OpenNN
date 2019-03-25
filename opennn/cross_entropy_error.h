@@ -5,9 +5,8 @@
 /*                                                                                                              */
 /*   C R O S S   E N T R O P Y   E R R O R   C L A S S   H E A D E R                                            */
 /*                                                                                                              */
-/*   Roberto Lopez                                                                                              */
-/*   Artelnics - Making intelligent use of data                                                                 */
-/*   robertolopez@artelnics.com                                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
+/*   artelnics@artelnics.com                                                                                    */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
@@ -22,12 +21,12 @@
 
 // OpenNN includes
 
-#include "error_term.h"
+#include "loss_index.h"
 #include "data_set.h"
 
 // TinyXml includes
 
-#include "../tinyxml2/tinyxml2.h"
+#include "tinyxml2.h"
 
 
 namespace OpenNN
@@ -36,14 +35,14 @@ namespace OpenNN
 /// This class represents the cross entropy error term. 
 /// This functional is used in classification problems.
 
-class CrossEntropyError : public ErrorTerm
+class CrossEntropyError : public LossIndex
 {
 
 public:
 
    // DEFAULT CONSTRUCTOR
 
-   explicit CrossEntropyError(void);
+   explicit CrossEntropyError();
 
    // NEURAL NETWORK CONSTRUCTOR
 
@@ -67,7 +66,7 @@ public:
 
    // DESTRUCTOR
 
-   virtual ~CrossEntropyError(void);
+   virtual ~CrossEntropyError();
 
    // ASSIGNMENT OPERATOR
 
@@ -79,45 +78,35 @@ public:
 
    // METHODS
 
-   // Checking methods
+   // Error methods
 
-   void check(void) const;
+   double calculate_training_error() const;
 
-   // loss methods
+   double calculate_selection_error() const;
 
-   double calculate_error(void) const;
-   double calculate_error(const Vector<double>&) const;
+   double calculate_training_error(const Vector<double>&) const;
 
-   double calculate_minimum_loss(void) const;
+   double calculate_batch_error(const Vector<size_t> &) const;
 
-   double calculate_selection_error(void) const;
-   double calculate_minimum_selection_error(void) const;
+   double calculate_batch_error_cuda(const Vector<size_t>&, const MultilayerPerceptron::Pointers&) const;
 
-   double calculate_error_unnormalized(void) const;
-   double calculate_error_unnormalized(const Vector<double>&) const;
+   // Gradient methods
 
-   double calculate_minimum_loss_unnormalized(void) const;
+   Vector<double> calculate_training_error_gradient() const;
 
-   double calculate_selection_error_unnormalized(void) const;
-   double calculate_minimum_selection_error_unnormalized(void) const;
+   FirstOrderLoss calculate_batch_first_order_loss_cuda(const Vector<size_t>&,
+                                                        const MultilayerPerceptron::Pointers&, const Vector<double*>&) const;
 
-   Vector<double> calculate_output_gradient(const Vector<double> &, const Vector<double> &) const;
-   Matrix<double> calculate_output_Hessian(const Vector<double> &, const Vector<double> &) const;
+   Matrix<double> calculate_output_gradient(const Matrix<double>&, const Matrix<double>&) const;
 
-   Vector<double> calculate_output_gradient_unnormalized(const Vector<double> &, const Vector<double> &) const;
-
-   Vector<double> calculate_gradient_unnormalized(void) const;
-
-   std::string write_error_term_type(void) const;
+   string write_error_term_type() const;
 
    // Serialization methods
 
-   tinyxml2::XMLDocument* to_XML(void) const;   
+   tinyxml2::XMLDocument* to_XML() const;   
    void from_XML(const tinyxml2::XMLDocument&);
 
    void write_XML(tinyxml2::XMLPrinter&) const;
-   //void read_XML(   );
-
 };
 
 }
@@ -126,7 +115,7 @@ public:
 
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (c) 2005-2016 Roberto Lopez.
+// Copyright(C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

@@ -5,9 +5,8 @@
 /*                                                                                                              */
 /*   W E I G H T E D   S Q U A R E D   E R R O R    C L A S S   H E A D E R                                     */
 /*                                                                                                              */
-/*   Roberto Lopez                                                                                              */
-/*   Artelnics - Making intelligent use of data                                                                 */
-/*   robertolopez@artelnics.com                                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
+/*   artelnics@artelnics.com                                                                                    */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
@@ -25,12 +24,12 @@
 
 // OpenNN includes
 
-#include "error_term.h"
+#include "loss_index.h"
 #include "data_set.h"
 
 // TinyXml includes
 
-#include "../tinyxml2/tinyxml2.h"
+#include "tinyxml2.h"
 
 namespace OpenNN
 {
@@ -40,14 +39,14 @@ namespace OpenNN
 /// This functional is used in data modeling problems, such as function regression, 
 /// classification and time series prediction.
 
-class WeightedSquaredError : public ErrorTerm
+class WeightedSquaredError : public LossIndex
 {
 
 public:
 
    // DEFAULT CONSTRUCTOR
 
-   explicit WeightedSquaredError(void);
+   explicit WeightedSquaredError();
 
    // NEURAL NETWORK CONSTRUCTOR
 
@@ -71,79 +70,89 @@ public:
 
    // DESTRUCTOR
 
-   virtual ~WeightedSquaredError(void);
+   virtual ~WeightedSquaredError();
 
    // STRUCTURES
-
 
    // METHODS
 
    // Get methods
 
-   double get_positives_weight(void) const;
-   double get_negatives_weight(void) const;
+   double get_positives_weight() const;
+   double get_negatives_weight() const;
+
+   double get_normalization_coefficient() const;
 
    // Set methods
 
-   // Checking methods
+   // Error methods
 
-   void check(void) const;
-
-   // Objective methods
-
-   void set_default(void);
+   void set_default();
 
    void set_positives_weight(const double&);
    void set_negatives_weight(const double&);
 
+   void set_normalization_coefficient(const double&);
+
    void set_weights(const double&, const double&);
 
-   void set_weights(void);
+   void set_weights();
 
-   double calculate_positives_loss(void) const;
-   double calculate_negatives_loss(void) const;
+   void set_normalization_coefficient();
+   void set_selection_normalization_coefficient();
 
-   double calculate_error(void) const;
-   double calculate_error(const Vector<double>&) const;
-   double calculate_selection_error(void) const;
+   double calculate_positives_error() const;
+   double calculate_negatives_error() const;
 
-   double calculate_error(const double&) const;
-   double calculate_error(const Vector<double>&, const double&) const;
-   double calculate_selection_error(const double&) const;
+   double calculate_training_error() const;
 
-   Vector<double> calculate_output_gradient(const Vector<double>&, const Vector<double>&) const;
-   Matrix<double> calculate_output_Hessian(const Vector<double>&, const Vector<double>&) const;
+   double calculate_selection_error() const;
+
+   double calculate_training_error(const Vector<double>&) const;
+
+   double calculate_batch_error(const Vector<size_t> &) const;
+
+   Vector<double> calculate_training_error_gradient() const;
+
+   Vector<double> calculate_batch_error_gradient(const Vector<size_t>&) const;
+
+   LossIndex::FirstOrderLoss calculate_first_order_loss() const;
+   LossIndex::FirstOrderLoss calculate_batch_first_order_loss(const Vector<size_t> &) const;
+
+   LossIndex::FirstOrderLoss calculate_batch_first_order_loss_cuda(const Vector<size_t>&, const MultilayerPerceptron::Pointers&) const;
+
+   LossIndex::FirstOrderLoss calculate_batch_first_order_loss_cuda(const Vector<size_t>&,
+                                                                   const MultilayerPerceptron::Pointers&, const Vector<double*>&) const;
+
+//   double calculate_error(const double&) const;
+//   double calculate_error(const Vector<double>&, const double&) const;
+//   double calculate_selection_error(const double&) const;
 
    Vector<double> calculate_output_gradient(const Vector<double>&, const Vector<double>&, const double&) const;
-   Vector<double> calculate_gradient_with_normalization(const double&) const;
+   Matrix<double> calculate_output_gradient(const Matrix<double>&, const Matrix<double>&) const;
 
-   FirstOrderPerformance calculate_first_order_loss(void) const;
-   SecondOrderPerformance calculate_second_order_loss(void) const;
+   // Error terms methods
 
-   // Objective terms methods
+   Vector<double> calculate_error_terms(const Vector<double>&) const;
+   Vector<double> calculate_error_terms(const Matrix<double>&, const Matrix<double>&) const;
 
-   Vector<double> calculate_terms(void) const;
-   Vector<double> calculate_terms(const Vector<double>&) const;
+   LossIndex::SecondOrderLoss calculate_terms_second_order_loss() const;
 
-   Matrix<double> calculate_terms_Jacobian(void) const;
 
-   FirstOrderTerms calculate_first_order_terms(void) const;
-
-   std::string write_error_term_type(void) const;
+   string write_error_term_type() const;
 
    // Serialization methods
 
-   tinyxml2::XMLDocument* to_XML(void) const;   
+   tinyxml2::XMLDocument* to_XML() const;   
    void from_XML(const tinyxml2::XMLDocument&);
 
    void write_XML(tinyxml2::XMLPrinter&) const;
-   //void read_XML(   );
 
-//   std::string write_information(void) const;
-
-   std::string to_string(void) const;
+   string object_to_string() const;
 
 private:
+
+   Vector<double> calculate_output_gradient(const Vector<size_t>&, const Vector<double>&, const Vector<double>&) const;
 
    /// Weight for the positives for the calculation of the error.
 
@@ -153,7 +162,10 @@ private:
 
    double negatives_weight;
 
+   /// Coefficient of normalization for the calculation of the training error.
 
+   double normalization_coefficient;
+   double selection_normalization_coefficient;
 };
 
 }
@@ -162,7 +174,7 @@ private:
 
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (c) 2005-2016 Roberto Lopez.
+// Copyright(C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

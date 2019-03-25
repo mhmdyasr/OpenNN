@@ -6,7 +6,7 @@
 /*   I N P U T S   S E L E C T I O N   A L G O R I T H M   C L A S S   H E A D E R                              */
 /*                                                                                                              */
 /*   Fernando Gomez                                                                                             */
-/*   Artelnics - Making intelligent use of data                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
 /*   fernandogomez@artelnics.com                                                                                */
 /*                                                                                                              */
 /****************************************************************************************************************/
@@ -33,13 +33,13 @@
 
 // TinyXml includes
 
-#include "../tinyxml2/tinyxml2.h"
+#include "tinyxml2.h"
 
 namespace OpenNN
 {
 
 /// This abstract class represents the concept of inputs selection algorithm for a neural network.
-/// Any derived class must implement the perform_inputs_selection(void) method.
+/// Any derived class must implement the perform_inputs_selection() method.
 
 class InputsSelectionAlgorithm
 {
@@ -47,7 +47,7 @@ public:
 
     // DEFAULT CONSTRUCTOR
 
-    explicit InputsSelectionAlgorithm(void);
+    explicit InputsSelectionAlgorithm();
 
     // TRAINING STRATEGY CONSTRUCTOR
 
@@ -55,7 +55,7 @@ public:
 
     // FILE CONSTRUCTOR
 
-    explicit InputsSelectionAlgorithm(const std::string&);
+    explicit InputsSelectionAlgorithm(const string&);
 
     // XML CONSTRUCTOR
 
@@ -64,19 +64,19 @@ public:
 
     // DESTRUCTOR
 
-    virtual ~InputsSelectionAlgorithm(void);
+    virtual ~InputsSelectionAlgorithm();
 
     // ENUMERATIONS
 
-    /// Enumeration of available methods for the calculus of the losss.
+    /// Enumeration of available methods for the calculus of the losses.
 
-    enum PerformanceCalculationMethod{Minimum, Maximum, Mean};
+    enum LossCalculationMethod{Minimum, Maximum, Mean};
 
     /// Enumeration of all possibles condition of stop for the algorithms.
 
     enum StoppingCondition{
         MaximumTime,
-        SelectionLossGoal,
+        SelectionErrorGoal,
         MaximumInputs,
         MinimumInputs,
         MaximumIterations,
@@ -92,19 +92,19 @@ public:
 
     struct InputsSelectionResults
     {
-       explicit InputsSelectionResults(void)
+       explicit InputsSelectionResults()
        {
 
        }
 
-       virtual ~InputsSelectionResults(void)
+       virtual ~InputsSelectionResults()
        {
 
        }
 
-       std::string write_stopping_condition(void) const;
+       string write_stopping_condition() const;
 
-       std::string to_string(void) const;
+       string object_to_string() const;
 
        /// Inputs of the different neural networks.
 
@@ -120,21 +120,21 @@ public:
 
        /// Selection loss of the different neural networks.
 
-       Vector<double> selection_loss_data;
+       Vector<double> selection_error_data;
 
-       /// Vector of parameters for the neural network with minimum selection loss.
+       /// Vector of parameters for the neural network with minimum selection error.
 
        Vector<double> minimal_parameters;
 
-       /// Value of minimum selection loss.
+       /// Value of minimum selection error.
 
-       double final_selection_loss;
+       double final_selection_error;
 
-       /// Value of loss for the neural network with minimum selection loss.
+       /// Value of loss for the neural network with minimum selection error.
 
        double final_loss;
 
-       /// Inputs of the neural network with minimum selection loss.
+       /// Inputs of the neural network with minimum selection error.
 
        Vector<bool> optimal_inputs;
 
@@ -155,31 +155,31 @@ public:
 
     // Get methods
 
-    const bool& get_approximation(void) const;
+    const bool& get_approximation() const;
 
-    TrainingStrategy* get_training_strategy_pointer(void) const;
+    TrainingStrategy* get_training_strategy_pointer() const;
 
-    bool has_training_strategy(void) const;
+    bool has_training_strategy() const;
 
-    const size_t& get_trials_number(void) const;
+    const size_t& get_trials_number() const;
 
-    const bool& get_reserve_parameters_data(void) const;
-    const bool& get_reserve_loss_data(void) const;
-    const bool& get_reserve_selection_loss_data(void) const;
-    const bool& get_reserve_minimal_parameters(void) const;
+    const bool& get_reserve_parameters_data() const;
+    const bool& get_reserve_error_data() const;
+    const bool& get_reserve_selection_error_data() const;
+    const bool& get_reserve_minimal_parameters() const;
 
-    const PerformanceCalculationMethod& get_loss_calculation_method(void) const;
+    const LossCalculationMethod& get_loss_calculation_method() const;
 
-    const bool& get_display(void) const;
+    const bool& get_display() const;
 
-    const double& get_selection_loss_goal(void) const;
-    const size_t& get_maximum_iterations_number(void) const;
-    const double& get_maximum_time(void) const;
-    const double& get_maximum_correlation(void) const;
-    const double& get_minimum_correlation(void) const;
-    const double& get_tolerance(void) const;
+    const double& get_selection_error_goal() const;
+    const size_t& get_maximum_iterations_number() const;
+    const double& get_maximum_time() const;
+    const double& get_maximum_correlation() const;
+    const double& get_minimum_correlation() const;
+    const double& get_tolerance() const;
 
-    std::string write_loss_calculation_method(void) const;
+    string write_loss_calculation_method() const;
 
     // Set methods
 
@@ -187,60 +187,53 @@ public:
 
     void set_training_strategy_pointer(TrainingStrategy*);
 
-    void set_default(void);
+    void set_default();
 
     void set_trials_number(const size_t&);
 
     void set_reserve_parameters_data(const bool&);
-    void set_reserve_loss_data(const bool&);
-    void set_reserve_selection_loss_data(const bool&);
+    void set_reserve_error_data(const bool&);
+    void set_reserve_selection_error_data(const bool&);
     void set_reserve_minimal_parameters(const bool&);
 
-    void set_loss_calculation_method(const PerformanceCalculationMethod&);
-    void set_loss_calculation_method(const std::string&);
+    void set_loss_calculation_method(const LossCalculationMethod&);
+    void set_loss_calculation_method(const string&);
 
     void set_display(const bool&);
 
-    void set_selection_loss_goal(const double&);
+    void set_selection_error_goal(const double&);
     void set_maximum_iterations_number(const size_t&);
     void set_maximum_time(const double&);
     void set_maximum_correlation(const double&);
     void set_minimum_correlation(const double&);
     void set_tolerance(const double&);
 
-    // Correlation methods
-
-    Matrix<double> calculate_logistic_correlations(void) const;
-
-    Vector<double> calculate_final_correlations(void) const;
-
     // Performances calculation methods
-
-    void set_neural_inputs(const Vector<bool>&);
 
     Vector<double> perform_minimum_model_evaluation(const Vector<bool>&);
     Vector<double> perform_maximum_model_evaluation(const Vector<bool>&);
-    Vector<double> perform_mean_model_evaluation(const Vector<bool>&) ;
+    Vector<double> perform_mean_model_evaluation(const Vector<bool>&);
 
-    Vector<double> get_final_losss(const TrainingStrategy::Results&) const;
+    Vector<double> get_final_losses(const TrainingStrategy::Results&) const;
 
     Vector<double> perform_model_evaluation(const Vector<bool>&);
 
     Vector<double> get_parameters_inputs(const Vector<bool>&) const;
 
+    string write_stopping_condition(const TrainingStrategy::Results&) const;
+
     // inputs selection methods
 
-    void delete_selection_history(void);
-    void delete_loss_history(void);
-    void delete_parameters_history(void);
-    void check(void) const;
+    void delete_selection_history();
+    void delete_loss_history();
+    void delete_parameters_history();
+    void check() const;
 
     size_t get_input_index(const Vector<Variables::Use>, const size_t);
 
     /// Performs the inputs selection for a neural network.
 
-    virtual InputsSelectionResults* perform_inputs_selection(void) = 0;
-
+    virtual InputsSelectionResults* perform_inputs_selection() = 0;
 
 protected:
 
@@ -260,7 +253,7 @@ protected:
 
     /// Selection loss of all the neural networks trained.
 
-    Vector<double> selection_loss_history;
+    Vector<double> selection_error_history;
 
     /// Performance of all the neural networks trained.
 
@@ -276,7 +269,7 @@ protected:
 
     /// Method used for the calculation of the loss and the generalizaton loss.
 
-    PerformanceCalculationMethod loss_calculation_method;
+    LossCalculationMethod loss_calculation_method;
 
     // Inputs selection results
 
@@ -286,13 +279,13 @@ protected:
 
     /// True if the loss of all neural networks are to be reserved.
 
-    bool reserve_loss_data;
+    bool reserve_error_data;
 
-    /// True if the selection loss of all neural networks are to be reserved.
+    /// True if the selection error of all neural networks are to be reserved.
 
-    bool reserve_selection_loss_data;
+    bool reserve_selection_error_data;
 
-    /// True if the vector parameters of the neural network presenting minimum selection loss is to be reserved.
+    /// True if the vector parameters of the neural network presenting minimum selection error is to be reserved.
 
     bool reserve_minimal_parameters;
 
@@ -302,9 +295,9 @@ protected:
 
     // STOPPING CRITERIA
 
-    /// Goal value for the selection loss. It is used as a stopping criterion.
+    /// Goal value for the selection error. It is used as a stopping criterion.
 
-    double selection_loss_goal;
+    double selection_error_goal;
 
     /// Maximum number of iterations to perform_inputs_selection. It is used as a stopping criterion.
 
@@ -331,7 +324,7 @@ protected:
 #endif
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (c) 2005-2016 Roberto Lopez.
+// Copyright(C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

@@ -6,7 +6,7 @@
 /*   S I M U L A T E D   A N N E A L I N G   O R D E R   T E S T   C L A S S   H E A D E R                      */
 /*                                                                                                              */
 /*   Fernando Gomez                                                                                             */
-/*   Artelnics - Making intelligent use of data                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
 /*   fernandogomez@artelnics.com                                                                                */
 /*                                                                                                              */
 /****************************************************************************************************************/
@@ -22,14 +22,14 @@ using namespace OpenNN;
 
 // CONSTRUCTOR
 
-SimulatedAnnealingOrderTest::SimulatedAnnealingOrderTest(void) : UnitTesting()
+SimulatedAnnealingOrderTest::SimulatedAnnealingOrderTest() : UnitTesting()
 {
 }
 
 
 // DESTRUCTOR
 
-SimulatedAnnealingOrderTest::~SimulatedAnnealingOrderTest(void)
+SimulatedAnnealingOrderTest::~SimulatedAnnealingOrderTest()
 {
 }
 
@@ -38,7 +38,7 @@ SimulatedAnnealingOrderTest::~SimulatedAnnealingOrderTest(void)
 
 // Constructor and destructor methods
 
-void SimulatedAnnealingOrderTest::test_constructor(void)
+void SimulatedAnnealingOrderTest::test_constructor()
 {
     message += "test_constructor\n";
 
@@ -53,7 +53,7 @@ void SimulatedAnnealingOrderTest::test_constructor(void)
     assert_true(!sa2.has_training_strategy(), LOG);
 }
 
-void SimulatedAnnealingOrderTest::test_destructor(void)
+void SimulatedAnnealingOrderTest::test_destructor()
 {
     message += "test_destructor\n";
 
@@ -63,21 +63,19 @@ void SimulatedAnnealingOrderTest::test_destructor(void)
 
 }
 
-// Set methods
 
-void SimulatedAnnealingOrderTest::test_set_default(void)
+void SimulatedAnnealingOrderTest::test_set_default()
 {
     message += "test_set_default\n";
 
 }
 
-// Order selection methods
 
-void SimulatedAnnealingOrderTest::test_perform_order_selection(void)
+void SimulatedAnnealingOrderTest::test_perform_order_selection()
 {
     message += "test_perform_order_selection\n";
 
-    std::string str;
+    string str;
     Matrix<double> data;
 
     Vector<Instances::Use> uses;
@@ -86,9 +84,9 @@ void SimulatedAnnealingOrderTest::test_perform_order_selection(void)
 
     DataSet ds;
 
-    LossIndex pf(&nn, &ds);
+    SumSquaredError sse(&nn, &ds);
 
-    TrainingStrategy ts(&pf);
+    TrainingStrategy ts(&sse);
 
     SimulatedAnnealingOrder sa(&ts);
 
@@ -131,22 +129,22 @@ void SimulatedAnnealingOrderTest::test_perform_order_selection(void)
     nn.set(1,3,1);
     nn.initialize_parameters(0.0);
 
-    pf.set_error_type(LossIndex::SUM_SQUARED_ERROR);
+    ts.set_loss_method(TrainingStrategy::SUM_SQUARED_ERROR);
 
-    ts.set_main_type(TrainingStrategy::QUASI_NEWTON_METHOD);
+    ts.set_training_method(TrainingStrategy::QUASI_NEWTON_METHOD);
 
     ts.set_display(false);
 
     sa.set_trials_number(1);
     sa.set_maximum_order(7);
-    sa.set_selection_loss_goal(1.0);
+    sa.set_selection_error_goal(1.0);
     sa.set_minimum_temperature(0.0);
     sa.set_display(false);
 
     results = sa.perform_order_selection();
 
     assert_true(results->stopping_condition ==
-                OrderSelectionAlgorithm::SelectionLossGoal, LOG);
+                OrderSelectionAlgorithm::SelectionErrorGoal, LOG);
 
     // Test
 
@@ -185,15 +183,15 @@ void SimulatedAnnealingOrderTest::test_perform_order_selection(void)
     nn.set(1,3,1);
     nn.initialize_parameters(0.0);
 
-    pf.set_error_type(LossIndex::SUM_SQUARED_ERROR);
+    ts.set_loss_method(TrainingStrategy::SUM_SQUARED_ERROR);
 
-    ts.set_main_type(TrainingStrategy::QUASI_NEWTON_METHOD);
+    ts.set_training_method(TrainingStrategy::QUASI_NEWTON_METHOD);
 
     ts.set_display(false);
 
     sa.set_trials_number(1);
     sa.set_maximum_order(7);
-    sa.set_selection_loss_goal(0.0);
+    sa.set_selection_error_goal(0.0);
     sa.set_minimum_temperature(0.0);
     sa.set_display(false);
 
@@ -201,25 +199,24 @@ void SimulatedAnnealingOrderTest::test_perform_order_selection(void)
 
     assert_true(results->stopping_condition ==
                 OrderSelectionAlgorithm::MaximumIterations, LOG);
-
 }
 
 // Serialization methods
 
-void SimulatedAnnealingOrderTest::test_to_XML(void)
+void SimulatedAnnealingOrderTest::test_to_XML()
 {
     message += "test_to_XML\n";
 
     SimulatedAnnealingOrder sa;
 
     tinyxml2::XMLDocument* document = sa.to_XML();
-    assert_true(document != NULL, LOG);
+    assert_true(document != nullptr, LOG);
 
     delete document;
 
 }
 
-void SimulatedAnnealingOrderTest::test_from_XML(void)
+void SimulatedAnnealingOrderTest::test_from_XML()
 {
     message += "test_from_XML\n";
 
@@ -234,7 +231,7 @@ void SimulatedAnnealingOrderTest::test_from_XML(void)
 
 // Unit testing methods
 
-void SimulatedAnnealingOrderTest::run_test_case(void)
+void SimulatedAnnealingOrderTest::run_test_case()
 {
     message += "Running simulated annealing order test case...\n";
 

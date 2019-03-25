@@ -5,12 +5,12 @@
 /*                                                                                                              */
 /*   S U M   S Q U A R E D   E R R O R   T E S T   C L A S S   H E A D E R                                      */
 /*                                                                                                              */
-/*   Roberto Lopez                                                                                              */
-/*   Artelnics - Making intelligent use of data                                                                 */
-/*   robertolopez@artelnics.com                                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
+/*   artelnics@artelnics.com                                                                                    */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
+#pragma once
 #ifndef __SUMSQUAREDERRORTEST_H__
 #define __SUMSQUAREDERRORTEST_H__
 
@@ -19,7 +19,6 @@
 #include "unit_testing.h"
 
 using namespace OpenNN;
-
 
 class SumSquaredErrorTest : public UnitTesting 
 {
@@ -32,60 +31,63 @@ public:
 
    // GENERAL CONSTRUCTOR
 
-   explicit SumSquaredErrorTest(void);
+   explicit SumSquaredErrorTest();
 
 
    // DESTRUCTOR
 
-   virtual ~SumSquaredErrorTest(void);
+   virtual ~SumSquaredErrorTest();
 
 
    // METHODS
 
    // Constructor and destructor methods
 
-   void test_constructor(void);
-   void test_destructor(void);
+   void test_constructor();
+   void test_destructor();
 
    // Get methods
 
    // Set methods
 
-   // Objective methods
+   // Error methods
 
-   void test_calculate_loss(void); 
-   void test_calculate_selection_loss(void);
+   void test_calculate_error();
+   void test_calculate_selection_error();
 
-   void test_calculate_gradient(void);
+   // Gradient methods
 
-   void test_calculate_Hessian(void);
+   void test_calculate_layers_delta();
 
-   // Objective terms methods 
+   void test_calculate_error_gradient();
 
-   void test_calculate_terms(void);
+   void test_calculate_error_Hessian();
 
-   void test_calculate_terms_Jacobian(void);
+   // Error terms methods
+
+   void test_calculate_error_terms();
+
+   void test_calculate_error_terms_Jacobian();
 
    // Other methods
 
-   void test_calculate_squared_errors(void);
+   void test_calculate_squared_errors();
 
    // Serialization methods
 
-   void test_to_XML(void);   
-   void test_from_XML(void);
+   void test_to_XML();
+   void test_from_XML();
 
    // Unit testing methods
 
-   void run_test_case(void);
+   void run_test_case();
 };
-
 
 #endif
 
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (C) 2005-2016 Roberto Lopez.
+// Copyright (C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

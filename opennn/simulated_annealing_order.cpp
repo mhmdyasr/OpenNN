@@ -6,7 +6,7 @@
 /*   S I M U L A T E D   A N N E A L I N G   O R D E R   C L A S S                                              */
 /*                                                                                                              */
 /*   Fernando Gomez                                                                                             */
-/*   Artelnics - Making intelligent use of data                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
 /*   fernandogomez@artelnics.com                                                                                */
 /*                                                                                                              */
 /****************************************************************************************************************/
@@ -23,7 +23,7 @@ namespace OpenNN
 
 /// Default constructor.
 
-SimulatedAnnealingOrder::SimulatedAnnealingOrder(void)
+SimulatedAnnealingOrder::SimulatedAnnealingOrder()
     : OrderSelectionAlgorithm()
 {
     set_default();
@@ -47,7 +47,7 @@ SimulatedAnnealingOrder::SimulatedAnnealingOrder(TrainingStrategy* new_training_
 /// File constructor.
 /// @param file_name Name of XML simulated annealing order file.
 
-SimulatedAnnealingOrder::SimulatedAnnealingOrder(const std::string& file_name)
+SimulatedAnnealingOrder::SimulatedAnnealingOrder(const string& file_name)
     : OrderSelectionAlgorithm(file_name)
 {
     load(file_name);
@@ -70,35 +70,35 @@ SimulatedAnnealingOrder::SimulatedAnnealingOrder(const tinyxml2::XMLDocument& si
 
 /// Destructor.
 
-SimulatedAnnealingOrder::~SimulatedAnnealingOrder(void)
+SimulatedAnnealingOrder::~SimulatedAnnealingOrder()
 {
 }
 
 // METHODS
 
-// const double& get_cooling_rate(void) const method
+// const double& get_cooling_rate() const method
 
 /// Returns the temperature reduction factor for the simulated annealing method.
 
-const double& SimulatedAnnealingOrder::get_cooling_rate(void) const
+const double& SimulatedAnnealingOrder::get_cooling_rate() const
 {
     return(cooling_rate);
 }
 
-// const double& get_minimum_temperature(void) const method
+// const double& get_minimum_temperature() const method
 
 /// Returns the minimum temperature reached in the simulated annealing model order selection algorithm.
 
-const double& SimulatedAnnealingOrder::get_minimum_temperature(void) const
+const double& SimulatedAnnealingOrder::get_minimum_temperature() const
 {
     return(minimum_temperature);
 }
 
-// void set_default(void) method 
+// void set_default() method 
 
 /// Sets the members of the model selection object to their default values.
 
-void SimulatedAnnealingOrder::set_default(void)
+void SimulatedAnnealingOrder::set_default()
 {
     cooling_rate = 0.5;
 
@@ -116,22 +116,22 @@ void SimulatedAnnealingOrder::set_cooling_rate(const double& new_cooling_rate)
 
     if(new_cooling_rate <= 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
         buffer << "OpenNN Exception: SimulatedAnnealingOrder class.\n"
                << "void set_cooling_rate(const size_t&) method.\n"
                << "Cooling rate must be greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
     if(new_cooling_rate >= 1)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
         buffer << "OpenNN Exception: SimulatedAnnealingOrder class.\n"
                << "void set_cooling_rate(const size_t&) method.\n"
                << "Cooling rate must be less than 1.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -150,13 +150,13 @@ void SimulatedAnnealingOrder::set_minimum_temperature(const double& new_minimum_
 
     if(new_minimum_temperature < 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: SimulatedAnnealingOrder class.\n"
                << "void set_minimum_temperature(const double&) method.\n"
                << "Minimum temperature must be equal or greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -165,30 +165,30 @@ void SimulatedAnnealingOrder::set_minimum_temperature(const double& new_minimum_
 }
 
 
-// size_t get_optimal_selection_loss_index(void) const method
+// size_t get_optimal_selection_error_index() const method
 
 /// Return the index of the optimal individual of the history considering the tolerance.
 
-size_t SimulatedAnnealingOrder::get_optimal_selection_loss_index(void) const
+size_t SimulatedAnnealingOrder::get_optimal_selection_error_index() const
 {
     size_t index = 0;
 
     size_t optimal_order = order_history[0];
 
-    double optimum_error = selection_loss_history[0];
+    double optimum_error = selection_error_history[0];
 
     size_t current_order;
 
     double current_error;
 
-    for (size_t i = 1; i < order_history.size(); i++)
+    for(size_t i = 1; i < order_history.size(); i++)
     {
         current_order = order_history[i];
-        current_error = selection_loss_history[i];
+        current_error = selection_error_history[i];
 
         if((fabs(optimum_error-current_error) < tolerance &&
              optimal_order > current_order) ||
-            (fabs(optimum_error-current_error) >= tolerance &&
+           (fabs(optimum_error-current_error) >= tolerance &&
              current_error < optimum_error)   )
         {
             optimal_order = current_order;
@@ -201,11 +201,11 @@ size_t SimulatedAnnealingOrder::get_optimal_selection_loss_index(void) const
     return(index);
 }
 
-// SimulatedAnnealingOrderResults* perform_order_selection(void) method
+// SimulatedAnnealingOrderResults* perform_order_selection() method
 
 /// Perform the order selection with the simulated annealing method.
 
-SimulatedAnnealingOrder::SimulatedAnnealingOrderResults* SimulatedAnnealingOrder::perform_order_selection(void)
+SimulatedAnnealingOrder::SimulatedAnnealingOrderResults* SimulatedAnnealingOrder::perform_order_selection()
 {
     SimulatedAnnealingOrderResults* results = new SimulatedAnnealingOrderResults();
 
@@ -217,7 +217,7 @@ SimulatedAnnealingOrder::SimulatedAnnealingOrderResults* SimulatedAnnealingOrder
     Vector<double> current_order_loss(2);
     Vector<double> optimum_parameters, current_parameters;
 
-    double current_training_loss, current_selection_loss;
+    double current_training_loss, current_selection_error;
 
     bool end = false;
     size_t iterations = 0;
@@ -234,7 +234,7 @@ SimulatedAnnealingOrder::SimulatedAnnealingOrderResults* SimulatedAnnealingOrder
 
     if(display)
     {
-        std::cout << "Performing order selection with simulated annealing method..." << std::endl;
+        cout << "Performing order selection with simulated annealing method..." << endl;
     }
 
     time(&beginning_time);
@@ -245,20 +245,20 @@ SimulatedAnnealingOrder::SimulatedAnnealingOrderResults* SimulatedAnnealingOrder
     optimum_parameters = get_parameters_order(optimal_order);
 
     current_training_loss = optimum_loss[0];
-    current_selection_loss = optimum_loss[1];
+    current_selection_error = optimum_loss[1];
 
-    temperature = current_selection_loss;
+    temperature = current_selection_error;
 
     results->order_data.push_back(optimal_order);
 
-    if(reserve_loss_data)
+    if(reserve_error_data)
     {
         results->loss_data.push_back(current_training_loss);
     }
 
-    if(reserve_selection_loss_data)
+    if(reserve_selection_error_data)
     {
-        results->selection_loss_data.push_back(current_selection_loss);
+        results->selection_error_data.push_back(current_selection_error);
     }
 
     if(reserve_parameters_data)
@@ -271,28 +271,28 @@ SimulatedAnnealingOrder::SimulatedAnnealingOrderResults* SimulatedAnnealingOrder
 
     if(display)
     {
-        std::cout << "Initial values : " << std::endl;
-        std::cout << "Hidden perceptrons : " << optimal_order << std::endl;
-        std::cout << "Final selection loss : " << optimum_loss[1] << std::endl;
-        std::cout << "Final Training loss : " << optimum_loss[0] << std::endl;
-        std::cout << "Temperature : " << temperature << std::endl;
-        std::cout << "Elapsed time : " << elapsed_time << std::endl;
+        cout << "Initial values : " << endl;
+        cout << "Hidden perceptrons : " << optimal_order << endl;
+        cout << "Final selection error : " << optimum_loss[1] << endl;
+        cout << "Final Training loss : " << optimum_loss[0] << endl;
+        cout << "Temperature : " << temperature << endl;
+        cout << "Elapsed time : " << write_elapsed_time(elapsed_time) << endl;
     }
 
-    while (!end){
+    while(!end){
 
-        upper_bound = std::min(maximum_order, optimal_order + (maximum_order-minimum_order)/3);
+        upper_bound = min(maximum_order, optimal_order + (maximum_order-minimum_order)/3);
         if(optimal_order <= (maximum_order-minimum_order)/3)
         {
             lower_bound = minimum_order;
         }
         else
         {
-            lower_bound = optimal_order - (maximum_order-minimum_order)/3;
+            lower_bound = optimal_order -(maximum_order-minimum_order)/3;
         }
 
         current_order = (size_t)(lower_bound + calculate_random_uniform(0.,1.)*(upper_bound - lower_bound));
-        while (current_order == optimal_order)
+        while(current_order == optimal_order)
         {
             current_order = (size_t)(lower_bound + calculate_random_uniform(0.,1.)*(upper_bound - lower_bound));
             random_failures++;
@@ -317,10 +317,10 @@ SimulatedAnnealingOrder::SimulatedAnnealingOrderResults* SimulatedAnnealingOrder
 
         current_order_loss = perform_model_evaluation(current_order);
         current_training_loss = current_order_loss[0];
-        current_selection_loss = current_order_loss[1];
+        current_selection_error = current_order_loss[1];
         current_parameters = get_parameters_order(current_order);
 
-        boltzmann_probability = std::min(1.0, exp(-(current_selection_loss-optimum_loss[1])/temperature));
+        boltzmann_probability = min(1.0, exp(-(current_selection_error-optimum_loss[1])/temperature));
         random_uniform = calculate_random_uniform(0.,1.);
 
 #ifdef __OPENNN_MPI__
@@ -339,14 +339,14 @@ SimulatedAnnealingOrder::SimulatedAnnealingOrderResults* SimulatedAnnealingOrder
 
         results->order_data.push_back(current_order);
 
-        if(reserve_loss_data)
+        if(reserve_error_data)
         {
             results->loss_data.push_back(current_training_loss);
         }
 
-        if(reserve_selection_loss_data)
+        if(reserve_selection_error_data)
         {
-            results->selection_loss_data.push_back(current_selection_loss);
+            results->selection_error_data.push_back(current_selection_error);
         }
 
         if(reserve_parameters_data)
@@ -366,7 +366,7 @@ SimulatedAnnealingOrder::SimulatedAnnealingOrderResults* SimulatedAnnealingOrder
 
             if(display)
             {
-                std::cout << "Minimum temperature reached." << std::endl;
+                cout << "Minimum temperature reached." << endl;
             }
 
             results->stopping_condition = SimulatedAnnealingOrder::MinimumTemperature;
@@ -377,21 +377,21 @@ SimulatedAnnealingOrder::SimulatedAnnealingOrderResults* SimulatedAnnealingOrder
 
             if(display)
             {
-                std::cout << "Maximum time reached." << std::endl;
+                cout << "Maximum time reached." << endl;
             }
 
             results->stopping_condition = SimulatedAnnealingOrder::MaximumTime;
         }
-        else if(optimum_loss[1] <= selection_loss_goal)
+        else if(optimum_loss[1] <= selection_error_goal)
         {
             end = true;
 
             if(display)
             {
-                std::cout << "Selection loss reached." << std::endl;
+                cout << "Selection loss reached." << endl;
             }
 
-            results->stopping_condition = SimulatedAnnealingOrder::SelectionLossGoal;
+            results->stopping_condition = SimulatedAnnealingOrder::SelectionErrorGoal;
         }
         else if(iterations >= maximum_iterations_number)
         {
@@ -399,7 +399,7 @@ SimulatedAnnealingOrder::SimulatedAnnealingOrderResults* SimulatedAnnealingOrder
 
             if(display)
             {
-                std::cout << "Maximum number of iterations reached." << std::endl;
+                cout << "Maximum number of iterations reached." << endl;
             }
 
             results->stopping_condition = SimulatedAnnealingOrder::MaximumIterations;
@@ -407,43 +407,32 @@ SimulatedAnnealingOrder::SimulatedAnnealingOrderResults* SimulatedAnnealingOrder
 
         if(display)
         {
-            std::cout << "Iteration : " << iterations << std::endl;
-            std::cout << "Hidden neurons number : " << optimal_order << std::endl;
-            std::cout << "Selection loss : " << optimum_loss[1] << std::endl;
-            std::cout << "Training loss : " << optimum_loss[0] << std::endl;
-            std::cout << "Current temperature : " << temperature << std::endl;
-            std::cout << "Elapsed time : " << elapsed_time << std::endl;
+            cout << "Iteration : " << iterations << endl;
+            cout << "Hidden neurons number : " << optimal_order << endl;
+            cout << "Selection loss : " << optimum_loss[1] << endl;
+            cout << "Training loss : " << optimum_loss[0] << endl;
+            cout << "Current temperature : " << temperature << endl;
+            cout << "Elapsed time : " << write_elapsed_time(elapsed_time) << endl;
         }
     }
 
-    size_t optimal_index = get_optimal_selection_loss_index();
+    size_t optimal_index = get_optimal_selection_error_index();
 
-    optimal_order = order_history[optimal_index] ;
+    optimal_order = order_history[optimal_index];
     optimum_loss[0] = loss_history[optimal_index];
-    optimum_loss[1] = selection_loss_history[optimal_index];
+    optimum_loss[1] = selection_error_history[optimal_index];
     optimum_parameters = get_parameters_order(optimal_order);
 
     if(display)
     {
-        std::cout << "Optimal order : " << optimal_order << std::endl;
-        std::cout << "Optimum selection loss : " << optimum_loss[1] << std::endl;
-        std::cout << "Corresponding training loss : " << optimum_loss[0] << std::endl;
+        cout << "Optimal order : " << optimal_order << endl;
+        cout << "Optimum selection error : " << optimum_loss[1] << endl;
+        cout << "Corresponding training loss : " << optimum_loss[0] << endl;
     }
 
     const size_t last_hidden_layer = multilayer_perceptron_pointer->get_layers_number()-2;
-    const size_t perceptrons_number = multilayer_perceptron_pointer->get_layer_pointer(last_hidden_layer)->get_perceptrons_number();
 
-    if(optimal_order > perceptrons_number)
-    {
-        multilayer_perceptron_pointer->grow_layer_perceptron(last_hidden_layer,optimal_order-perceptrons_number);
-    }
-    else
-    {
-        for (size_t i = 0; i < (perceptrons_number-optimal_order); i++)
-        {
-            multilayer_perceptron_pointer->prune_layer_perceptron(last_hidden_layer,0);
-        }
-    }
+    multilayer_perceptron_pointer->set_layer_perceptrons_number(last_hidden_layer, optimal_order);
 
     multilayer_perceptron_pointer->set_parameters(optimum_parameters);
 
@@ -458,23 +447,23 @@ SimulatedAnnealingOrder::SimulatedAnnealingOrderResults* SimulatedAnnealingOrder
 
     results->optimal_order = optimal_order;
     results->final_loss = optimum_loss[0];
-    results->final_selection_loss = optimum_loss[1];
+    results->final_selection_error = optimum_loss[1];
     results->elapsed_time = elapsed_time;
     results->iterations_number = iterations;
 
     return(results);
 }
 
-// Matrix<std::string> to_string_matrix(void) const method
+// Matrix<string> to_string_matrix() const method
 
 /// Writes as matrix of strings the most representative atributes.
 
-Matrix<std::string> SimulatedAnnealingOrder::to_string_matrix(void) const
+Matrix<string> SimulatedAnnealingOrder::to_string_matrix() const
 {
-    std::ostringstream buffer;
+    ostringstream buffer;
 
-    Vector<std::string> labels;
-    Vector<std::string> values;
+    Vector<string> labels;
+    Vector<string> values;
 
    // Minimum order
 
@@ -521,12 +510,12 @@ Matrix<std::string> SimulatedAnnealingOrder::to_string_matrix(void) const
 
    values.push_back(buffer.str());
 
-   // selection loss goal
+   // selection error goal
 
    labels.push_back("Selection loss goal");
 
    buffer.str("");
-   buffer << selection_loss_goal;
+   buffer << selection_error_goal;
 
    values.push_back(buffer.str());
 
@@ -559,11 +548,11 @@ Matrix<std::string> SimulatedAnnealingOrder::to_string_matrix(void) const
 
    // Plot training loss history
 
-   labels.push_back("Plot training loss history");
+   labels.push_back("Plot training error history");
 
    buffer.str("");
 
-   if(reserve_loss_data)
+   if(reserve_error_data)
    {
        buffer << "true";
    }
@@ -574,13 +563,13 @@ Matrix<std::string> SimulatedAnnealingOrder::to_string_matrix(void) const
 
    values.push_back(buffer.str());
 
-   // Plot selection loss history
+   // Plot selection error history
 
-   labels.push_back("Plot selection loss history");
+   labels.push_back("Plot selection error history");
 
    buffer.str("");
 
-   if(reserve_selection_loss_data)
+   if(reserve_selection_error_data)
    {
        buffer << "true";
    }
@@ -594,22 +583,22 @@ Matrix<std::string> SimulatedAnnealingOrder::to_string_matrix(void) const
    const size_t rows_number = labels.size();
    const size_t columns_number = 2;
 
-   Matrix<std::string> string_matrix(rows_number, columns_number);
+   Matrix<string> string_matrix(rows_number, columns_number);
 
-   string_matrix.set_column(0, labels);
-   string_matrix.set_column(1, values);
+   string_matrix.set_column(0, labels, "name");
+   string_matrix.set_column(1, values, "value");
 
     return(string_matrix);
 }
 
-// tinyxml2::XMLDocument* to_XML(void) const method
+// tinyxml2::XMLDocument* to_XML() const method
 
 /// Prints to the screen the simulated annealing order parameters, the stopping criteria
 /// and other user stuff concerning the simulated annealing order object.
 
-tinyxml2::XMLDocument* SimulatedAnnealingOrder::to_XML(void) const
+tinyxml2::XMLDocument* SimulatedAnnealingOrder::to_XML() const
 {
-   std::ostringstream buffer;
+   ostringstream buffer;
 
    tinyxml2::XMLDocument* document = new tinyxml2::XMLDocument;
 
@@ -619,8 +608,8 @@ tinyxml2::XMLDocument* SimulatedAnnealingOrder::to_XML(void) const
 
    document->InsertFirstChild(root_element);
 
-   tinyxml2::XMLElement* element = NULL;
-   tinyxml2::XMLText* text = NULL;
+   tinyxml2::XMLElement* element = nullptr;
+   tinyxml2::XMLText* text = nullptr;
 
    // Minimum order
    {
@@ -682,13 +671,13 @@ tinyxml2::XMLDocument* SimulatedAnnealingOrder::to_XML(void) const
    element->LinkEndChild(text);
    }
 
-   // selection loss goal
+   // selection error goal
    {
-   element = document->NewElement("SelectionLossGoal");
+   element = document->NewElement("SelectionErrorGoal");
    root_element->LinkEndChild(element);
 
    buffer.str("");
-   buffer << selection_loss_goal;
+   buffer << selection_error_goal;
 
    text = document->NewText(buffer.str().c_str());
    element->LinkEndChild(text);
@@ -730,25 +719,25 @@ tinyxml2::XMLDocument* SimulatedAnnealingOrder::to_XML(void) const
    element->LinkEndChild(text);
    }
 
-   // Reserve loss data
+   // Reserve error data
    {
-   element = document->NewElement("ReservePerformanceHistory");
+   element = document->NewElement("ReserveErrorHistory");
    root_element->LinkEndChild(element);
 
    buffer.str("");
-   buffer << reserve_loss_data;
+   buffer << reserve_error_data;
 
    text = document->NewText(buffer.str().c_str());
    element->LinkEndChild(text);
    }
 
-   // Reserve selection loss data
+   // Reserve selection error data
    {
-   element = document->NewElement("ReserveSelectionLossHistory");
+   element = document->NewElement("ReserveSelectionErrorHistory");
    root_element->LinkEndChild(element);
 
    buffer.str("");
-   buffer << reserve_selection_loss_data;
+   buffer << reserve_selection_error_data;
 
    text = document->NewText(buffer.str().c_str());
    element->LinkEndChild(text);
@@ -756,7 +745,7 @@ tinyxml2::XMLDocument* SimulatedAnnealingOrder::to_XML(void) const
 
    // Performance calculation method
 //   {
-//   element = document->NewElement("PerformanceCalculationMethod");
+//   element = document->NewElement("LossCalculationMethod");
 //   root_element->LinkEndChild(element);
 
 //   text = document->NewText(write_loss_calculation_method().c_str());
@@ -810,7 +799,7 @@ tinyxml2::XMLDocument* SimulatedAnnealingOrder::to_XML(void) const
 
 void SimulatedAnnealingOrder::write_XML(tinyxml2::XMLPrinter& file_stream) const
 {
-    std::ostringstream buffer;
+    ostringstream buffer;
 
     //file_stream.OpenElement("SimulatedAnnealingOrder");
 
@@ -869,12 +858,12 @@ void SimulatedAnnealingOrder::write_XML(tinyxml2::XMLPrinter& file_stream) const
 
     file_stream.CloseElement();
 
-    // selection loss goal
+    // selection error goal
 
-    file_stream.OpenElement("SelectionLossGoal");
+    file_stream.OpenElement("SelectionErrorGoal");
 
     buffer.str("");
-    buffer << selection_loss_goal;
+    buffer << selection_error_goal;
 
     file_stream.PushText(buffer.str().c_str());
 
@@ -913,23 +902,23 @@ void SimulatedAnnealingOrder::write_XML(tinyxml2::XMLPrinter& file_stream) const
 
     file_stream.CloseElement();
 
-    // Reserve loss data
+    // Reserve error data
 
-    file_stream.OpenElement("ReservePerformanceHistory");
+    file_stream.OpenElement("ReserveErrorHistory");
 
     buffer.str("");
-    buffer << reserve_loss_data;
+    buffer << reserve_error_data;
 
     file_stream.PushText(buffer.str().c_str());
 
     file_stream.CloseElement();
 
-    // Reserve selection loss data
+    // Reserve selection error data
 
-    file_stream.OpenElement("ReserveSelectionLossHistory");
+    file_stream.OpenElement("ReserveSelectionErrorHistory");
 
     buffer.str("");
-    buffer << reserve_selection_loss_data;
+    buffer << reserve_selection_error_data;
 
     file_stream.PushText(buffer.str().c_str());
 
@@ -951,13 +940,13 @@ void SimulatedAnnealingOrder::from_XML(const tinyxml2::XMLDocument& document)
 
     if(!root_element)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: IncrementalOrder class.\n"
                << "void from_XML(const tinyxml2::XMLDocument&) method.\n"
-               << "SimulatedAnnealingOrder element is NULL.\n";
+               << "SimulatedAnnealingOrder element is nullptr.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
     // Minimum order
@@ -972,9 +961,9 @@ void SimulatedAnnealingOrder::from_XML(const tinyxml2::XMLDocument& document)
            {
               minimum_order = new_minimum_order;
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -991,9 +980,9 @@ void SimulatedAnnealingOrder::from_XML(const tinyxml2::XMLDocument& document)
            {
               maximum_order = new_maximum_order;
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1010,28 +999,28 @@ void SimulatedAnnealingOrder::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_trials_number(new_trials_number);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
 
     // Performance calculation method
     {
-        const tinyxml2::XMLElement* element = root_element->FirstChildElement("PerformanceCalculationMethod");
+        const tinyxml2::XMLElement* element = root_element->FirstChildElement("LossCalculationMethod");
 
         if(element)
         {
-           const std::string new_loss_calculation_method = element->GetText();
+           const string new_loss_calculation_method = element->GetText();
 
            try
            {
               set_loss_calculation_method(new_loss_calculation_method);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1048,9 +1037,9 @@ void SimulatedAnnealingOrder::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_cooling_rate(new_cooling_rate);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1061,53 +1050,53 @@ void SimulatedAnnealingOrder::from_XML(const tinyxml2::XMLDocument& document)
 
         if(element)
         {
-           const std::string new_reserve_parameters_data = element->GetText();
+           const string new_reserve_parameters_data = element->GetText();
 
            try
            {
               set_reserve_parameters_data(new_reserve_parameters_data != "0");
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
 
     // Reserve loss data
     {
-        const tinyxml2::XMLElement* element = root_element->FirstChildElement("ReservePerformanceHistory");
+        const tinyxml2::XMLElement* element = root_element->FirstChildElement("ReserveErrorHistory");
 
         if(element)
         {
-           const std::string new_reserve_loss_data = element->GetText();
+           const string new_reserve_error_data = element->GetText();
 
            try
            {
-              set_reserve_loss_data(new_reserve_loss_data != "0");
+              set_reserve_error_data(new_reserve_error_data != "0");
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
 
-    // Reserve selection loss data
+    // Reserve selection error data
     {
-        const tinyxml2::XMLElement* element = root_element->FirstChildElement("ReserveSelectionLossHistory");
+        const tinyxml2::XMLElement* element = root_element->FirstChildElement("ReserveSelectionErrorHistory");
 
         if(element)
         {
-           const std::string new_reserve_selection_loss_data = element->GetText();
+           const string new_reserve_selection_error_data = element->GetText();
 
            try
            {
-              set_reserve_selection_loss_data(new_reserve_selection_loss_data != "0");
+              set_reserve_selection_error_data(new_reserve_selection_error_data != "0");
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1118,15 +1107,15 @@ void SimulatedAnnealingOrder::from_XML(const tinyxml2::XMLDocument& document)
 
         if(element)
         {
-           const std::string new_reserve_minimal_parameters = element->GetText();
+           const string new_reserve_minimal_parameters = element->GetText();
 
            try
            {
               set_reserve_minimal_parameters(new_reserve_minimal_parameters != "0");
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1137,34 +1126,34 @@ void SimulatedAnnealingOrder::from_XML(const tinyxml2::XMLDocument& document)
 
         if(element)
         {
-           const std::string new_display = element->GetText();
+           const string new_display = element->GetText();
 
            try
            {
               set_display(new_display != "0");
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
 
-    // selection loss goal
+    // selection error goal
     {
-        const tinyxml2::XMLElement* element = root_element->FirstChildElement("SelectionLossGoal");
+        const tinyxml2::XMLElement* element = root_element->FirstChildElement("SelectionErrorGoal");
 
         if(element)
         {
-           const double new_selection_loss_goal = atof(element->GetText());
+           const double new_selection_error_goal = atof(element->GetText());
 
            try
            {
-              set_selection_loss_goal(new_selection_loss_goal);
+              set_selection_error_goal(new_selection_error_goal);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1181,9 +1170,9 @@ void SimulatedAnnealingOrder::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_maximum_iterations_number(new_maximum_iterations_number);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1200,9 +1189,9 @@ void SimulatedAnnealingOrder::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_maximum_time(new_maximum_time);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1219,9 +1208,9 @@ void SimulatedAnnealingOrder::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_tolerance(new_tolerance);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1238,20 +1227,20 @@ void SimulatedAnnealingOrder::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_minimum_temperature(new_minimum_temperature);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
 }
 
-// void save(const std::string&) const method
+// void save(const string&) const method
 
 /// Saves to a XML-type file the members of the simulated annealing order object.
 /// @param file_name Name of simulated annealing order XML-type file.
 
-void SimulatedAnnealingOrder::save(const std::string& file_name) const
+void SimulatedAnnealingOrder::save(const string& file_name) const
 {
    tinyxml2::XMLDocument* document = to_XML();
 
@@ -1261,12 +1250,12 @@ void SimulatedAnnealingOrder::save(const std::string& file_name) const
 }
 
 
-// void load(const std::string&) method
+// void load(const string&) method
 
 /// Loads a simulated annealing order object from a XML-type file.
 /// @param file_name Name of simulated annealing order XML-type file.
 
-void SimulatedAnnealingOrder::load(const std::string& file_name)
+void SimulatedAnnealingOrder::load(const string& file_name)
 {
    set_default();
 
@@ -1274,13 +1263,13 @@ void SimulatedAnnealingOrder::load(const std::string& file_name)
 
    if(document.LoadFile(file_name.c_str()))
    {
-      std::ostringstream buffer;
+      ostringstream buffer;
 
       buffer << "OpenNN Exception: SimulatedAnnealingOrder class.\n"
-             << "void load(const std::string&) method.\n"
+             << "void load(const string&) method.\n"
              << "Cannot load XML file " << file_name << ".\n";
 
-      throw std::logic_error(buffer.str());
+      throw logic_error(buffer.str());
    }
 
    from_XML(document);
@@ -1289,7 +1278,7 @@ void SimulatedAnnealingOrder::load(const std::string& file_name)
 }
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (c) 2005-2016 Roberto Lopez.
+// Copyright(C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

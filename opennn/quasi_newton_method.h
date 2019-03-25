@@ -5,9 +5,8 @@
 /*                                                                                                              */
 /*   Q U A S I - N E W T O N   M E T H O D    C L A S S   H E A D E R                                           */
 /*                                                                                                              */
-/*   Roberto Lopez                                                                                              */
-/*   Artelnics - Making intelligent use of data                                                                 */
-/*   robertolopez@artelnics.com                                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
+/*   artelnics@artelnics.com                                                                                    */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
@@ -26,29 +25,29 @@
 #include <cmath>
 #include <ctime>
 
-#ifdef __OPENNN_CUDA__
-#include <cublas_v2.h>
-#endif
+//#ifdef __OPENNN_CUDA__
+//#include <cublas_v2.h>
+//#endif
 
 // OpenNN includes
 
 #include "loss_index.h"
 
-#include "training_algorithm.h"
-#include "training_rate_algorithm.h"
+#include "optimization_algorithm.h"
+#include "learning_rate_algorithm.h"
 
 // TinyXml includes
 
-#include "../tinyxml2/tinyxml2.h"
+#include "tinyxml2.h"
 
 namespace OpenNN
 {
 
 ///
-/// This concrete class represents a quasi-Newton training algorithm for a loss functional of a neural network.
+/// This concrete class represents a quasi-Newton training algorithm for a loss index of a neural network.
 ///
 
-class QuasiNewtonMethod : public TrainingAlgorithm
+class QuasiNewtonMethod : public OptimizationAlgorithm
 {
 
 public:
@@ -62,9 +61,9 @@ public:
 
    // DEFAULT CONSTRUCTOR
 
-   explicit QuasiNewtonMethod(void);
+   explicit QuasiNewtonMethod();
 
-   // PERFORMANCE FUNCTIONAL CONSTRUCTOR
+   // LOSS INDEX CONSTRUCTOR
 
    explicit QuasiNewtonMethod(LossIndex*);
 
@@ -75,7 +74,7 @@ public:
 
    // DESTRUCTOR
 
-   virtual ~QuasiNewtonMethod(void);
+   virtual ~QuasiNewtonMethod();
 
    // STRUCTURES
 
@@ -83,27 +82,26 @@ public:
    /// This structure contains the training results for the quasi-Newton method. 
    ///
 
-   struct QuasiNewtonMethodResults : public TrainingAlgorithm::TrainingAlgorithmResults
+   struct QuasiNewtonMethodResults : public OptimizationAlgorithm::OptimizationAlgorithmResults
    {
        /// Default constructor.
 
-       explicit QuasiNewtonMethodResults(void) : TrainingAlgorithm::TrainingAlgorithmResults()
+       explicit QuasiNewtonMethodResults() : OptimizationAlgorithm::OptimizationAlgorithmResults()
        {
-           quasi_Newton_method_pointer = NULL;
+           quasi_Newton_method_pointer = nullptr;
        }
 
        /// Quasi-Newton method constructor.
 
-       explicit QuasiNewtonMethodResults(QuasiNewtonMethod* new_quasi_Newton_method_pointer) : TrainingAlgorithm::TrainingAlgorithmResults()
+       explicit QuasiNewtonMethodResults(QuasiNewtonMethod* new_quasi_Newton_method_pointer) : OptimizationAlgorithm::OptimizationAlgorithmResults()
        {
            quasi_Newton_method_pointer = new_quasi_Newton_method_pointer;
        }
 
        /// Destructor.
 
-       virtual ~QuasiNewtonMethodResults(void)
+       virtual ~QuasiNewtonMethodResults()
        {
-           quasi_Newton_method_pointer = NULL;
        }
 
        // Members
@@ -114,43 +112,43 @@ public:
 
       // Training history
 
-      /// History of the neural network parameters over the training iterations. 
+      /// History of the neural network parameters over the training epochs.
 
       Vector< Vector<double> > parameters_history;
 
-      /// History of the parameters norm over the training iterations. 
+      /// History of the parameters norm over the training epochs.
 
       Vector<double> parameters_norm_history;
 
-      /// History of the loss function loss over the training iterations. 
+      /// History of the loss function loss over the training epochs.
 
       Vector<double> loss_history;
 
-      /// History of the selection loss over the training iterations.
+      /// History of the selection error over the training epochs.
 
-      Vector<double> selection_loss_history;
+      Vector<double> selection_error_history;
 
-      /// History of the loss function gradient over the training iterations. 
+      /// History of the loss function gradient over the training epochs.
 
       Vector< Vector<double> > gradient_history;
 
-      /// History of the gradient norm over the training iterations. 
+      /// History of the gradient norm over the training epochs.
 
       Vector<double> gradient_norm_history;
 
-      /// History of the inverse Hessian approximation over the training iterations. 
+      /// History of the inverse Hessian approximation over the training epochs.
 
       Vector< Matrix<double> > inverse_Hessian_history;
 
-      /// History of the random search training direction over the training iterations. 
+      /// History of the random search training direction over the training epochs.
 
       Vector< Vector<double> > training_direction_history;
 
-      /// History of the random search training rate over the training iterations. 
+      /// History of the random search training rate over the training epochs.
 
       Vector<double> training_rate_history;
 
-      /// History of the elapsed time over the training iterations. 
+      /// History of the elapsed time over the training epochs.
 
       Vector<double> elapsed_time_history;
 
@@ -168,9 +166,9 @@ public:
 
       double final_loss;
 
-      /// Final selection loss.
+      /// Final selection error.
 
-      double final_selection_loss;
+      double final_selection_error;
 
       /// Final loss function gradient. 
 
@@ -196,80 +194,85 @@ public:
 
       double elapsed_time;
 
-      /// Maximum number of training iterations.
+      /// Maximum number of training epochs.
 
-      size_t iterations_number;
+      size_t epochs_number;
 
       // Methods
 
-      QuasiNewtonMethod* get_quasi_Newton_method_pointer(void) const;
+      QuasiNewtonMethod* get_quasi_Newton_method_pointer() const;
 
       void set_quasi_Newton_method_pointer(QuasiNewtonMethod*);
 
       void resize_training_history(const size_t&);
 
-      std::string to_string(void) const;
+      string object_to_string() const;
 
-      Matrix<std::string> write_final_results(const size_t& precision = 3) const;
+      Matrix<string> write_final_results(const int& precision = 3) const;
    };
 
    // METHODS
 
    // Get methods
 
-   const TrainingRateAlgorithm& get_training_rate_algorithm(void) const;
-   TrainingRateAlgorithm* get_training_rate_algorithm_pointer(void);
+   const LearningRateAlgorithm& get_learning_rate_algorithm() const;
+   LearningRateAlgorithm* get_learning_rate_algorithm_pointer();
 
-   const InverseHessianApproximationMethod& get_inverse_Hessian_approximation_method(void) const;
-   std::string write_inverse_Hessian_approximation_method(void) const;
+   const InverseHessianApproximationMethod& get_inverse_Hessian_approximation_method() const;
+   string write_inverse_Hessian_approximation_method() const;
 
    // Training parameters
 
-   const double& get_warning_parameters_norm(void) const;
-   const double& get_warning_gradient_norm(void) const;
-   const double& get_warning_training_rate(void) const;
+   const double& get_warning_parameters_norm() const;
+   const double& get_warning_gradient_norm() const;
+   const double& get_warning_training_rate() const;
 
-   const double& get_error_parameters_norm(void) const;
-   const double& get_error_gradient_norm(void) const;
-   const double& get_error_training_rate(void) const;
+   const double& get_error_parameters_norm() const;
+   const double& get_error_gradient_norm() const;
+   const double& get_error_training_rate() const;
+
+   const size_t& get_epochs_number() const;
 
    // Stopping criteria
 
-   const double& get_minimum_parameters_increment_norm(void) const;
+   const double& get_minimum_parameters_increment_norm() const;
 
-   const double& get_minimum_loss_increase(void) const;
-   const double& get_loss_goal(void) const;
-   const double& get_gradient_norm_goal(void) const;
-   const size_t& get_maximum_selection_loss_decreases(void) const;
+   const double& get_minimum_loss_increase() const;
+   const double& get_loss_goal() const;
+   const double& get_gradient_norm_goal() const;
+   const size_t& get_maximum_selection_error_decreases() const;
 
-   const size_t& get_maximum_iterations_number(void) const;
-   const double& get_maximum_time(void) const;
+   const size_t& get_maximum_epochs_number() const;
+   const double& get_maximum_time() const;
 
-   const bool& get_return_minimum_selection_error_neural_network(void) const;
+   const bool& get_return_minimum_selection_error_neural_network() const;
+   const bool& get_apply_early_stopping() const;
 
    // Reserve training history
 
-   const bool& get_reserve_parameters_history(void) const;
-   const bool& get_reserve_parameters_norm_history(void) const;
+   const bool& get_reserve_parameters_history() const;
+   const bool& get_reserve_parameters_norm_history() const;
 
-   const bool& get_reserve_loss_history(void) const;
-   const bool& get_reserve_gradient_history(void) const;
-   const bool& get_reserve_gradient_norm_history(void) const;
-   const bool& get_reserve_inverse_Hessian_history(void) const;
-   const bool& get_reserve_selection_loss_history(void) const;
+   const bool& get_reserve_error_history() const;
+   const bool& get_reserve_gradient_history() const;
+   const bool& get_reserve_gradient_norm_history() const;
+   const bool& get_reserve_inverse_Hessian_history() const;
+   const bool& get_reserve_selection_error_history() const;
 
-   const bool& get_reserve_training_direction_history(void) const;
-   const bool& get_reserve_training_rate_history(void) const;
-   const bool& get_reserve_elapsed_time_history(void) const;
+   const bool& get_reserve_training_direction_history() const;
+   const bool& get_reserve_training_rate_history() const;
+   const bool& get_reserve_elapsed_time_history() const;
 
    // Set methods
 
    void set_loss_index_pointer(LossIndex*);
 
    void set_inverse_Hessian_approximation_method(const InverseHessianApproximationMethod&);
-   void set_inverse_Hessian_approximation_method(const std::string&);
+   void set_inverse_Hessian_approximation_method(const string&);
 
-   void set_default(void);
+   void set_display(const bool&);
+
+   void set_default();
 
    // Training parameters
 
@@ -285,26 +288,27 @@ public:
 
    void set_minimum_parameters_increment_norm(const double&);
 
-   void set_minimum_loss_increase(const double&);
+   void set_minimum_loss_decrease(const double&);
    void set_loss_goal(const double&);
    void set_gradient_norm_goal(const double&);
-   void set_maximum_selection_loss_decreases(const size_t&);
+   void set_maximum_selection_error_increases(const size_t&);
 
-   void set_maximum_iterations_number(const size_t&);
+   void set_maximum_epochs_number(const size_t&);
    void set_maximum_time(const double&);
 
    void set_return_minimum_selection_error_neural_network(const bool&);
+   void set_apply_early_stopping(const bool&);
 
    // Reserve training history
 
    void set_reserve_parameters_history(const bool&);
    void set_reserve_parameters_norm_history(const bool&);
 
-   void set_reserve_loss_history(const bool&);
+   void set_reserve_error_history(const bool&);
    void set_reserve_gradient_history(const bool&);
    void set_reserve_gradient_norm_history(const bool&);
    void set_reserve_inverse_Hessian_history(const bool&);
-   void set_reserve_selection_loss_history(const bool&);
+   void set_reserve_selection_error_history(const bool&);
 
    void set_reserve_training_direction_history(const bool&);
    void set_reserve_training_rate_history(const bool&);
@@ -319,12 +323,13 @@ public:
    Vector<double> calculate_gradient_descent_training_direction(const Vector<double>&) const;
 
    Matrix<double> calculate_DFP_inverse_Hessian
-   (const Vector<double>&, const Vector<double>&, const Vector<double>&, const Vector<double>&, const Matrix<double>&) const;
+  (const Vector<double>&, const Vector<double>&, const Vector<double>&, const Vector<double>&, const Matrix<double>&) const;
 
    Matrix<double> calculate_BFGS_inverse_Hessian
-   (const Vector<double>&, const Vector<double>&, const Vector<double>&, const Vector<double>&, const Matrix<double>&) const;
+  (const Vector<double>&, const Vector<double>&, const Vector<double>&, const Vector<double>&, const Matrix<double>&) const;
 
    Matrix<double> calculate_inverse_Hessian_approximation(const Vector<double>&, const Vector<double>&, const Vector<double>&, const Vector<double>&, const Matrix<double>&) const;
+   void update_inverse_Hessian_approximation(const Vector<double>&, const Vector<double>&, const Vector<double>&, const Vector<double>&) const;
 
 #ifdef __OPENNN_CUDA__
    Matrix<double> calculate_DFP_inverse_Hessian_CUDA(double*, double*, double*, double*, double*, double*) const;
@@ -334,25 +339,26 @@ public:
 
    Vector<double> calculate_training_direction(const Vector<double>&, const Matrix<double>&) const;
 
-   QuasiNewtonMethodResults* perform_training(void);
+   QuasiNewtonMethodResults* perform_training();
+   void perform_training_void();
 
    // Training history methods
 
    void set_reserve_all_training_history(const bool&);
 
-   std::string write_training_algorithm_type(void) const;
+   string write_optimization_algorithm_type() const;
 
    // Serialization methods
 
-   tinyxml2::XMLDocument* to_XML(void) const;
+   tinyxml2::XMLDocument* to_XML() const;
    void from_XML(const tinyxml2::XMLDocument&);
 
    void write_XML(tinyxml2::XMLPrinter&) const;
    //void read_XML(   );
 
 
-   std::string to_string(void) const;
-   Matrix<std::string> to_string_matrix(void) const;
+   string object_to_string() const;
+   Matrix<string> to_string_matrix() const;
 
 
 private: 
@@ -360,7 +366,7 @@ private:
    /// Training rate algorithm object. 
    /// It is used to calculate the step for the quasi-Newton training direction.
 
-   TrainingRateAlgorithm training_rate_algorithm;
+   LearningRateAlgorithm learning_rate_algorithm;
 
    /// Variable containing the actual method used to obtain a suitable training rate. 
 
@@ -398,26 +404,26 @@ private:
 
    double minimum_parameters_increment_norm;
 
-   /// Minimum loss improvement between two successive iterations. It is used as a stopping criterion.
+   /// Minimum loss improvement between two successive epochs. It is used as a stopping criterion.
 
-   double minimum_loss_increase;
+   double minimum_loss_decrease;
 
    /// Goal value for the loss. It is used as a stopping criterion.
 
    double loss_goal;
 
-   /// Goal value for the norm of the objective function gradient. It is used as a stopping criterion.
+   /// Goal value for the norm of the error function gradient. It is used as a stopping criterion.
 
    double gradient_norm_goal;
 
-   /// Maximum number of iterations at which the selection loss increases.
+   /// Maximum number of epochs at which the selection error increases.
    /// This is an early stopping method for improving selection.
 
-   size_t maximum_selection_loss_decreases;
+   size_t maximum_selection_error_decreases;
 
-   /// Maximum number of iterations to perform_training. It is used as a stopping criterion.
+   /// Maximum number of epochs to perform_training. It is used as a stopping criterion.
 
-   size_t maximum_iterations_number;
+   size_t maximum_epochs_number;
 
    /// Maximum training time. It is used as a stopping criterion.
 
@@ -426,6 +432,10 @@ private:
    /// True if the final model will be the neural network with the minimum selection error, false otherwise.
 
    bool return_minimum_selection_error_neural_network;
+
+   /// True if the selection error decrease stopping criteria has to be taken in account, false otherwise.
+
+   bool apply_early_stopping;
 
    // TRAINING HISTORY
 
@@ -437,9 +447,9 @@ private:
 
    bool reserve_parameters_norm_history;
 
-   /// True if the loss history vector is to be reserved, false otherwise.
+   /// True if the error history vector is to be reserved, false otherwise.
 
-   bool reserve_loss_history;
+   bool reserve_error_history;
 
    /// True if the gradient history matrix is to be reserved, false otherwise.
 
@@ -465,9 +475,10 @@ private:
 
    bool reserve_elapsed_time_history;
 
-   /// True if the selection loss history vector is to be reserved, false otherwise.
+   /// True if the selection error history vector is to be reserved, false otherwise.
 
-   bool reserve_selection_loss_history;
+   bool reserve_selection_error_history;
+
 };
 
 }
@@ -476,7 +487,7 @@ private:
 
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (c) 2005-2016 Roberto Lopez.
+// Copyright(C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

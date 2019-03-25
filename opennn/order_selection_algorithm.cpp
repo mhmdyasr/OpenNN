@@ -6,7 +6,7 @@
 /*   O R D E R   S E L E C T I O N   A L G O R I T H M   C L A S S                                              */
 /*                                                                                                              */
 /*   Fernando Gomez                                                                                             */
-/*   Artelnics - Making intelligent use of data                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
 /*   fernandogomez@artelnics.com                                                                                */
 /*                                                                                                              */
 /****************************************************************************************************************/
@@ -22,8 +22,8 @@ namespace OpenNN {
 
 /// Default constructor.
 
-OrderSelectionAlgorithm::OrderSelectionAlgorithm(void)
-    : training_strategy_pointer(NULL)
+OrderSelectionAlgorithm::OrderSelectionAlgorithm()
+    : training_strategy_pointer(nullptr)
 {
     set_default();
 }
@@ -46,8 +46,8 @@ OrderSelectionAlgorithm::OrderSelectionAlgorithm(TrainingStrategy* new_training_
 /// File constructor.
 /*/// @param file_name Name of XML order selection file.*/
 
-OrderSelectionAlgorithm::OrderSelectionAlgorithm(const std::string&)
-    : training_strategy_pointer(NULL)
+OrderSelectionAlgorithm::OrderSelectionAlgorithm(const string&)
+    : training_strategy_pointer(nullptr)
 {
     //load(file_name);
 }
@@ -59,7 +59,7 @@ OrderSelectionAlgorithm::OrderSelectionAlgorithm(const std::string&)
 /*/// @param order_selection_document Pointer to a TinyXML document containing the order selection algorithm data.*/
 
 OrderSelectionAlgorithm::OrderSelectionAlgorithm(const tinyxml2::XMLDocument& )
-    : training_strategy_pointer(NULL)
+    : training_strategy_pointer(nullptr)
 {
     //from_XML(order_selection_document);
 }
@@ -69,30 +69,29 @@ OrderSelectionAlgorithm::OrderSelectionAlgorithm(const tinyxml2::XMLDocument& )
 
 /// Destructor.
 
-OrderSelectionAlgorithm::~OrderSelectionAlgorithm(void)
+OrderSelectionAlgorithm::~OrderSelectionAlgorithm()
 {
 }
 
 
 // METHODS
 
-// TrainingStrategy* get_training_strategy_pointer(void) const method
 
 /// Returns a pointer to the training strategy object.
 
-TrainingStrategy* OrderSelectionAlgorithm::get_training_strategy_pointer(void) const
+TrainingStrategy* OrderSelectionAlgorithm::get_training_strategy_pointer() const
 {
 #ifdef __OPENNN_DEBUG__
 
     if(!training_strategy_pointer)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
-               << "DataSet* get_training_strategy_pointer(void) const method.\n"
-               << "Training strategy pointer is NULL.\n";
+               << "DataSet* get_training_strategy_pointer() const method.\n"
+               << "Training strategy pointer is nullptr.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -100,11 +99,10 @@ TrainingStrategy* OrderSelectionAlgorithm::get_training_strategy_pointer(void) c
     return(training_strategy_pointer);
 }
 
-// bool has_training_strategy(void) const method
 
 /// Returns true if this order selection algorithm has a training strategy associated, and false otherwise.
 
-bool OrderSelectionAlgorithm::has_training_strategy(void) const
+bool OrderSelectionAlgorithm::has_training_strategy() const
 {
     if(training_strategy_pointer)
     {
@@ -116,167 +114,135 @@ bool OrderSelectionAlgorithm::has_training_strategy(void) const
     }
 }
 
-// const size_t& get_maximum_order(void) const method
 
 /// Returns the maximum of the hidden perceptrons number used in the order order selection.
 
-const size_t& OrderSelectionAlgorithm::get_maximum_order(void) const
+const size_t& OrderSelectionAlgorithm::get_maximum_order() const
 {
     return(maximum_order);
 }
 
 
-// const size_t& get_minimum_order(void) const method
-
 /// Returns the minimum of the hidden perceptrons number used in the order selection.
 
-const size_t& OrderSelectionAlgorithm::get_minimum_order(void) const
+const size_t& OrderSelectionAlgorithm::get_minimum_order() const
 {
     return(minimum_order);
 }
 
-// const size_t& get_trials_number(void) const method
 
 /// Returns the number of trials for each network architecture.
 
-const size_t& OrderSelectionAlgorithm::get_trials_number(void) const
+const size_t& OrderSelectionAlgorithm::get_trials_number() const
 {
     return(trials_number);
 }
 
-// const bool& get_reserve_parameters_data(void) const method
 
 /// Returns true if the neural network parameters are to be reserved, and false otherwise.
 
-const bool& OrderSelectionAlgorithm::get_reserve_parameters_data(void) const
+const bool& OrderSelectionAlgorithm::get_reserve_parameters_data() const
 {
     return(reserve_parameters_data);
 }
 
 
-// const bool& get_reserve_loss_data(void) const method
+/// Returns true if the loss index losses are to be reserved, and false otherwise.
 
-/// Returns true if the loss functional losss are to be reserved, and false otherwise.
-
-const bool& OrderSelectionAlgorithm::get_reserve_loss_data(void) const
+const bool& OrderSelectionAlgorithm::get_reserve_error_data() const
 {
-    return(reserve_loss_data);
+    return(reserve_error_data);
 }
 
 
-// const bool& get_reserve_selection_loss_data(void) const method
+/// Returns true if the loss index selection losses are to be reserved, and false otherwise.
 
-/// Returns true if the loss functional selection losss are to be reserved, and false otherwise.
-
-const bool& OrderSelectionAlgorithm::get_reserve_selection_loss_data(void) const
+const bool& OrderSelectionAlgorithm::get_reserve_selection_error_data() const
 {
-    return(reserve_selection_loss_data);
+    return(reserve_selection_error_data);
 }
 
 
-// const bool& get_reserve_minimal_parameters(void) const method
+/// Returns true if the parameters vector of the neural network with minimum selection error is to be reserved, and false otherwise.
 
-/// Returns true if the parameters vector of the neural network with minimum selection loss is to be reserved, and false otherwise.
-
-const bool& OrderSelectionAlgorithm::get_reserve_minimal_parameters(void) const
+const bool& OrderSelectionAlgorithm::get_reserve_minimal_parameters() const
 {
     return(reserve_minimal_parameters);
 }
 
-// const PerformanceCalculationMethod& get_loss_calculation_method(void) const method
 
-/// Returns the method for the calculation of the loss and the selection loss.
+/// Returns the method for the calculation of the loss and the selection error.
 
-const OrderSelectionAlgorithm::PerformanceCalculationMethod& OrderSelectionAlgorithm::get_loss_calculation_method(void) const
+const OrderSelectionAlgorithm::LossCalculationMethod& OrderSelectionAlgorithm::get_loss_calculation_method() const
 {
     return(loss_calculation_method);
 }
 
-// const bool& get_display(void) const method
 
 /// Returns true if messages from this class can be displayed on the screen,
 /// or false if messages from this class can't be displayed on the screen.
 
-const bool& OrderSelectionAlgorithm::get_display(void) const
+const bool& OrderSelectionAlgorithm::get_display() const
 {
     return(display);
 }
 
-// const double& get_selection_loss_goal(void) const method
 
-/// Returns the goal for the selection loss in the order selection algorithm.
+/// Returns the goal for the selection error in the order selection algorithm.
 
-const double& OrderSelectionAlgorithm::get_selection_loss_goal(void) const
+const double& OrderSelectionAlgorithm::get_selection_error_goal() const
 {
-    return(selection_loss_goal);
+    return(selection_error_goal);
 }
 
 
-// const size_t& get_maximum_iterations_number(void) const method
-
 /// Returns the maximum number of iterations in the order selection algorithm.
 
-const size_t& OrderSelectionAlgorithm::get_maximum_iterations_number(void) const
+const size_t& OrderSelectionAlgorithm::get_maximum_iterations_number() const
 {
     return(maximum_iterations_number);
 }
 
 
-// const double& get_maximum_time(void) const method
-
 /// Returns the maximum time in the order selection algorithm.
 
-const double& OrderSelectionAlgorithm::get_maximum_time(void) const
+const double& OrderSelectionAlgorithm::get_maximum_time() const
 {
     return(maximum_time);
 }
 
-// const double& get_tolerance(void) const method
 
 /// Return the tolerance of error for the order selection algorithm.
 
-const double& OrderSelectionAlgorithm::get_tolerance(void) const
+const double& OrderSelectionAlgorithm::get_tolerance() const
 {
     return(tolerance);
 }
 
-// std::string write_loss_calculation_method(void) const method
 
 /// Return a string with the loss calculation method of this order selection algorithm.
 
-std::string OrderSelectionAlgorithm::write_loss_calculation_method(void) const
+string OrderSelectionAlgorithm::write_loss_calculation_method() const
 {
-    switch (loss_calculation_method)
+    switch(loss_calculation_method)
     {
-    case Maximum:
-    {
-        return ("Maximum");
+        case Maximum:
+        {
+            return("Maximum");
+        }
+        case Minimum:
+        {
+            return("Minimum");
+        }
+        case Mean:
+        {
+            return("Mean");
+        }
     }
-    case Minimum:
-    {
-        return ("Minimum");
-    }
-    case Mean:
-    {
-        return ("Mean");
-    }
-    default:
-    {
-        std::ostringstream buffer;
 
-        buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
-               << "std::string write_loss_calculation_method(void) const method.\n"
-               << "Unknown loss calculation method.\n";
-
-        throw std::logic_error(buffer.str());
-
-        break;
-    }
-    }
+    return string();
 }
 
-
-// void set_training_strategy_pointer(TrainingStrategy*) method
 
 /// Sets a new training strategy pointer.
 /// @param new_training_strategy_pointer Pointer to a training strategy object.
@@ -287,18 +253,15 @@ void OrderSelectionAlgorithm::set_training_strategy_pointer(TrainingStrategy* ne
 }
 
 
-// void set_default(void) method 
-
 /// Sets the members of the order selection object to their default values.
 
-void OrderSelectionAlgorithm::set_default(void)
+void OrderSelectionAlgorithm::set_default()
 {
-
-    size_t inputs_number ;
+    size_t inputs_number;
     size_t outputs_number;
 
-    if(training_strategy_pointer == NULL
-            || !training_strategy_pointer->has_loss_index())
+    if(training_strategy_pointer == nullptr
+    || !training_strategy_pointer->has_loss_index())
     {
         inputs_number = 0;
         outputs_number = 0;
@@ -311,15 +274,17 @@ void OrderSelectionAlgorithm::set_default(void)
     // MEMBERS
 
     minimum_order = 1;
+
     // Heuristic value for the maximum_order
+
     maximum_order = 2*(inputs_number + outputs_number);
     trials_number = 1;
 
     // order selection results
 
     reserve_parameters_data = true;
-    reserve_loss_data = true;
-    reserve_selection_loss_data = true;
+    reserve_error_data = true;
+    reserve_selection_error_data = true;
     reserve_minimal_parameters = true;
 
     loss_calculation_method = Minimum;
@@ -328,15 +293,14 @@ void OrderSelectionAlgorithm::set_default(void)
 
     // STOPPING CRITERIA
 
-    selection_loss_goal = 0.0;
+    selection_error_goal = 0.0;
 
     maximum_iterations_number = 1000;
     maximum_time = 10000.0;
 
-    tolerance = 1.0e-3;
+    tolerance = 0.0;
 }
 
-// void set_maximum_order(const size_t&) method
 
 /// Sets the number of the maximum hidden perceptrons for the order selection algorithm.
 /// @param new_maximum_order Number of maximum hidden perceptrons.
@@ -347,24 +311,24 @@ void OrderSelectionAlgorithm::set_maximum_order(const size_t& new_maximum_order)
 
     if(new_maximum_order <= 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
                << "void set_maximum_order(const size_t&) method.\n"
-               << "maximum_order (" << new_maximum_order << ") must be greater than 0.\n";
+               << "maximum_order(" << new_maximum_order << ") must be greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
-    if(new_maximum_order <= minimum_order)
+    if(new_maximum_order < minimum_order)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
                << "void set_maximum_order(const size_t&) method.\n"
-               << "maximum_order (" << new_maximum_order << ") must be greater than minimum_order (" << minimum_order << ").\n";
+               << "maximum_order(" << new_maximum_order << ") must be equal or greater than minimum_order(" << minimum_order << ").\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -372,8 +336,6 @@ void OrderSelectionAlgorithm::set_maximum_order(const size_t& new_maximum_order)
     maximum_order = new_maximum_order;
 }
 
-
-// void set_minimum_order(const size_t&) method
 
 /// Sets the number of the minimum hidden perceptrons for the order selection algorithm.
 /// @param new_minimum_order Number of minimum hidden perceptrons.
@@ -384,23 +346,23 @@ void OrderSelectionAlgorithm::set_minimum_order(const size_t& new_minimum_order)
 
     if(new_minimum_order <= 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
                << "void set_minimum_order(const size_t&) method.\n"
-               << "minimum_order (" << new_minimum_order << ") must be greater than 0.\n";
+               << "minimum_order(" << new_minimum_order << ") must be greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
     if(new_minimum_order >= maximum_order)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
                << "void set_minimum_order(const size_t&) method.\n"
-               << "minimum_order (" << new_minimum_order << ") must be less than maximum_order (" << maximum_order << ").\n";
+               << "minimum_order(" << new_minimum_order << ") must be less than maximum_order(" << maximum_order << ").\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -408,7 +370,6 @@ void OrderSelectionAlgorithm::set_minimum_order(const size_t& new_minimum_order)
     minimum_order = new_minimum_order;
 }
 
-// void set_trials_number(const size_t&) method
 
 /// Sets the number of times that each different neural network is to be trained.
 /// @param new_trials_number Number of assays for each set of parameters.
@@ -419,12 +380,12 @@ void OrderSelectionAlgorithm::set_trials_number(const size_t& new_trials_number)
 
     if(new_trials_number <= 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
                << "void set_trials_number(const size_t&) method.\n"
                << "Number of assays must be greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -432,7 +393,6 @@ void OrderSelectionAlgorithm::set_trials_number(const size_t& new_trials_number)
     trials_number = new_trials_number;
 }
 
-// void set_reserve_parameters_data(const bool&) method
 
 /// Sets the reserve flag for the parameters data.
 /// @param new_reserve_parameters_data Flag value.
@@ -443,29 +403,23 @@ void OrderSelectionAlgorithm::set_reserve_parameters_data(const bool& new_reserv
 }
 
 
-// void set_reserve_loss_data(const bool&) method
-
 /// Sets the reserve flag for the loss data.
-/// @param new_reserve_loss_data Flag value.
+/// @param new_reserve_error_data Flag value.
 
-void OrderSelectionAlgorithm::set_reserve_loss_data(const bool& new_reserve_loss_data)
+void OrderSelectionAlgorithm::set_reserve_error_data(const bool& new_reserve_error_data)
 {
-    reserve_loss_data = new_reserve_loss_data;
+    reserve_error_data = new_reserve_error_data;
 }
 
 
-// void set_reserve_selection_loss_data(const bool&) method
+/// Sets the reserve flag for the selection error data.
+/// @param new_reserve_selection_error_data Flag value.
 
-/// Sets the reserve flag for the selection loss data.
-/// @param new_reserve_selection_loss_data Flag value.
-
-void OrderSelectionAlgorithm::set_reserve_selection_loss_data(const bool& new_reserve_selection_loss_data)
+void OrderSelectionAlgorithm::set_reserve_selection_error_data(const bool& new_reserve_selection_error_data)
 {
-    reserve_selection_loss_data = new_reserve_selection_loss_data;
+    reserve_selection_error_data = new_reserve_selection_error_data;
 }
 
-
-// void set_reserve_minimal_parameters(const bool&) method
 
 /// Sets the reserve flag for the minimal parameters.
 /// @param new_reserve_minimal_parameters Flag value.
@@ -475,22 +429,20 @@ void OrderSelectionAlgorithm::set_reserve_minimal_parameters(const bool& new_res
     reserve_minimal_parameters = new_reserve_minimal_parameters;
 }
 
-// void set_loss_calculation_method(const PerformanceCalculationMethod&) method
 
-/// Sets a new method to calculate the loss and the selection loss.
-/// @param new_loss_calculation_method Method to calculate the loss (Minimum, Maximum or Mean).
+/// Sets a new method to calculate the loss and the selection error.
+/// @param new_loss_calculation_method Method to calculate the loss(Minimum, Maximum or Mean).
 
-void OrderSelectionAlgorithm::set_loss_calculation_method(const OrderSelectionAlgorithm::PerformanceCalculationMethod& new_loss_calculation_method)
+void OrderSelectionAlgorithm::set_loss_calculation_method(const OrderSelectionAlgorithm::LossCalculationMethod& new_loss_calculation_method)
 {
     loss_calculation_method = new_loss_calculation_method;
 }
 
-// void set_loss_calculation_method(const std::string&) method
 
 /// Sets a new loss calculation method from a string.
 /// @param new_loss_calculation_method String with the loss calculation method.
 
-void OrderSelectionAlgorithm::set_loss_calculation_method(const std::string& new_loss_calculation_method)
+void OrderSelectionAlgorithm::set_loss_calculation_method(const string& new_loss_calculation_method)
 {
     if(new_loss_calculation_method == "Maximum")
     {
@@ -508,19 +460,17 @@ void OrderSelectionAlgorithm::set_loss_calculation_method(const std::string& new
 
     }
     else{
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
-               << "void set_loss_calculation_method(const std::string&) method.\n"
+               << "void set_loss_calculation_method(const string&) method.\n"
                << "Unknown loss calculation method.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
 
     }
 }
 
-
-// void set_display(const bool&) method
 
 /// Sets a new display value.
 /// If it is set to true messages from this class are to be displayed on the screen;
@@ -532,33 +482,30 @@ void OrderSelectionAlgorithm::set_display(const bool& new_display)
     display = new_display;
 }
 
-// void set_selection_loss_goal(const double&) method
 
-/// Sets the selection loss goal for the order selection algorithm.
-/// @param new_selection_loss_goal Goal of the selection loss.
+/// Sets the selection error goal for the order selection algorithm.
+/// @param new_selection_error_goal Goal of the selection error.
 
-void OrderSelectionAlgorithm::set_selection_loss_goal(const double& new_selection_loss_goal)
+void OrderSelectionAlgorithm::set_selection_error_goal(const double& new_selection_error_goal)
 {
 #ifdef __OPENNN_DEBUG__
 
-    if(new_selection_loss_goal < 0)
+    if(new_selection_error_goal < 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
-               << "void set_selection_loss_goal(const double&) method.\n"
+               << "void set_selection_error_goal(const double&) method.\n"
                << "Selection loss goal must be greater or equal than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
 
-    selection_loss_goal = new_selection_loss_goal;
+    selection_error_goal = new_selection_error_goal;
 }
 
-
-// void set_maximum_iterations_number(const size_t&) method
 
 /// Sets the maximum iterations number for the order selection algorithm.
 /// @param new_maximum_iterations_number Maximum number of iterations.
@@ -569,13 +516,13 @@ void OrderSelectionAlgorithm::set_maximum_iterations_number(const size_t& new_ma
 
     if(new_maximum_iterations_number <= 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
                << "void set_maximum_iterations_number(const size_t&) method.\n"
                << "Maximum iterations number must be greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -583,8 +530,6 @@ void OrderSelectionAlgorithm::set_maximum_iterations_number(const size_t& new_ma
     maximum_iterations_number = new_maximum_iterations_number;
 }
 
-
-// void set_maximum_time(const double&) method
 
 /// Sets the maximum time for the order selection algorithm.
 /// @param new_maximum_time Maximum time for the algorithm.
@@ -595,13 +540,13 @@ void OrderSelectionAlgorithm::set_maximum_time(const double& new_maximum_time)
 
     if(new_maximum_time < 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
                << "void set_maximum_time(const double&) method.\n"
                << "Maximum time must be greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -609,7 +554,6 @@ void OrderSelectionAlgorithm::set_maximum_time(const double& new_maximum_time)
     maximum_time = new_maximum_time;
 }
 
-// void set_tolerance(const double&) method
 
 /// Set the tolerance for the errors in the trainings of the algorithm.
 /// @param new_tolerance Value of the tolerance.
@@ -620,13 +564,13 @@ void OrderSelectionAlgorithm::set_tolerance(const double& new_tolerance)
 
     if(new_tolerance < 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
                << "void set_tolerance(const double&) method.\n"
                << "Tolerance must be equal or greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -635,9 +579,7 @@ void OrderSelectionAlgorithm::set_tolerance(const double& new_tolerance)
 }
 
 
-// Vector<double> perform_minimum_model_evaluation(const size_t&) method
-
-/// Returns the minimum of the loss and selection loss in trials_number trainings
+/// Returns the minimum of the loss and selection error in trials_number trainings
 /// @param order_number Number of perceptrons in the hidden layer to be trained with.
 
 Vector<double> OrderSelectionAlgorithm::perform_minimum_model_evaluation(const size_t& order_number)
@@ -646,24 +588,24 @@ Vector<double> OrderSelectionAlgorithm::perform_minimum_model_evaluation(const s
 
     if(order_number <= 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
                << "Vector<double> perform_minimum_model_evaluation(size_t) method.\n"
                << "Number of hidden perceptrons must be greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
     if(trials_number <= 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
                << "Vector<double> perform_minimum_model_evaluation(size_t) method.\n"
                << "Number of parameters assay must be greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -673,8 +615,8 @@ Vector<double> OrderSelectionAlgorithm::perform_minimum_model_evaluation(const s
     TrainingStrategy::Results training_strategy_results;
 
     Vector<double> final(2);
-    final[0] = 10;
-    final[1] = 10;
+    final[0] = std::numeric_limits<double>::max();
+    final[1] = std::numeric_limits<double>::max();
 
     Vector<double> current_loss(2);
 
@@ -683,7 +625,7 @@ Vector<double> OrderSelectionAlgorithm::perform_minimum_model_evaluation(const s
     bool flag_loss = false;
     bool flag_selection = false;
 
-    for (size_t i = 0; i < order_history.size(); i++)
+    for(size_t i = 0; i < order_history.size(); i++)
     {
         if(order_history[i] == order_number)
         {
@@ -692,11 +634,11 @@ Vector<double> OrderSelectionAlgorithm::perform_minimum_model_evaluation(const s
         }
     }
 
-    for (size_t i = 0; i < order_history.size(); i++)
+    for(size_t i = 0; i < order_history.size(); i++)
     {
         if(order_history[i] == order_number)
         {
-            final[1] = selection_loss_history[i];
+            final[1] = selection_error_history[i];
             flag_selection = true;
         }
     }
@@ -708,52 +650,42 @@ Vector<double> OrderSelectionAlgorithm::perform_minimum_model_evaluation(const s
 
     MultilayerPerceptron* multilayer_perceptron = neural_network->get_multilayer_perceptron_pointer();
     const size_t last_hidden_layer = multilayer_perceptron->get_layers_number()-2;
-    const size_t perceptrons_number = multilayer_perceptron->get_layer_pointer(last_hidden_layer)->get_perceptrons_number();
 
-    if(order_number > perceptrons_number)
-    {
-        multilayer_perceptron->grow_layer_perceptron(last_hidden_layer,order_number-perceptrons_number);
-        neural_network->perturbate_parameters(0.001);
-#ifdef __OPENNN_MPI__
-
-        neural_network->set_MPI(neural_network);
-
-#endif
-        training_strategy_results = training_strategy_pointer->perform_training();
-
-        final_parameters.set(neural_network->arrange_parameters());
-        final = get_final_losss(training_strategy_results);
-    }
-    else
-    {
-        for (size_t i = 0; i < (perceptrons_number-order_number); i++)
-        {
-            multilayer_perceptron->prune_layer_perceptron(last_hidden_layer,0);
-        }
-
-        neural_network->perturbate_parameters(0.001);
+    multilayer_perceptron->set_layer_perceptrons_number(last_hidden_layer, order_number);
+    neural_network->randomize_parameters_normal();
 
 #ifdef __OPENNN_MPI__
 
         neural_network->set_MPI(neural_network);
 
 #endif
-        training_strategy_results = training_strategy_pointer->perform_training();
 
-        final_parameters.set(neural_network->arrange_parameters());
-        final = get_final_losss(training_strategy_results);
-    }
+    training_strategy_results = training_strategy_pointer->perform_training();
 
-    for (size_t i = 1; i < trials_number; i++)
+    final_parameters.set(neural_network->get_parameters());
+    final = get_final_losses(training_strategy_results);
+
+    for(size_t i = 1; i < trials_number; i++)
     {
         if(display)
         {
-            std::cout << "Trial number: " << i << std::endl;
-            std::cout << "Training loss: " << final[0] << std::endl;
-            std::cout << "Selection loss: " << final[1] << std::endl;
+            cout << "Trial number: " << i << endl;
+            if(i == 1)
+            {
+                cout << "Training loss: " << final[0] << endl;
+                cout << "Selection error: " << final[1] << endl;
+                cout << "Stopping condition: " << write_stopping_condition(training_strategy_results) << endl << endl;
+            }
+            else
+            {
+                cout << "Training loss: " << current_loss[0] << endl;
+                cout << "Selection error: " << current_loss[1] << endl;
+                cout << "Stopping condition: " << write_stopping_condition(training_strategy_results) << endl << endl;
+            }
         }
 
         neural_network->randomize_parameters_normal();
+
 #ifdef __OPENNN_MPI__
 
         neural_network->set_MPI(neural_network);
@@ -761,46 +693,46 @@ Vector<double> OrderSelectionAlgorithm::perform_minimum_model_evaluation(const s
 #endif
         training_strategy_results = training_strategy_pointer->perform_training();
 
-        current_loss = get_final_losss(training_strategy_results);
+        current_loss = get_final_losses(training_strategy_results);
 
         if(!flag_loss && final[0] > current_loss[0])
         {
             final[0] = current_loss[0];
 
-            final_parameters.set(neural_network->arrange_parameters());
+            final_parameters.set(neural_network->get_parameters());
         }
 
         if(!flag_selection && final[1] > current_loss[1])
         {
             final[1] = current_loss[1];
 
-            final_parameters.set(neural_network->arrange_parameters());
+            final_parameters.set(neural_network->get_parameters());
         }
+    }
 
-        if(i == trials_number - 1 && display)
-        {
-            std::cout << "Trial number: " << trials_number << std::endl;
-            std::cout << "Training loss: " << final[0] << std::endl;
-            std::cout << "Selection loss: " << final[1] << std::endl;
-        }
-
+    if(display)
+    {
+        cout << "Trial number: " << trials_number << endl;
+        cout << "Training loss: " << final[0] << endl;
+        cout << "Selection error: " << final[1] << endl;
+        cout << "Stopping condition: " << write_stopping_condition(training_strategy_results) << endl << endl;
     }
 
     order_history.push_back(order_number);
 
     loss_history.push_back(final[0]);
 
-    selection_loss_history.push_back(final[1]);
+    selection_error_history.push_back(final[1]);
 
     parameters_history.push_back(final_parameters);
-
+//    cout << "final " << final << endl; cout.flush();
+//    cout << "trials " << trials_number << endl; cout.flush();
+//    cout << neural_network->get_multilayer_perceptron_pointer()->get_architecture() << endl; cout.flush();
     return final;
 }
 
 
-// Vector<double> perform_maximum_model_evaluation(const size_t&) const method
-
-/// Returns the maximum of the loss and selection loss in trials_number trainings
+/// Returns the maximum of the loss and selection error in trials_number trainings
 /// @param order_number Number of perceptrons in the hidden layer to be trained with.
 
 Vector<double> OrderSelectionAlgorithm::perform_maximum_model_evaluation(const size_t& order_number)
@@ -809,24 +741,24 @@ Vector<double> OrderSelectionAlgorithm::perform_maximum_model_evaluation(const s
 
     if(order_number <= 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
                << "Vector<double> perform_maximum_model_evaluation(size_t) method.\n"
                << "Number of hidden perceptrons must be greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
     if(trials_number <= 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
                << "Vector<double> perform_maximum_model_evaluation(size_t) method.\n"
                << "Number of parameters assay must be greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -846,7 +778,7 @@ Vector<double> OrderSelectionAlgorithm::perform_maximum_model_evaluation(const s
     bool flag_loss = false;
     bool flag_selection = false;
 
-    for (size_t i = 0; i < order_history.size(); i++)
+    for(size_t i = 0; i < order_history.size(); i++)
     {
         if(order_history[i] == order_number)
         {
@@ -857,11 +789,11 @@ Vector<double> OrderSelectionAlgorithm::perform_maximum_model_evaluation(const s
 
 
 
-    for (size_t i = 0; i < order_history.size(); i++)
+    for(size_t i = 0; i < order_history.size(); i++)
     {
         if(order_history[i] == order_number)
         {
-            final[1] = selection_loss_history[i];
+            final[1] = selection_error_history[i];
             flag_selection = true;
         }
     }
@@ -874,76 +806,79 @@ Vector<double> OrderSelectionAlgorithm::perform_maximum_model_evaluation(const s
 
     MultilayerPerceptron* multilayer_perceptron = neural_network->get_multilayer_perceptron_pointer();
     const size_t last_hidden_layer = multilayer_perceptron->get_layers_number()-2;
-    const size_t perceptrons_number = multilayer_perceptron->get_layer_pointer(last_hidden_layer)->get_perceptrons_number();
 
-    if(order_number > perceptrons_number)
-    {
-        multilayer_perceptron->grow_layer_perceptron(last_hidden_layer,order_number-perceptrons_number);
-        neural_network->perturbate_parameters(0.001);
-        training_strategy_results = training_strategy_pointer->perform_training();
+    multilayer_perceptron->set_layer_perceptrons_number(last_hidden_layer, order_number);
+    neural_network->randomize_parameters_normal();
 
-        final_parameters.set(neural_network->arrange_parameters());
-        final = get_final_losss(training_strategy_results);
-    }
-    else
-    {
-        training_strategy_pointer->get_quasi_Newton_method_pointer()->set_maximum_selection_loss_decreases(training_strategy_pointer->get_quasi_Newton_method_pointer()->get_maximum_iterations_number());
+#ifdef __OPENNN_MPI__
 
-        for (size_t i = 0; i < (perceptrons_number-order_number); i++)
-        {
-            multilayer_perceptron->prune_layer_perceptron(last_hidden_layer,0);
-        }
+        neural_network->set_MPI(neural_network);
 
-        neural_network->perturbate_parameters(0.001);
-        training_strategy_results = training_strategy_pointer->perform_training();
+#endif
 
-        final_parameters.set(neural_network->arrange_parameters());
-        final = get_final_losss(training_strategy_results);
-    }
+    training_strategy_results = training_strategy_pointer->perform_training();
 
-    for (size_t i = 1; i < trials_number; i++)
+    final_parameters.set(neural_network->get_parameters());
+    final = get_final_losses(training_strategy_results);
+
+    for(size_t i = 1; i < trials_number; i++)
     {
         if(display)
         {
-            std::cout << "Trial number: " << i << std::endl;
-            std::cout << "Training loss: " << final[0] << std::endl;
-            std::cout << "Selection loss: " << final[1] << std::endl;
+            cout << "Trial number: " << i << endl;
+            if(i == 1)
+            {
+                cout << "Training loss: " << final[0] << endl;
+                cout << "Selection error: " << final[1] << endl;
+                cout << "Stopping condition: " << write_stopping_condition(training_strategy_results) << endl << endl;
+            }
+            else
+            {
+                cout << "Training loss: " << current_loss[0] << endl;
+                cout << "Selection error: " << current_loss[1] << endl;
+                cout << "Stopping condition: " << write_stopping_condition(training_strategy_results) << endl << endl;
+            }
         }
 
         neural_network->randomize_parameters_normal();
 
+#ifdef __OPENNN_MPI__
+
+        neural_network->set_MPI(neural_network);
+
+#endif
         training_strategy_results = training_strategy_pointer->perform_training();
 
-        current_loss = get_final_losss(training_strategy_results);
+        current_loss = get_final_losses(training_strategy_results);
 
         if(!flag_loss && final[0] < current_loss[0])
         {
             final[0] = current_loss[0];
 
-            final_parameters.set(neural_network->arrange_parameters());
+            final_parameters.set(neural_network->get_parameters());
         }
 
         if(!flag_selection && final[1] < current_loss[1])
         {
             final[1] = current_loss[1];
 
-            final_parameters.set(neural_network->arrange_parameters());
+            final_parameters.set(neural_network->get_parameters());
         }
+    }
 
-        if(i == trials_number - 1 && display)
-        {
-            std::cout << "Trial number: " << trials_number << std::endl;
-            std::cout << "Training loss: " << final[0] << std::endl;
-            std::cout << "Selection loss: " << final[1] << std::endl;
-        }
-
+    if(display)
+    {
+        cout << "Trial number: " << trials_number << endl;
+        cout << "Training loss: " << final[0] << endl;
+        cout << "Selection error: " << final[1] << endl;
+        cout << "Stopping condition: " << write_stopping_condition(training_strategy_results) << endl << endl;
     }
 
     order_history.push_back(order_number);
 
     loss_history.push_back(final[0]);
 
-    selection_loss_history.push_back(final[1]);
+    selection_error_history.push_back(final[1]);
 
     parameters_history.push_back(final_parameters);
 
@@ -951,9 +886,7 @@ Vector<double> OrderSelectionAlgorithm::perform_maximum_model_evaluation(const s
 }
 
 
-// Vector<double> perform_mean_model_evaluation(const size_t&) method
-
-/// Returns the mean of the loss and selection loss in trials_number trainings
+/// Returns the mean of the loss and selection error in trials_number trainings
 /// @param order_number Number of perceptrons in the hidden layer to be trained with.
 
 Vector<double> OrderSelectionAlgorithm::perform_mean_model_evaluation(const size_t& order_number)
@@ -962,24 +895,24 @@ Vector<double> OrderSelectionAlgorithm::perform_mean_model_evaluation(const size
 
     if(order_number <= 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
                << "Vector<double> perform_mean_model_evaluation(size_t) method.\n"
                << "Number of hidden perceptrons must be greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
     if(trials_number <= 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
                << "Vector<double> perform_mean_model_evaluation(size_t) method.\n"
                << "Number of parameters assay must be greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -1000,7 +933,7 @@ Vector<double> OrderSelectionAlgorithm::perform_mean_model_evaluation(const size
     bool flag_selection = false;
 
 
-    for (size_t i = 0; i < order_history.size(); i++)
+    for(size_t i = 0; i < order_history.size(); i++)
     {
         if(order_history[i] == order_number)
         {
@@ -1011,11 +944,11 @@ Vector<double> OrderSelectionAlgorithm::perform_mean_model_evaluation(const size
 
 
 
-    for (size_t i = 0; i < order_history.size(); i++)
+    for(size_t i = 0; i < order_history.size(); i++)
     {
         if(order_history[i] == order_number)
         {
-            mean_final[1] = selection_loss_history[i];
+            mean_final[1] = selection_error_history[i];
             flag_selection = true;
         }
     }
@@ -1028,45 +961,50 @@ Vector<double> OrderSelectionAlgorithm::perform_mean_model_evaluation(const size
 
     MultilayerPerceptron* multilayer_perceptron = neural_network->get_multilayer_perceptron_pointer();
     const size_t last_hidden_layer = multilayer_perceptron->get_layers_number()-2;
-    const size_t perceptrons_number = multilayer_perceptron->get_layer_pointer(last_hidden_layer)->get_perceptrons_number();
 
-    if(order_number > perceptrons_number)
-    {
-        multilayer_perceptron->grow_layer_perceptron(last_hidden_layer,order_number-perceptrons_number);
-        neural_network->perturbate_parameters(0.001);
-        training_strategy_results = training_strategy_pointer->perform_training();
+    multilayer_perceptron->set_layer_perceptrons_number(last_hidden_layer, order_number);
+    neural_network->randomize_parameters_normal();
 
-        final_parameters.set(neural_network->arrange_parameters());
-        mean_final = get_final_losss(training_strategy_results);
-    }
-    else
-    {
-        for (size_t i = 0; i < (perceptrons_number-order_number); i++)
-        {
-            multilayer_perceptron->prune_layer_perceptron(last_hidden_layer,0);
-        }
+#ifdef __OPENNN_MPI__
 
-        neural_network->perturbate_parameters(0.001);
-        training_strategy_results = training_strategy_pointer->perform_training();
+        neural_network->set_MPI(neural_network);
 
-        final_parameters.set(neural_network->arrange_parameters());
-        mean_final = get_final_losss(training_strategy_results);
-    }
+#endif
 
-    for (size_t i = 1; i < trials_number; i++)
+    training_strategy_results = training_strategy_pointer->perform_training();
+
+    final_parameters.set(neural_network->get_parameters());
+    mean_final = get_final_losses(training_strategy_results);
+
+    for(size_t i = 1; i < trials_number; i++)
     {
         if(display)
         {
-            std::cout << "Trial number: " << i << std::endl;
-            std::cout << "Training loss: " << mean_final[0] << std::endl;
-            std::cout << "Selection loss: " << mean_final[1] << std::endl;
+            cout << "Trial number: " << i << endl;
+            if(i == 1)
+            {
+                cout << "Training loss: " << mean_final[0] << endl;
+                cout << "Selection error: " << mean_final[1] << endl;
+                cout << "Stopping condition: " << write_stopping_condition(training_strategy_results) << endl << endl;
+            }
+            else
+            {
+                cout << "Training loss: " << current_loss[0] << endl;
+                cout << "Selection error: " << current_loss[1] << endl;
+                cout << "Stopping condition: " << write_stopping_condition(training_strategy_results) << endl << endl;
+            }
         }
 
         neural_network->randomize_parameters_normal();
 
+#ifdef __OPENNN_MPI__
+
+        neural_network->set_MPI(neural_network);
+
+#endif
         training_strategy_results = training_strategy_pointer->perform_training();
 
-        current_loss = get_final_losss(training_strategy_results);
+        current_loss = get_final_losses(training_strategy_results);
 
         if(!flag_loss)
         {
@@ -1077,124 +1015,120 @@ Vector<double> OrderSelectionAlgorithm::perform_mean_model_evaluation(const size
         {
             mean_final[1] += current_loss[1]/trials_number;
         }
+    }
 
-        if(i == trials_number - 1 && display)
-        {
-            std::cout << "Trial number: " << trials_number << std::endl;
-            std::cout << "Training loss: " << mean_final[0] << std::endl;
-            std::cout << "Selection loss: " << mean_final[1] << std::endl;
-        }
-
+    if(display)
+    {
+        cout << "Trial number: " << trials_number << endl;
+        cout << "Training loss: " << mean_final[0] << endl;
+        cout << "Selection error: " << mean_final[1] << endl;
+        cout << "Stopping condition: " << write_stopping_condition(training_strategy_results) << endl << endl;
     }
 
     order_history.push_back(order_number);
 
     loss_history.push_back(mean_final[0]);
 
-    selection_loss_history.push_back(mean_final[1]);
+    selection_error_history.push_back(mean_final[1]);
 
     parameters_history.push_back(final_parameters);
 
     return mean_final;
 }
 
-// Vector<double> get_final_losss(const TrainingStrategy::Results&) const method
 
-/// Return final training loss and final selection loss depending on the training method.
+/// Return final training loss and final selection error depending on the training method.
 /// @param results Results of the perform_training method.
 
-Vector<double> OrderSelectionAlgorithm::get_final_losss(const TrainingStrategy::Results& results) const
+Vector<double> OrderSelectionAlgorithm::get_final_losses(const TrainingStrategy::Results& results) const
 {
-    Vector<double> losss(2);
-    switch(training_strategy_pointer->get_main_type())
+    Vector<double> losses(2);
+    switch(training_strategy_pointer->get_training_method())
     {
-    case TrainingStrategy::NO_MAIN:
-    {
-        losss[0] = 0;
-        losss[1] = 0;
-        break;
-    }
-    case TrainingStrategy::GRADIENT_DESCENT:
-    {
-        losss[0] = results.gradient_descent_results_pointer->final_loss;
-        losss[1] = results.gradient_descent_results_pointer->final_selection_loss;
-        break;
-    }
-    case TrainingStrategy::CONJUGATE_GRADIENT:
-    {
-        losss[0] = results.conjugate_gradient_results_pointer->final_loss;
-        losss[1] = results.conjugate_gradient_results_pointer->final_selection_loss;
-        break;
-    }
-    case TrainingStrategy::QUASI_NEWTON_METHOD:
-    {
-        losss[0] = results.quasi_Newton_method_results_pointer->final_loss;
-        losss[1] = results.quasi_Newton_method_results_pointer->final_selection_loss;
-        break;
-    }
-    case TrainingStrategy::LEVENBERG_MARQUARDT_ALGORITHM:
-    {
-        losss[0] = results.Levenberg_Marquardt_algorithm_results_pointer->final_loss;
-        losss[1] = results.Levenberg_Marquardt_algorithm_results_pointer->final_selection_loss;
-        break;
-    }
-    case TrainingStrategy::USER_MAIN:
-    {
-        losss[0] = 0;
-        losss[1] = 0;
-        break;
-    }
-    default:
-    {
-        std::ostringstream buffer;
+        case TrainingStrategy::GRADIENT_DESCENT:
+        {
+            losses[0] = results.gradient_descent_results_pointer->final_loss;
+            losses[1] = results.gradient_descent_results_pointer->final_selection_error;
+            return(losses);
+        }
+        case TrainingStrategy::CONJUGATE_GRADIENT:
+        {
+            losses[0] = results.conjugate_gradient_results_pointer->final_loss;
+            losses[1] = results.conjugate_gradient_results_pointer->final_selection_error;
+            return(losses);
+        }
+        case TrainingStrategy::QUASI_NEWTON_METHOD:
+        {
+            losses[0] = results.quasi_Newton_method_results_pointer->final_loss;
+            losses[1] = results.quasi_Newton_method_results_pointer->final_selection_error;
+            return(losses);
+        }
+        case TrainingStrategy::LEVENBERG_MARQUARDT_ALGORITHM:
+        {
+            losses[0] = results.Levenberg_Marquardt_algorithm_results_pointer->final_loss;
+            losses[1] = results.Levenberg_Marquardt_algorithm_results_pointer->final_selection_error;
+            return(losses);
+        }
+        case TrainingStrategy::STOCHASTIC_GRADIENT_DESCENT:
+        {
+            losses[0] = results.stochastic_gradient_descent_results_pointer->final_loss;
+            losses[1] = results.stochastic_gradient_descent_results_pointer->final_selection_error;
+            return(losses);
+        }
+        case TrainingStrategy::ADAPTIVE_MOMENT_ESTIMATION:
+        {
+            losses[0] = results.adaptive_moment_estimation_results_pointer->final_loss;
+            losses[1] = results.adaptive_moment_estimation_results_pointer->final_selection_error;
+            return(losses);
+        }
+//        default:
+//        {
+//            ostringstream buffer;
 
-        buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
-               << "Vector<double> get_final_losss(const TrainingStrategy::Results) method.\n"
-               << "Unknown main type method.\n";
+//            buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
+//                   << "Vector<double> get_final_losses(const TrainingStrategy::Results) method.\n"
+//                   << "Unknown main type method.\n";
 
-        throw std::logic_error(buffer.str());
-    }
+//            throw logic_error(buffer.str());
+//        }
     }
 
-    return(losss);
+    // Default
+
+    ostringstream buffer;
+
+    buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
+           << "Vector<double> get_final_losses(const TrainingStrategy::Results) method.\n"
+           << "Unknown main type method.\n";
+
+    throw logic_error(buffer.str());
 }
 
-// Vector<double> perform_model_evaluation(const size_t&) method
 
 /// Return loss and selection depending on the loss calculation method.
 /// @param order_number Number of perceptrons in the hidden layer to be trained with.
 
 Vector<double> OrderSelectionAlgorithm::perform_model_evaluation(const size_t& order_number)
 {
-    switch (loss_calculation_method)
+    switch(loss_calculation_method)
     {
-    case Maximum:
-    {
-        return(perform_maximum_model_evaluation(order_number));
+        case Maximum:
+        {
+            return(perform_maximum_model_evaluation(order_number));
+        }
+        case Minimum:
+        {
+            return(perform_minimum_model_evaluation(order_number));
+        }
+        case Mean:
+        {
+            return(perform_mean_model_evaluation(order_number));
+        }
     }
-    case Minimum:
-    {
-        return(perform_minimum_model_evaluation(order_number));
-    }
-    case Mean:
-    {
-        return(perform_mean_model_evaluation(order_number));
-    }
-    default:
-    {
-        std::ostringstream buffer;
 
-        buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
-               << "Vector<double> perform_model_evaluation(const size_t) method.\n"
-               << "Unknown loss calculation method.\n";
-
-        throw std::logic_error(buffer.str());
-    }
-    }
+    return Vector<double>();
 }
 
-
-// Vector<double> get_parameters_order(const size_t&) const method
 
 /// Returns the parameters of the neural network if the order is in the history.
 /// @param order Order of the neural network.
@@ -1205,13 +1139,13 @@ Vector<double> OrderSelectionAlgorithm::get_parameters_order(const size_t& order
 
     if(order <= 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
                << "Vector<double> get_parameters_order(const size_t&) method.\n"
                << "Order must be greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -1219,7 +1153,7 @@ Vector<double> OrderSelectionAlgorithm::get_parameters_order(const size_t& order
     size_t i;
     Vector<double> parameters;
 
-    for (i = 0; i < order_history.size(); i++)
+    for(i = 0; i < order_history.size(); i++)
     {
         if(order_history[i] == order)
         {
@@ -1231,50 +1165,101 @@ Vector<double> OrderSelectionAlgorithm::get_parameters_order(const size_t& order
     return(parameters);
 }
 
-// void delete_selection_history(void) method 
 
-/// Delete the history of the selection loss values.
+/// Return a string with the stopping condition of the training depending on the training method.
+/// @param results Results of the perform_training method.
 
-void OrderSelectionAlgorithm::delete_selection_history(void)
+string OrderSelectionAlgorithm::write_stopping_condition(const TrainingStrategy::Results& results) const
 {
-    selection_loss_history.set();
+    switch(training_strategy_pointer->get_training_method())
+    {
+        case TrainingStrategy::GRADIENT_DESCENT:
+        {
+            return results.gradient_descent_results_pointer->write_stopping_condition();
+        }
+        case TrainingStrategy::CONJUGATE_GRADIENT:
+        {
+            return results.conjugate_gradient_results_pointer->write_stopping_condition();
+        }
+        case TrainingStrategy::QUASI_NEWTON_METHOD:
+        {
+            return results.quasi_Newton_method_results_pointer->write_stopping_condition();
+        }
+        case TrainingStrategy::LEVENBERG_MARQUARDT_ALGORITHM:
+        {
+            return results.Levenberg_Marquardt_algorithm_results_pointer->write_stopping_condition();
+        }
+        case TrainingStrategy::STOCHASTIC_GRADIENT_DESCENT:
+        {
+            return results.stochastic_gradient_descent_results_pointer->write_stopping_condition();
+        }
+        case TrainingStrategy::ADAPTIVE_MOMENT_ESTIMATION:
+        {
+            return results.adaptive_moment_estimation_results_pointer->write_stopping_condition();
+        }
+//        default:
+//        {
+//            ostringstream buffer;
+
+//            buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
+//                   << "Vector<double> get_final_losses(const TrainingStrategy::Results) method.\n"
+//                   << "Unknown main type method.\n";
+
+//            throw logic_error(buffer.str());
+//        }
+    }
+
+    // Default
+
+    ostringstream buffer;
+
+    buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
+           << "Vector<double> get_final_losses(const TrainingStrategy::Results) method.\n"
+           << "Unknown main type method.\n";
+
+    throw logic_error(buffer.str());
 }
 
-// void delete_loss_history(void) method 
+
+/// Delete the history of the selection error values.
+
+void OrderSelectionAlgorithm::delete_selection_history()
+{
+    selection_error_history.set();
+}
+
 
 /// Delete the history of the loss values.
 
-void OrderSelectionAlgorithm::delete_loss_history(void)
+void OrderSelectionAlgorithm::delete_loss_history()
 {
     loss_history.set();
 }
 
-// void delete_parameters_history(void) method 
 
 /// Delete the history of the parameters of the trained neural networks.
 
-void OrderSelectionAlgorithm::delete_parameters_history(void)
+void OrderSelectionAlgorithm::delete_parameters_history()
 {
     parameters_history.set();
 }
 
-// void check(void) const method
 
-/// Checks that the different pointers needed for performing the order selection are not NULL.
+/// Checks that the different pointers needed for performing the order selection are not nullptr.
 
-void OrderSelectionAlgorithm::check(void) const
+void OrderSelectionAlgorithm::check() const
 {
-    // Training algorithm stuff
+    // Optimization algorithm stuff
 
-    std::ostringstream buffer;
+    ostringstream buffer;
 
     if(!training_strategy_pointer)
     {
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
-               << "void check(void) const method.\n"
-               << "Pointer to training strategy is NULL.\n";
+               << "void check() const method.\n"
+               << "Pointer to training strategy is nullptr.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
     // Loss index stuff
@@ -1284,10 +1269,10 @@ void OrderSelectionAlgorithm::check(void) const
     if(!loss_index_pointer)
     {
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
-               << "void check(void) const method.\n"
-               << "Pointer to loss functional is NULL.\n";
+               << "void check() const method.\n"
+               << "Pointer to loss index is nullptr.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
     // Neural network stuff
@@ -1297,10 +1282,10 @@ void OrderSelectionAlgorithm::check(void) const
     if(!neural_network_pointer)
     {
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
-               << "void check(void) const method.\n"
-               << "Pointer to neural network is NULL.\n";
+               << "void check() const method.\n"
+               << "Pointer to neural network is nullptr.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
     const MultilayerPerceptron* multilayer_perceptron_pointer = neural_network_pointer->get_multilayer_perceptron_pointer();
@@ -1308,29 +1293,29 @@ void OrderSelectionAlgorithm::check(void) const
     if(!multilayer_perceptron_pointer)
     {
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
-               << "void check(void) const method.\n"
-               << "Pointer to multilayer perceptron is NULL.\n";
+               << "void check() const method.\n"
+               << "Pointer to multilayer perceptron is nullptr.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
     if(multilayer_perceptron_pointer->is_empty())
     {
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
-               << "void check(void) const method.\n"
+               << "void check() const method.\n"
                << "Multilayer Perceptron is empty.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 
    if(multilayer_perceptron_pointer->get_layers_number() == 1)
    {
       buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
-             << "void check(void) const method.\n"
+             << "void check() const method.\n"
              << "Number of layers in multilayer perceptron must be greater than 1.\n";
 
-      throw std::logic_error(buffer.str());
+      throw logic_error(buffer.str());
    }
 
 
@@ -1341,84 +1326,69 @@ void OrderSelectionAlgorithm::check(void) const
     if(!data_set_pointer)
     {
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
-               << "void check(void) const method.\n"
-               << "Pointer to data set is NULL.\n";
+               << "void check() const method.\n"
+               << "Pointer to data set is nullptr.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
     const Instances& instances = data_set_pointer->get_instances();
 
-    const size_t selection_instances_number = instances.count_selection_instances_number();
+    const size_t selection_instances_number = instances.get_selection_instances_number();
 
     if(selection_instances_number == 0)
     {
         buffer << "OpenNN Exception: OrderSelectionAlgorithm class.\n"
-               << "void check(void) const method.\n"
+               << "void check() const method.\n"
                << "Number of selection instances is zero.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 }
 
-
-// std::string write_stopping_condition(void) const method
 
 /// Return a string with the stopping condition of the OrderSelectionResults
 
-std::string OrderSelectionAlgorithm::OrderSelectionResults::write_stopping_condition(void) const
+string OrderSelectionAlgorithm::OrderSelectionResults::write_stopping_condition() const
 {
-    switch (stopping_condition)
+    switch(stopping_condition)
     {
-    case MaximumTime:
-    {
-        return ("MaximumTime");
-    }
-    case SelectionLossGoal:
-    {
-        return("SelectionLossGoal");
-    }
-    case MaximumIterations:
-    {
-        return("MaximumIterations");
-    }
-    case MaximumSelectionFailures:
-    {
-        return("MaximumSelectionFailures");
-    }
-    case MinimumTemperature:
-    {
-        return("MinimumTemperature");
-    }
-    case AlgorithmFinished:
-    {
-        return("AlgorithmFinished");
-    }
-    default:
-    {
-        std::ostringstream buffer;
-
-        buffer << "OpenNN Exception: OrderSelectionResults struct.\n"
-               << "std::string write_stopping_condition(void) const method.\n"
-               << "Unknown stopping condition type.\n";
-
-        throw std::logic_error(buffer.str());
-
-        break;
-    }
+        case MaximumTime:
+        {
+            return("MaximumTime");
+        }
+        case SelectionErrorGoal:
+        {
+            return("SelectionErrorGoal");
+        }
+        case MaximumIterations:
+        {
+            return("MaximumIterations");
+        }
+        case MaximumSelectionFailures:
+        {
+            return("MaximumSelectionFailures");
+        }
+        case MinimumTemperature:
+        {
+            return("MinimumTemperature");
+        }
+        case AlgorithmFinished:
+        {
+            return("AlgorithmFinished");
+        }
     }
 
+    return string();
 }
 
 
-// std::string to_string(void) const method
-
 /// Returns a string representation of the current order selection results structure.
 
-std::string OrderSelectionAlgorithm::OrderSelectionResults::to_string(void) const
+string OrderSelectionAlgorithm::OrderSelectionResults::object_to_string() const
 {
-   std::ostringstream buffer;
+   ostringstream buffer;
 
    // Order history
 
@@ -1436,20 +1406,20 @@ std::string OrderSelectionAlgorithm::OrderSelectionResults::to_string(void) cons
             << parameters_data.to_row_matrix() << "\n";
    }
 
-   // Performance history
+   // Loss history
 
    if(!loss_data.empty())
    {
-       buffer << "% Performance history:\n"
+       buffer << "% Loss history:\n"
               << loss_data.to_row_matrix() << "\n";
    }
 
    // Selection loss history
 
-   if(!selection_loss_data.empty())
+   if(!selection_error_data.empty())
    {
        buffer << "% Selection loss history:\n"
-              << selection_loss_data.to_row_matrix() << "\n";
+              << selection_error_data.to_row_matrix() << "\n";
    }
 
    // Minimal parameters
@@ -1465,17 +1435,17 @@ std::string OrderSelectionAlgorithm::OrderSelectionResults::to_string(void) cons
    buffer << "% Stopping condition\n"
           << write_stopping_condition() << "\n";
 
-   // Optimum selection loss
+   // Optimum selection error
 
-   if(final_selection_loss != 0)
+   if(fabs(final_selection_error - 0) > numeric_limits<double>::epsilon())
    {
-       buffer << "% Optimum selection loss:\n"
-              << final_selection_loss << "\n";
+       buffer << "% Optimum selection error:\n"
+              << final_selection_error << "\n";
    }
 
    // Final loss
 
-   if(final_loss != 0)
+   if(fabs(final_loss - 0) > numeric_limits<double>::epsilon())
    {
        buffer << "% Final loss:\n"
               << final_loss << "\n";
@@ -1499,7 +1469,7 @@ std::string OrderSelectionAlgorithm::OrderSelectionResults::to_string(void) cons
    // Elapsed time
 
    buffer << "% Elapsed time:\n"
-          << elapsed_time << "\n";
+          << write_elapsed_time(elapsed_time) << "\n";
 
 
 
@@ -1508,7 +1478,7 @@ std::string OrderSelectionAlgorithm::OrderSelectionResults::to_string(void) cons
 }
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (c) 2005-2016 Roberto Lopez.
+// Copyright(C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

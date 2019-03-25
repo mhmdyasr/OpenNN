@@ -5,12 +5,10 @@
 /*                                                                                                              */
 /*   N O R M A L I Z E D   S Q U A R E D   E R R O R   T E S T   C L A S S   H E A D E R                        */
 /*                                                                                                              */
-/*   Roberto Lopez                                                                                              */ 
-/*   Artelnics - Making intelligent use of data                                                                 */
-/*   robertolopez@artelnics.com                                                                                 */
+/*   Artificial Intelligence Techniques SL (Artelnics)                                                          */
+/*   artelnics@artelnics.com                                                                                    */
 /*                                                                                                              */
 /****************************************************************************************************************/
-
 
 #ifndef __NORMALIZEDSQUAREDERRORTEST_H__
 #define __NORMALIZEDSQUAREDERRORTEST_H__
@@ -20,7 +18,6 @@
 #include "unit_testing.h"
 
 using namespace OpenNN;
-
 
 class NormalizedSquaredErrorTest : public UnitTesting 
 {
@@ -57,15 +54,14 @@ public:
    void test_calculate_training_normalization_coefficient(void);   
    void test_calculate_selection_normalization_coefficient(void);   
 
-   // Objective methods
+   // Error methods
 
    void test_calculate_error(void);
-   void test_calculate_selection_error(void);
 
-   void test_calculate_gradient(void);
+   void test_calculate_error_gradient(void);
    void test_calculate_Hessian(void);
 
-   // Objective terms methods
+   // Error terms methods
 
    void test_calculate_terms(void);
 
@@ -76,7 +72,6 @@ public:
    void test_calculate_squared_errors(void);
 
    void test_calculate_maximal_errors(void);
-
 
    // Serialization methods
 
@@ -93,7 +88,7 @@ public:
 
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (C) 2005-2016 Roberto Lopez.
+// Copyright (C) 2005-2018 Artificial Intelligence Techniques SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

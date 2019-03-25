@@ -5,9 +5,9 @@
 /*                                                                                                              */
 /*   N U M E R I C A L   D I F F E R E N T I A T I O N   T E S T   C L A S S                                    */
 /*                                                                                                              */
-/*   Roberto Lopez                                                                                              */
-/*   Artelnics - Making intelligent use of data                                                                 */
-/*   robertolopez@artelnics.com                                                                                 */
+
+/*   Artificial Intelligence Techniques SL                                                                      */
+/*   artelnics@artelnics.com                                                                                    */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
@@ -21,29 +21,29 @@
 using namespace OpenNN;
 
 
-NumericalDifferentiationTest::NumericalDifferentiationTest(void) : UnitTesting() 
+NumericalDifferentiationTest::NumericalDifferentiationTest() : UnitTesting() 
 {
 }
 
 
-NumericalDifferentiationTest::~NumericalDifferentiationTest(void)
+NumericalDifferentiationTest::~NumericalDifferentiationTest()
 {
 }
 
 
-void NumericalDifferentiationTest::test_constructor(void)
+void NumericalDifferentiationTest::test_constructor()
 {
    message += "test_constructor\n";
 }
 
 
-void NumericalDifferentiationTest::test_destructor(void)
+void NumericalDifferentiationTest::test_destructor()
 {
    message += "test_destructor\n";
 }
 
 
-void NumericalDifferentiationTest::test_calculate_forward_differences_derivative(void)
+void NumericalDifferentiationTest::test_calculate_forward_differences_derivatives()
 {
    message += "test_calculate_forward_differences_derivative\n";
 
@@ -55,14 +55,14 @@ void NumericalDifferentiationTest::test_calculate_forward_differences_derivative
    // Test
 
    x = 0.0;
-   d = nd.calculate_forward_differences_derivative(*this, &NumericalDifferentiationTest::f1, x);
+   d = nd.calculate_forward_differences_derivatives(*this, &NumericalDifferentiationTest::f1, x);
 
    assert_true(d == 1.0, LOG);
 
 }
 
 
-void NumericalDifferentiationTest::test_calculate_central_differences_derivative(void)
+void NumericalDifferentiationTest::test_calculate_central_differences_derivatives()
 {
    message += "test_calculate_central_differences_derivative\n";
 
@@ -74,13 +74,13 @@ void NumericalDifferentiationTest::test_calculate_central_differences_derivative
    // Test
 
    x = 0.0;
-   d = nd.calculate_central_differences_derivative(*this, &NumericalDifferentiationTest::f1, x);
+   d = nd.calculate_central_differences_derivatives(*this, &NumericalDifferentiationTest::f1, x);
 
    assert_true(d == 1.0, LOG);
 }
 
 
-void NumericalDifferentiationTest::test_calculate_derivative(void)
+void NumericalDifferentiationTest::test_calculate_derivatives()
 {
    message += "test_calculate_derivative\n";
 
@@ -92,7 +92,7 @@ void NumericalDifferentiationTest::test_calculate_derivative(void)
 
    nd.set_numerical_differentiation_method(NumericalDifferentiation::ForwardDifferences);
 
-   d = nd.calculate_derivative(*this, &NumericalDifferentiationTest::f1, 0.0);
+   d = nd.calculate_derivatives(*this, &NumericalDifferentiationTest::f1, 0.0);
 
    assert_true(d == 1.0, LOG);
 
@@ -100,14 +100,14 @@ void NumericalDifferentiationTest::test_calculate_derivative(void)
 
    nd.set_numerical_differentiation_method(NumericalDifferentiation::CentralDifferences);
 
-   d = nd.calculate_derivative(*this, &NumericalDifferentiationTest::f1, 0.0);
+   d = nd.calculate_derivatives(*this, &NumericalDifferentiationTest::f1, 0.0);
 
    assert_true(d == 1.0, LOG);
 
 }
 
 
-void NumericalDifferentiationTest::test_calculate_forward_differences_second_derivative(void)
+void NumericalDifferentiationTest::test_calculate_forward_differences_second_derivatives()
 {
    message += "test_calculate_forward_differences_second_derivative\n";
 
@@ -119,7 +119,7 @@ void NumericalDifferentiationTest::test_calculate_forward_differences_second_der
    // Test
 
    x = 0.0;
-   d2 = nd.calculate_forward_differences_second_derivative(*this, &NumericalDifferentiationTest::f1, x);
+   d2 = nd.calculate_forward_differences_second_derivatives(*this, &NumericalDifferentiationTest::f1, x);
 
    assert_true(d2 == 0.0, LOG);
 
@@ -136,7 +136,7 @@ void NumericalDifferentiationTest::test_calculate_forward_differences_second_der
    x1.randomize_normal();
    x2.randomize_normal();
 
-   M = nd.calculate_forward_differences_second_derivative(*this, &NumericalDifferentiationTest::f7, dummy_1, x1, dummy_2, x2);
+   M = nd.calculate_forward_differences_second_derivatives(*this, &NumericalDifferentiationTest::f7, dummy_1, x1, dummy_2, x2);
 
    assert_true(M.get_rows_number() == 5, LOG);
    assert_true(M.get_columns_number() == 3, LOG);
@@ -146,7 +146,7 @@ void NumericalDifferentiationTest::test_calculate_forward_differences_second_der
    x1.set(5, 1.0);
    x2.set(5, 1.0);
 
-   M = nd.calculate_forward_differences_second_derivative(*this, &NumericalDifferentiationTest::f7, dummy_1, x1, dummy_2, x2);
+   M = nd.calculate_forward_differences_second_derivatives(*this, &NumericalDifferentiationTest::f7, dummy_1, x1, dummy_2, x2);
 
    assert_true(M.get_rows_number() == 5, LOG);
    assert_true(M.get_columns_number() == 5, LOG);
@@ -157,14 +157,14 @@ void NumericalDifferentiationTest::test_calculate_forward_differences_second_der
    x1.set(9);
    x2.set(15);
 
-   M = nd.calculate_forward_differences_second_derivative(*this, &NumericalDifferentiationTest::f7, dummy_1, x1, dummy_2, x2);
+   M = nd.calculate_forward_differences_second_derivatives(*this, &NumericalDifferentiationTest::f7, dummy_1, x1, dummy_2, x2);
 
    assert_true(M.get_rows_number() == 9, LOG);
    assert_true(M.get_columns_number() == 15, LOG);
 }
 
 
-void NumericalDifferentiationTest::test_calculate_central_differences_second_derivative(void)
+void NumericalDifferentiationTest::test_calculate_central_differences_second_derivatives()
 {
    message += "test_calculate_central_differences_second_derivative\n";
 
@@ -176,13 +176,13 @@ void NumericalDifferentiationTest::test_calculate_central_differences_second_der
    // Test
 
    x = 0.0;
-   d2 = nd.calculate_central_differences_second_derivative(*this, &NumericalDifferentiationTest::f1, x);
+   d2 = nd.calculate_central_differences_second_derivatives(*this, &NumericalDifferentiationTest::f1, x);
 
    assert_true(fabs(d2) <= 1.0e-6, LOG);
 }
 
 
-void NumericalDifferentiationTest::test_calculate_second_derivative(void)
+void NumericalDifferentiationTest::test_calculate_second_derivatives()
 {
    message += "test_calculate_second_derivative\n";
 
@@ -196,7 +196,7 @@ void NumericalDifferentiationTest::test_calculate_second_derivative(void)
    nd.set_numerical_differentiation_method(NumericalDifferentiation::ForwardDifferences);
 
    x = 0.0;
-   d2 = nd.calculate_second_derivative(*this, &NumericalDifferentiationTest::f1, x);
+   d2 = nd.calculate_second_derivatives(*this, &NumericalDifferentiationTest::f1, x);
 
    assert_true(fabs(d2) <= 1.0e-6, LOG);
 
@@ -205,13 +205,13 @@ void NumericalDifferentiationTest::test_calculate_second_derivative(void)
    nd.set_numerical_differentiation_method(NumericalDifferentiation::CentralDifferences);
 
    x = 0.0;
-   d2 = nd.calculate_second_derivative(*this, &NumericalDifferentiationTest::f1, x);
+   d2 = nd.calculate_second_derivatives(*this, &NumericalDifferentiationTest::f1, x);
 
    assert_true(fabs(d2) <= 1.0e-6, LOG);
 }
 
 
-void NumericalDifferentiationTest::test_calculate_forward_differences_gradient(void)
+void NumericalDifferentiationTest::test_calculate_forward_differences_gradient()
 {
    message += "test_calculate_forward_differences_gradient\n";
 
@@ -231,7 +231,7 @@ void NumericalDifferentiationTest::test_calculate_forward_differences_gradient(v
 }
 
 
-void NumericalDifferentiationTest::test_calculate_central_differences_gradient(void)
+void NumericalDifferentiationTest::test_calculate_central_differences_gradient()
 {
    message += "test_calculate_central_differences_gradient\n";
 
@@ -251,7 +251,7 @@ void NumericalDifferentiationTest::test_calculate_central_differences_gradient(v
 }
 
 
-void NumericalDifferentiationTest::test_calculate_gradient(void)
+void NumericalDifferentiationTest::test_calculate_gradient()
 {
    message += "test_calculate_gradient\n";
 
@@ -284,7 +284,7 @@ void NumericalDifferentiationTest::test_calculate_gradient(void)
 }
 
 
-void NumericalDifferentiationTest::test_calculate_forward_differences_Hessian(void)
+void NumericalDifferentiationTest::test_calculate_forward_differences_Hessian()
 {
    message += "test_calculate_forward_differences_Hessian\n";
 
@@ -304,7 +304,7 @@ void NumericalDifferentiationTest::test_calculate_forward_differences_Hessian(vo
 }
 
 
-void NumericalDifferentiationTest::test_calculate_central_differences_Hessian(void)
+void NumericalDifferentiationTest::test_calculate_central_differences_Hessian()
 {
    message += "test_calculate_central_differences_Hessian\n";
 
@@ -324,7 +324,7 @@ void NumericalDifferentiationTest::test_calculate_central_differences_Hessian(vo
 }
 
 
-void NumericalDifferentiationTest::test_calculate_Hessian(void)
+void NumericalDifferentiationTest::test_calculate_Hessian()
 {
    message += "test_calculate_Hessian\n";
 
@@ -377,7 +377,7 @@ void NumericalDifferentiationTest::test_calculate_Hessian(void)
 }
 
 
-void NumericalDifferentiationTest::test_calculate_forward_differences_Jacobian(void)
+void NumericalDifferentiationTest::test_calculate_forward_differences_Jacobian()
 {
    message += "test_calculate_forward_differences_Jacobian\n";
 
@@ -401,7 +401,7 @@ void NumericalDifferentiationTest::test_calculate_forward_differences_Jacobian(v
 }
 
 
-void NumericalDifferentiationTest::test_calculate_central_differences_Jacobian(void)
+void NumericalDifferentiationTest::test_calculate_central_differences_Jacobian()
 {
    message += "test_calculate_central_differences_Jacobian\n";
 
@@ -424,7 +424,7 @@ void NumericalDifferentiationTest::test_calculate_central_differences_Jacobian(v
 }
 
 
-void NumericalDifferentiationTest::test_calculate_Jacobian(void)
+void NumericalDifferentiationTest::test_calculate_Jacobian()
 {
    message += "test_calculate_Jacobian\n";
 
@@ -479,15 +479,15 @@ void NumericalDifferentiationTest::test_calculate_Jacobian(void)
 
    assert_true((J_fd-J_cd).calculate_absolute_value().calculate_maximum() < 0.05, LOG);
 
-   std::cout << J_fd << std::endl;
-   std::cout << J_cd << std::endl;
+   cout << J_fd << endl;
+   cout << J_cd << endl;
 
 }
 
 
-void NumericalDifferentiationTest::test_calculate_forward_differences_Hessian_form(void)
+void NumericalDifferentiationTest::test_calculate_forward_differences_Hessian_form()
 {
-   message += "test_calculate_forward_differences_Hessian_form\n";
+   message += "test_calculate_forward_differences_Hessian\n";
 
    NumericalDifferentiation nd;
 
@@ -497,7 +497,7 @@ void NumericalDifferentiationTest::test_calculate_forward_differences_Hessian_fo
    // Test
 
    x.set(2, 0.0);
-   H = nd.calculate_forward_differences_Hessian_form(*this, &NumericalDifferentiationTest::f3, x);
+   H = nd.calculate_forward_differences_Hessian(*this, &NumericalDifferentiationTest::f3, x);
 
    assert_true(H.size() == 2, LOG);
 
@@ -511,15 +511,15 @@ void NumericalDifferentiationTest::test_calculate_forward_differences_Hessian_fo
 }
 
  
-void NumericalDifferentiationTest::test_calculate_central_differences_Hessian_form(void)
+void NumericalDifferentiationTest::test_calculate_central_differences_Hessian_form()
 {
-   message += "test_calculate_central_differences_Hessian_form\n";
+   message += "test_calculate_central_differences_Hessian\n";
 
    NumericalDifferentiation nd;
 
    Vector<double> x(2, 0.0);
 
-   Vector< Matrix<double> > Hessian = nd.calculate_central_differences_Hessian_form(*this, &NumericalDifferentiationTest::f3, x);
+   Vector< Matrix<double> > Hessian = nd.calculate_central_differences_Hessian(*this, &NumericalDifferentiationTest::f3, x);
 
    assert_true(Hessian.size() == 2, LOG);
 
@@ -533,7 +533,7 @@ void NumericalDifferentiationTest::test_calculate_central_differences_Hessian_fo
 }
 
 
-void NumericalDifferentiationTest::test_calculate_Hessian_form(void)
+void NumericalDifferentiationTest::test_calculate_Hessian_form()
 {
    message += "test_calculate_Hessian\n";
 
@@ -548,7 +548,7 @@ void NumericalDifferentiationTest::test_calculate_Hessian_form(void)
 
    x.set(2, 0.0);
 
-   H = nd.calculate_Hessian_form(*this, &NumericalDifferentiationTest::f3, x);
+   H = nd.calculate_Hessian(*this, &NumericalDifferentiationTest::f3, x);
 
    assert_true(H.size() == 2, LOG);
 
@@ -566,7 +566,7 @@ void NumericalDifferentiationTest::test_calculate_Hessian_form(void)
 
    x.set(2, 0.0);
 
-   H = nd.calculate_Hessian_form(*this, &NumericalDifferentiationTest::f3, x);
+   H = nd.calculate_Hessian(*this, &NumericalDifferentiationTest::f3, x);
 
    assert_true(H.size() == 2, LOG);
 
@@ -580,7 +580,7 @@ void NumericalDifferentiationTest::test_calculate_Hessian_form(void)
 }
 
 
-void NumericalDifferentiationTest::run_test_case(void)
+void NumericalDifferentiationTest::run_test_case()
 {
    message += "Running numerical differentiation test case...\n";
 
@@ -591,23 +591,23 @@ void NumericalDifferentiationTest::run_test_case(void)
 
    // Derivative methods
 
-   test_calculate_forward_differences_derivative();
-   test_calculate_central_differences_derivative();
-   test_calculate_derivative();
+   test_calculate_forward_differences_derivatives();
+   test_calculate_central_differences_derivatives();
+   test_calculate_derivatives();
 
-   test_calculate_forward_differences_derivative();
-   test_calculate_central_differences_derivative();
-   test_calculate_derivative();
+   test_calculate_forward_differences_derivatives();
+   test_calculate_central_differences_derivatives();
+   test_calculate_derivatives();
 
    // Second derivative methods
 
-   test_calculate_forward_differences_second_derivative();
-   test_calculate_central_differences_second_derivative();
-   test_calculate_second_derivative();
+   test_calculate_forward_differences_second_derivatives();
+   test_calculate_central_differences_second_derivatives();
+   test_calculate_second_derivatives();
 
-   test_calculate_forward_differences_second_derivative();
-   test_calculate_central_differences_second_derivative();
-   test_calculate_second_derivative();
+   test_calculate_forward_differences_second_derivatives();
+   test_calculate_central_differences_second_derivatives();
+   test_calculate_second_derivatives();
 
    // Gradient methods
 
@@ -655,9 +655,9 @@ Vector<double> NumericalDifferentiationTest::f3(const Vector<double>& x) const
 }
 
 
-double NumericalDifferentiationTest::f7(const size_t& , const Vector<double>& x, const size_t& , const Vector<double>& y) const
+double NumericalDifferentiationTest::f7(const size_t&, const Vector<double>& x, const size_t&, const Vector<double>& y) const
 {
-   return(x.assemble(y).calculate_norm());
+   return(x.assemble(y).calculate_L2_norm());
 }
 
 
@@ -669,7 +669,7 @@ Vector<double> NumericalDifferentiationTest::f8(const size_t&, const size_t&, co
 
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (C) 2005-2016 Roberto Lopez.
+// Copyright (C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

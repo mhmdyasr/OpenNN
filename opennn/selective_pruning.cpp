@@ -6,7 +6,7 @@
 /*   S E L E C T I V E  P R U N I N G   C L A S S                                                               */
 /*                                                                                                              */
 /*   Fernando Gomez                                                                                             */
-/*   Artelnics - Making intelligent use of data                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
 /*   fernandogomez@artelnics.com                                                                                */
 /*                                                                                                              */
 /****************************************************************************************************************/
@@ -21,7 +21,7 @@ namespace OpenNN {
 
 /// Default constructor.
 
-SelectivePruning::SelectivePruning(void)
+SelectivePruning::SelectivePruning()
     : InputsSelectionAlgorithm()
 {
 }
@@ -43,7 +43,7 @@ SelectivePruning::SelectivePruning(TrainingStrategy* new_training_strategy_point
 /// File constructor.
 /// @param file_name Name of XML selective pruning file.
 
-SelectivePruning::SelectivePruning(const std::string& file_name)
+SelectivePruning::SelectivePruning(const string& file_name)
     : InputsSelectionAlgorithm(file_name)
 {
     load(file_name);
@@ -66,39 +66,39 @@ SelectivePruning::SelectivePruning(const tinyxml2::XMLDocument& selective_prunin
 
 /// Destructor.
 
-SelectivePruning::~SelectivePruning(void)
+SelectivePruning::~SelectivePruning()
 {
 }
 
 // METHODS
 
-// const size_t& get_minimum_inputs_number(void) const method
+// const size_t& get_minimum_inputs_number() const method
 
 /// Returns the minimum number of inputs in the selective pruning selection algorithm.
 
-const size_t& SelectivePruning::get_minimum_inputs_number(void) const
+const size_t& SelectivePruning::get_minimum_inputs_number() const
 {
     return(minimum_inputs_number);
 }
 
-// const size_t& get_maximum_selection_failures(void) const method
+// const size_t& get_maximum_selection_failures() const method
 
 /// Returns the maximum number of selection failures in the selective pruning algorithm.
 
-const size_t& SelectivePruning::get_maximum_selection_failures(void) const
+const size_t& SelectivePruning::get_maximum_selection_failures() const
 {
     return(maximum_selection_failures);
 }
 
-// void set_default(void) method
+// void set_default() method
 
 /// Sets the members of the selective pruning object to their default values.
 
-void SelectivePruning::set_default(void)
+void SelectivePruning::set_default()
 {
-    size_t inputs_number ;
+    size_t inputs_number;
 
-    if(training_strategy_pointer == NULL
+    if(training_strategy_pointer == nullptr
             || !training_strategy_pointer->has_loss_index())
     {
         maximum_selection_failures = 3;
@@ -106,7 +106,7 @@ void SelectivePruning::set_default(void)
     else
     {
         inputs_number = training_strategy_pointer->get_loss_index_pointer()->get_neural_network_pointer()->get_inputs_number();
-        maximum_selection_failures = (size_t)std::max(3.,inputs_number/5.);
+        maximum_selection_failures = (size_t)max(3.,inputs_number/5.);
     }
 
     minimum_inputs_number = 1;
@@ -123,13 +123,13 @@ void SelectivePruning::set_minimum_inputs_number(const size_t& new_minimum_input
 
     if(new_minimum_inputs_number <= 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: SelectivePruning class.\n"
                << "void set_minimum_inputs_number(const size_t&) method.\n"
                << "Minimum inputs number must be greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -148,13 +148,13 @@ void SelectivePruning::set_maximum_selection_failures(const size_t& new_maximum_
 
     if(new_maximum_loss_failures <= 0)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: SelectivePruning class.\n"
                << "void set_maximum_selection_failures(const size_t&) method.\n"
                << "Maximum selection failures must be greater than 0.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
 #endif
@@ -162,11 +162,11 @@ void SelectivePruning::set_maximum_selection_failures(const size_t& new_maximum_
     maximum_selection_failures = new_maximum_loss_failures;
 }
 
-// SelectivePruningResults* perform_inputs_selection(void) method
+
 
 /// Perform the inputs selection with the selective pruning method.
 
-SelectivePruning::SelectivePruningResults* SelectivePruning::perform_inputs_selection(void)
+SelectivePruning::SelectivePruningResults* SelectivePruning::perform_inputs_selection()
 {
 
 #ifdef __OPENNN_DEBUG__
@@ -185,26 +185,29 @@ SelectivePruning::SelectivePruningResults* SelectivePruning::perform_inputs_sele
 
     DataSet* data_set_pointer = loss_index_pointer->get_data_set_pointer();
 
+    const Vector<size_t> training_indices = data_set_pointer->get_instances().get_training_indices();
+    const Vector<size_t> selection_indices = data_set_pointer->get_instances().get_selection_indices();
+
     Variables* variables = data_set_pointer->get_variables_pointer();
 
-    const size_t inputs_number = variables->count_inputs_number();
+    const size_t inputs_number = variables->get_inputs_number();
 
     Vector< Statistics<double> > original_statistics;
-    ScalingLayer::ScalingMethod original_scaling_method;
+    Vector<ScalingLayer::ScalingMethod> original_scaling_methods;
 
     bool has_scaling_layer = neural_network_pointer->has_scaling_layer();
 
     if(has_scaling_layer)
     {
         original_statistics = neural_network_pointer->get_scaling_layer_pointer()->get_statistics();
-        original_scaling_method = neural_network_pointer->get_scaling_layer_pointer()->get_scaling_method();
+        original_scaling_methods = neural_network_pointer->get_scaling_layer_pointer()->get_scaling_methods();
     }
 
     Vector<bool> current_inputs(inputs_number, true);
 
     size_t current_inputs_number = inputs_number;
 
-    Vector<Variables::Use> current_uses = variables->arrange_uses();
+    Vector<Variables::Use> current_uses = variables->get_uses();
     const Vector<Variables::Use> original_uses = current_uses;
 
     Vector<double> current_parameters;
@@ -217,7 +220,7 @@ SelectivePruning::SelectivePruningResults* SelectivePruning::perform_inputs_sele
     Vector<double> final(2);
     Vector<double> history_row;
 
-    double current_training_loss, current_selection_loss;
+    double current_training_loss, current_selection_error;
     size_t best_ratio_index;
     double best_error;
 
@@ -232,52 +235,52 @@ SelectivePruning::SelectivePruningResults* SelectivePruning::perform_inputs_sele
 
     if(display)
     {
-        std::cout << "Performing selective pruning selection..." << std::endl;
-        std::cout << "Performing initial training..." << std::endl;
+        cout << "Performing selective pruning selection..." << endl;
+        cout << "Performing initial training..." << endl;
     }
 
     final = perform_model_evaluation(current_inputs);
 
     current_training_loss = final[0];
-    current_selection_loss = final[1];
+    current_selection_error = final[1];
 
     results->inputs_data.push_back(current_inputs);
 
-    if(reserve_loss_data)
+    if(reserve_error_data)
     {
         results->loss_data.push_back(current_training_loss);
     }
 
-    if(reserve_selection_loss_data)
+    if(reserve_selection_error_data)
     {
-        results->selection_loss_data.push_back(current_selection_loss);
+        results->selection_error_data.push_back(current_selection_error);
     }
 
     if(reserve_parameters_data)
     {
-        history_row = neural_network_pointer->arrange_parameters();
+        history_row = neural_network_pointer->get_parameters();
         results->parameters_data.push_back(history_row);
     }
 
     if(display)
     {
-        std::cout << "Initial values: " << std::endl;
+        cout << "Initial values: " << endl;
 
-        std::cout << "Current inputs: " << variables->arrange_inputs_name().to_string() << std::endl;
-        std::cout << "Number of inputs: " << current_inputs.count_occurrences(true) << std::endl;
-        std::cout << "Training loss: " << current_training_loss << std::endl;
-        std::cout << "Selection loss: " << current_selection_loss << std::endl;
+        cout << "Current inputs: " << variables->get_inputs_name().vector_to_string() << endl;
+        cout << "Number of inputs: " << current_inputs.count_equal_to(true) << endl;
+        cout << "Training loss: " << current_training_loss << endl;
+        cout << "Selection error: " << current_selection_error << endl;
 
-        std::cout << std::endl;
+        cout << endl;
     }
 
     time(&beginning_time);
 
     while(!end)
     {
-        current_inputs_number = current_inputs.count_occurrences(true);
+        current_inputs_number = current_inputs.count_equal_to(true);
 
-        current_parameters = neural_network_pointer->arrange_parameters();
+        current_parameters = neural_network_pointer->get_parameters();
 
         index = 0;
 
@@ -286,9 +289,9 @@ SelectivePruning::SelectivePruningResults* SelectivePruning::perform_inputs_sele
             index++;
         }
 
-        for (size_t i = 0; i < current_inputs_number; i++)
+        for(size_t i = 0; i < current_inputs_number; i++)
         {
-            if (error_ratios[i+index] == 1e20)
+            if(error_ratios[i+index] == 1e20)
             {
                 index++;
             }
@@ -308,7 +311,7 @@ SelectivePruning::SelectivePruningResults* SelectivePruning::perform_inputs_sele
 
         index = best_ratio_index;
 
-        if (error_ratios[best_ratio_index] < current_selection_loss)
+        if(error_ratios[best_ratio_index] < current_selection_error)
         {
             original_index = get_input_index(original_uses, best_ratio_index);
 
@@ -329,8 +332,8 @@ SelectivePruning::SelectivePruningResults* SelectivePruning::perform_inputs_sele
             neural_network_pointer->prune_input(index);
         }
 
-        current_training_loss = loss_index_pointer->calculate_loss();
-        current_selection_loss = loss_index_pointer->calculate_selection_error();
+        current_training_loss = loss_index_pointer->calculate_training_loss();
+        current_selection_error = loss_index_pointer->calculate_selection_error();
         error_ratios[best_ratio_index] = 1e20;
 
         time(&current_time);
@@ -340,14 +343,14 @@ SelectivePruning::SelectivePruningResults* SelectivePruning::perform_inputs_sele
 
         results->inputs_data.push_back(current_inputs);
 
-        if(reserve_loss_data)
+        if(reserve_error_data)
         {
             results->loss_data.push_back(current_training_loss);
         }
 
-        if(reserve_selection_loss_data)
+        if(reserve_selection_error_data)
         {
-            results->selection_loss_data.push_back(current_selection_loss);
+            results->selection_error_data.push_back(current_selection_error);
         }
 
         if(reserve_parameters_data)
@@ -364,21 +367,21 @@ SelectivePruning::SelectivePruningResults* SelectivePruning::perform_inputs_sele
 
             if(display)
             {
-                std::cout << "Maximum time reached." << std::endl;
+                cout << "Maximum time reached." << endl;
             }
 
             results->stopping_condition = InputsSelectionAlgorithm::MaximumTime;
         }
-        else if(final[1] < selection_loss_goal)
+        else if(final[1] < selection_error_goal)
         {
             end = true;
 
             if(display)
             {
-                std::cout << "Selection loss reached." << std::endl;
+                cout << "Selection loss reached." << endl;
             }
 
-            results->stopping_condition = InputsSelectionAlgorithm::SelectionLossGoal;
+            results->stopping_condition = InputsSelectionAlgorithm::SelectionErrorGoal;
         }
         else if(iterations >= maximum_iterations_number)
         {
@@ -386,29 +389,29 @@ SelectivePruning::SelectivePruningResults* SelectivePruning::perform_inputs_sele
 
             if(display)
             {
-                std::cout << "Maximum number of iterations reached." << std::endl;
+                cout << "Maximum number of iterations reached." << endl;
             }
 
             results->stopping_condition = InputsSelectionAlgorithm::MaximumIterations;
         }
-        else if(current_inputs.count_occurrences(true) <= minimum_inputs_number)
+        else if(current_inputs.count_equal_to(true) <= minimum_inputs_number)
         {
             end = true;
 
             if(display)
             {
-                std::cout << "Minimum inputs (" << minimum_inputs_number << ") reached." << std::endl;
+                cout << "Minimum inputs(" << minimum_inputs_number << ") reached." << endl;
             }
 
             results->stopping_condition = InputsSelectionAlgorithm::MinimumInputs;
         }
-        else if(current_inputs.count_occurrences(true) == 1 || best_error >= current_selection_loss)
+        else if(current_inputs.count_equal_to(true) == 1 || best_error >= current_selection_error)
         {
             end = true;
 
             if(display)
             {
-                std::cout << "Algorithm finished" << std::endl;
+                cout << "Algorithm finished" << endl;
             }
 
             results->stopping_condition = InputsSelectionAlgorithm::AlgorithmFinished;
@@ -416,26 +419,26 @@ SelectivePruning::SelectivePruningResults* SelectivePruning::perform_inputs_sele
 
         if(display)
         {
-            std::cout << "Iteration: " << iterations << std::endl;
+            cout << "Iteration: " << iterations << endl;
 
-            if(current_inputs_number > current_inputs.count_occurrences(true))
-                std::cout << "Remove input: " << variables->arrange_names()[original_index] << std::endl;
+            if(current_inputs_number > current_inputs.count_equal_to(true))
+                cout << "Remove input: " << variables->get_names()[original_index] << endl;
 
-            std::cout << "Current inputs: " << variables->arrange_inputs_name().to_string() << std::endl;
-            std::cout << "Number of inputs: " << current_inputs.count_occurrences(true) << std::endl;
-            std::cout << "Training loss: " << current_training_loss << std::endl;
-            std::cout << "Selection loss: " << current_selection_loss << std::endl;
-            std::cout << "Elapsed time: " << elapsed_time << std::endl;
+            cout << "Current inputs: " << variables->get_inputs_name().vector_to_string() << endl;
+            cout << "Number of inputs: " << current_inputs.count_equal_to(true) << endl;
+            cout << "Training loss: " << current_training_loss << endl;
+            cout << "Selection error: " << current_selection_error << endl;
+            cout << "Elapsed time: " << write_elapsed_time(elapsed_time) << endl;
 
-            std::cout << std::endl;
+            cout << endl;
         }
     }
 
     optimal_inputs = current_inputs;
 
-    optimal_parameters = neural_network_pointer->arrange_parameters();
+    optimal_parameters = neural_network_pointer->get_parameters();
 
-    optimum_loss_error = loss_index_pointer->calculate_loss();
+    optimum_loss_error = loss_index_pointer->calculate_training_loss();
     optimum_selection_error = loss_index_pointer->calculate_selection_error();
 
     if(reserve_minimal_parameters)
@@ -444,14 +447,15 @@ SelectivePruning::SelectivePruningResults* SelectivePruning::perform_inputs_sele
     }
 
     results->optimal_inputs = optimal_inputs;
-    results->final_selection_loss = current_selection_loss;
+    results->final_selection_error = current_selection_error;
     results->final_loss = current_training_loss;
     results->iterations_number = iterations;
     results->elapsed_time = elapsed_time;
 
     Vector< Statistics<double> > statistics;
+    Vector<ScalingLayer::ScalingMethod> scaling_methods;
 
-    for (size_t i = 0; i < optimal_inputs.size(); i++)
+    for(size_t i = 0; i < optimal_inputs.size(); i++)
     {
         original_index = get_input_index(original_uses, i);
 
@@ -461,6 +465,7 @@ SelectivePruning::SelectivePruningResults* SelectivePruning::perform_inputs_sele
             if(has_scaling_layer)
             {
                 statistics.push_back(original_statistics[i]);
+                scaling_methods.push_back(original_scaling_methods[i]);
             }
         }
         else
@@ -470,14 +475,13 @@ SelectivePruning::SelectivePruningResults* SelectivePruning::perform_inputs_sele
     }
     variables->set_uses(current_uses);
 
-    set_neural_inputs(optimal_inputs);
+    neural_network_pointer->set_inputs(optimal_inputs);
     neural_network_pointer->set_parameters(optimal_parameters);
-    neural_network_pointer->get_inputs_pointer()->set_names(variables->arrange_inputs_name());
 
     if(has_scaling_layer)
     {
         ScalingLayer scaling_layer(statistics);
-        scaling_layer.set_scaling_method(original_scaling_method);
+        scaling_layer.set_scaling_methods(scaling_methods);
         neural_network_pointer->set_scaling_layer(scaling_layer);
     }
 
@@ -486,27 +490,27 @@ SelectivePruning::SelectivePruningResults* SelectivePruning::perform_inputs_sele
 
     if(display)
     {
-        std::cout << "Optimal inputs: " << neural_network_pointer->get_inputs_pointer()->arrange_names().to_string() << std::endl
-                  << "Optimal number of inputs: " << optimal_inputs.count_occurrences(true) << std::endl
-                  << "Optimum training loss: " << optimum_loss_error << std::endl
-                  << "Optimum selection loss: " << optimum_selection_error << std::endl
-                  << "Elapsed time: " << elapsed_time << std::endl;
+        cout << "Optimal inputs: " << neural_network_pointer->get_inputs_pointer()->get_names().vector_to_string() << endl
+                  << "Optimal number of inputs: " << optimal_inputs.count_equal_to(true) << endl
+                  << "Optimum training loss: " << optimum_loss_error << endl
+                  << "Optimum selection error: " << optimum_selection_error << endl
+                  << "Elapsed time: " << write_elapsed_time(elapsed_time) << endl;
     }
 
     return results;
 }
 
 
-// Matrix<std::string> to_string_matrix(void) const method
+// Matrix<string> to_string_matrix() const method
 
 /// Writes as matrix of strings the most representative atributes.
 
-Matrix<std::string> SelectivePruning::to_string_matrix(void) const
+Matrix<string> SelectivePruning::to_string_matrix() const
 {
-    std::ostringstream buffer;
+    ostringstream buffer;
 
-    Vector<std::string> labels;
-    Vector<std::string> values;
+    Vector<string> labels;
+    Vector<string> values;
 
    // Trials number
 
@@ -531,7 +535,7 @@ Matrix<std::string> SelectivePruning::to_string_matrix(void) const
    labels.push_back("Selection loss goal");
 
    buffer.str("");
-   buffer << selection_loss_goal;
+   buffer << selection_error_goal;
 
    values.push_back(buffer.str());
 
@@ -589,43 +593,43 @@ Matrix<std::string> SelectivePruning::to_string_matrix(void) const
 
    values.push_back(buffer.str());
 
-   // Plot training loss history
+   // Plot training error history
 
-   labels.push_back("Plot training loss history");
+   labels.push_back("Plot training error history");
 
    buffer.str("");
-   buffer << reserve_loss_data;
+   buffer << reserve_error_data;
 
    values.push_back(buffer.str());
 
-   // Plot selection loss history
+   // Plot selection error history
 
-   labels.push_back("Plot selection loss history");
+   labels.push_back("Plot selection error history");
 
    buffer.str("");
-   buffer << reserve_selection_loss_data;
+   buffer << reserve_selection_error_data;
 
    values.push_back(buffer.str());
 
    const size_t rows_number = labels.size();
    const size_t columns_number = 2;
 
-   Matrix<std::string> string_matrix(rows_number, columns_number);
+   Matrix<string> string_matrix(rows_number, columns_number);
 
-   string_matrix.set_column(0, labels);
-   string_matrix.set_column(1, values);
+   string_matrix.set_column(0, labels, "label");
+   string_matrix.set_column(1, values, "value");
 
     return(string_matrix);
 }
 
-// tinyxml2::XMLDocument* to_XML(void) const method
+// tinyxml2::XMLDocument* to_XML() const method
 
 /// Prints to the screen the selective pruning parameters, the stopping criteria
 /// and other user stuff concerning the selective pruning object.
 
-tinyxml2::XMLDocument* SelectivePruning::to_XML(void) const
+tinyxml2::XMLDocument* SelectivePruning::to_XML() const
 {
-   std::ostringstream buffer;
+   ostringstream buffer;
 
    tinyxml2::XMLDocument* document = new tinyxml2::XMLDocument;
 
@@ -635,8 +639,8 @@ tinyxml2::XMLDocument* SelectivePruning::to_XML(void) const
 
    document->InsertFirstChild(root_element);
 
-   tinyxml2::XMLElement* element = NULL;
-   tinyxml2::XMLText* text = NULL;
+   tinyxml2::XMLElement* element = nullptr;
+   tinyxml2::XMLText* text = nullptr;
 
    // Regression
 //   {
@@ -674,13 +678,13 @@ tinyxml2::XMLDocument* SelectivePruning::to_XML(void) const
    element->LinkEndChild(text);
    }
 
-   // selection loss goal
+   // selection error goal
    {
-   element = document->NewElement("SelectionLossGoal");
+   element = document->NewElement("SelectionErrorGoal");
    root_element->LinkEndChild(element);
 
    buffer.str("");
-   buffer << selection_loss_goal;
+   buffer << selection_error_goal;
 
    text = document->NewText(buffer.str().c_str());
    element->LinkEndChild(text);
@@ -758,25 +762,25 @@ tinyxml2::XMLDocument* SelectivePruning::to_XML(void) const
    element->LinkEndChild(text);
    }
 
-   // Reserve loss data
+   // Reserve error data
    {
-   element = document->NewElement("ReservePerformanceHistory");
+   element = document->NewElement("ReserveErrorHistory");
    root_element->LinkEndChild(element);
 
    buffer.str("");
-   buffer << reserve_loss_data;
+   buffer << reserve_error_data;
 
    text = document->NewText(buffer.str().c_str());
    element->LinkEndChild(text);
    }
 
-   // Reserve selection loss data
+   // Reserve selection error data
    {
-   element = document->NewElement("ReserveSelectionLossHistory");
+   element = document->NewElement("ReserveSelectionErrorHistory");
    root_element->LinkEndChild(element);
 
    buffer.str("");
-   buffer << reserve_selection_loss_data;
+   buffer << reserve_selection_error_data;
 
    text = document->NewText(buffer.str().c_str());
    element->LinkEndChild(text);
@@ -784,7 +788,7 @@ tinyxml2::XMLDocument* SelectivePruning::to_XML(void) const
 
    // Performance calculation method
 //   {
-//   element = document->NewElement("PerformanceCalculationMethod");
+//   element = document->NewElement("LossCalculationMethod");
 //   root_element->LinkEndChild(element);
 
 //   text = document->NewText(write_loss_calculation_method().c_str());
@@ -841,13 +845,13 @@ void SelectivePruning::from_XML(const tinyxml2::XMLDocument& document)
 
     if(!root_element)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: SelectivePruning class.\n"
                << "void from_XML(const tinyxml2::XMLDocument&) method.\n"
-               << "SelectivePruning element is NULL.\n";
+               << "SelectivePruning element is nullptr.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
     // Regression
@@ -856,15 +860,15 @@ void SelectivePruning::from_XML(const tinyxml2::XMLDocument& document)
 
         if(element)
         {
-            const std::string new_approximation = element->GetText();
+            const string new_approximation = element->GetText();
 
             try
             {
                set_approximation(new_approximation != "0");
             }
-            catch(const std::logic_error& e)
+            catch(const logic_error& e)
             {
-               std::cout << e.what() << std::endl;
+               cerr << e.what() << endl;
             }
         }
     }
@@ -881,28 +885,28 @@ void SelectivePruning::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_trials_number(new_trials_number);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
 
     // Performance calculation method
     {
-        const tinyxml2::XMLElement* element = root_element->FirstChildElement("PerformanceCalculationMethod");
+        const tinyxml2::XMLElement* element = root_element->FirstChildElement("LossCalculationMethod");
 
         if(element)
         {
-           const std::string new_loss_calculation_method = element->GetText();
+           const string new_loss_calculation_method = element->GetText();
 
            try
            {
               set_loss_calculation_method(new_loss_calculation_method);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -913,53 +917,53 @@ void SelectivePruning::from_XML(const tinyxml2::XMLDocument& document)
 
         if(element)
         {
-           const std::string new_reserve_parameters_data = element->GetText();
+           const string new_reserve_parameters_data = element->GetText();
 
            try
            {
               set_reserve_parameters_data(new_reserve_parameters_data != "0");
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
 
-    // Reserve loss data
+    // Reserve error data
     {
-        const tinyxml2::XMLElement* element = root_element->FirstChildElement("ReservePerformanceHistory");
+        const tinyxml2::XMLElement* element = root_element->FirstChildElement("ReserveErrorHistory");
 
         if(element)
         {
-           const std::string new_reserve_loss_data = element->GetText();
+           const string new_reserve_error_data = element->GetText();
 
            try
            {
-              set_reserve_loss_data(new_reserve_loss_data != "0");
+              set_reserve_error_data(new_reserve_error_data != "0");
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
 
-    // Reserve selection loss data
+    // Reserve selection error data
     {
-        const tinyxml2::XMLElement* element = root_element->FirstChildElement("ReserveSelectionLossHistory");
+        const tinyxml2::XMLElement* element = root_element->FirstChildElement("ReserveSelectionErrorHistory");
 
         if(element)
         {
-           const std::string new_reserve_selection_loss_data = element->GetText();
+           const string new_reserve_selection_error_data = element->GetText();
 
            try
            {
-              set_reserve_selection_loss_data(new_reserve_selection_loss_data != "0");
+              set_reserve_selection_error_data(new_reserve_selection_error_data != "0");
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -970,15 +974,15 @@ void SelectivePruning::from_XML(const tinyxml2::XMLDocument& document)
 
         if(element)
         {
-           const std::string new_reserve_minimal_parameters = element->GetText();
+           const string new_reserve_minimal_parameters = element->GetText();
 
            try
            {
               set_reserve_minimal_parameters(new_reserve_minimal_parameters != "0");
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -989,34 +993,34 @@ void SelectivePruning::from_XML(const tinyxml2::XMLDocument& document)
 
         if(element)
         {
-           const std::string new_display = element->GetText();
+           const string new_display = element->GetText();
 
            try
            {
               set_display(new_display != "0");
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
 
-    // selection loss goal
+    // selection error goal
     {
-        const tinyxml2::XMLElement* element = root_element->FirstChildElement("SelectionLossGoal");
+        const tinyxml2::XMLElement* element = root_element->FirstChildElement("SelectionErrorGoal");
 
         if(element)
         {
-           const double new_selection_loss_goal = atof(element->GetText());
+           const double new_selection_error_goal = atof(element->GetText());
 
            try
            {
-              set_selection_loss_goal(new_selection_loss_goal);
+              set_selection_error_goal(new_selection_error_goal);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1033,9 +1037,9 @@ void SelectivePruning::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_maximum_iterations_number(new_maximum_iterations_number);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1052,9 +1056,9 @@ void SelectivePruning::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_maximum_correlation(new_maximum_correlation);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1071,9 +1075,9 @@ void SelectivePruning::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_minimum_correlation(new_minimum_correlation);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1090,9 +1094,9 @@ void SelectivePruning::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_maximum_time(new_maximum_time);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1109,9 +1113,9 @@ void SelectivePruning::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_tolerance(new_tolerance);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1128,9 +1132,9 @@ void SelectivePruning::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_minimum_inputs_number(new_minimum_inputs_number);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
@@ -1147,21 +1151,21 @@ void SelectivePruning::from_XML(const tinyxml2::XMLDocument& document)
            {
               set_maximum_selection_failures(new_maximum_selection_failures);
            }
-           catch(const std::logic_error& e)
+           catch(const logic_error& e)
            {
-              std::cout << e.what() << std::endl;
+              cerr << e.what() << endl;
            }
         }
     }
 
 }
 
-// void save(const std::string&) const method
+// void save(const string&) const method
 
 /// Saves to a XML-type file the members of the selective pruning object.
 /// @param file_name Name of selective pruning XML-type file.
 
-void SelectivePruning::save(const std::string& file_name) const
+void SelectivePruning::save(const string& file_name) const
 {
    tinyxml2::XMLDocument* document = to_XML();
 
@@ -1171,12 +1175,12 @@ void SelectivePruning::save(const std::string& file_name) const
 }
 
 
-// void load(const std::string&) method
+// void load(const string&) method
 
 /// Loads a selective pruning object from a XML-type file.
 /// @param file_name Name of selective pruning XML-type file.
 
-void SelectivePruning::load(const std::string& file_name)
+void SelectivePruning::load(const string& file_name)
 {
    set_default();
 
@@ -1184,13 +1188,13 @@ void SelectivePruning::load(const std::string& file_name)
 
    if(document.LoadFile(file_name.c_str()))
    {
-      std::ostringstream buffer;
+      ostringstream buffer;
 
       buffer << "OpenNN Exception: SelectivePruning class.\n"
-             << "void load(const std::string&) method.\n"
+             << "void load(const string&) method.\n"
              << "Cannot load XML file " << file_name << ".\n";
 
-      throw std::logic_error(buffer.str());
+      throw logic_error(buffer.str());
    }
 
    from_XML(document);
@@ -1198,7 +1202,7 @@ void SelectivePruning::load(const std::string& file_name)
 }
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (c) 2005-2016 Roberto Lopez.
+// Copyright(C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

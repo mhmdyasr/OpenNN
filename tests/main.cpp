@@ -5,9 +5,9 @@
 /*                                                                                                              */
 /*   S U I T E   T E S T S   A P P L I C A T I O N                                                              */
 /*                                                                                                              */
-/*   Roberto Lopez                                                                                              */
-/*   Artelnics - Making intelligent use of data                                                                 */
-/*   robertolopez@artelnics.com                                                                                 */
+
+/*   Artificial Intelligence Techniques SL                                                                      */
+/*   artelnics@artelnics.com                                                                                    */
 /*                                                                                                              */
 /****************************************************************************************************************/
   
@@ -25,7 +25,7 @@
 
 using namespace OpenNN;
 
-int main(void)
+int main()
 {
 
 #ifdef __OPENNN_MPI__
@@ -40,7 +40,7 @@ int main(void)
 
     if(rank == 0)
     {
-        std::cout << "Tests do not work with MPI\n";
+        cout << "Tests do not work with MPI\n";
     }
 
     MPI_Finalize();
@@ -49,33 +49,30 @@ int main(void)
 
 #endif
 
-
-   std::cout <<
+   cout <<
    "Open Neural Networks Library. Test Suite Application.\n"
    "Write test:\n"
+   "vector\n"
+   "matrix\n"
+   "sparse_matrix\n"
    "variables\n"
    "instances\n"
    "missing_values\n"
+   "correlation_analysis\n"
    "data_set\n"
-   "plug_in\n"
-   "ordinary_differential_equations\n"
-   "mathematical_model\n"
    "unscaling_layer\n"
    "scaling_layer\n"
+   "inputs_trending_layer\n"
+   "outputs_trending_layer\n"
    "probabilistic_layer\n"
    "perceptron_layer\n"
-   "perceptron\n"
    "neural_network\n"
    "multilayer_perceptron\n"
    "inputs\n"
    "outputs\n"
-   "independent_parameters\n"
-   "conditions_layer\n"
    "bounding_layer\n"
    "sum_squared_error\n"
-   "error_term\n"
    "loss_index\n"
-   "outputs_integrals\n"
    "normalized_squared_error\n"
    "weighted_squared_error\n"
    "neural_parameters_norm\n"
@@ -83,9 +80,8 @@ int main(void)
    "mean_squared_error\n"
    "cross_entropy_error\n"
    "training_strategy\n"
-   "training_rate_algorithm\n"
-   "training_algorithm\n"
-   "random_search\n"
+   "learning_rate_algorithm\n"
+   "optimization_algorithm\n"
    "quasi_newton_method\n"
    "newton_method\n"
    "levenberg_marquardt_algorithm\n"
@@ -93,10 +89,6 @@ int main(void)
    "evolutionary_algorithm\n"
    "conjugate_gradient\n"
    "testing_analysis\n"
-   "vector\n"
-   "numerical_integration\n"
-   "numerical_differentiation\n"
-   "matrix\n"
    "model_selection\n"
    "order_selection_algorithm\n"
    "incremental_order\n"
@@ -106,24 +98,26 @@ int main(void)
    "growing_inputs\n"
    "pruning_inputs\n"
    "genetic_algorithm\n"
-   "suite" << std::endl;
+   "numerical_integration\n"
+   "numerical_differentiation\n"
+   "suite" << endl;
 
-   std::string test;
+   string test;
 
-   std::cout << "Test: ";
+   cout << "Test: ";
 
-   std::cin >> test;
+   cin >> test;
 
    // Redirect standard output to file
 
-   //std::ofstream out("../data/out.txt");
-   //std::cout.rdbuf(out.rdbuf());
+   //ofstream out("../data/out.txt");
+   //cout.rdbuf(out.rdbuf());
 
    try
    {
-      srand((unsigned)time(NULL));
+      srand(static_cast<unsigned>(time(nullptr)));
 
-      std::string message;
+      string message;
 
       size_t tests_count = 0;
       size_t tests_passed_count = 0;
@@ -153,6 +147,15 @@ int main(void)
          tests_passed_count += matrix_test.get_tests_passed_count();
          tests_failed_count += matrix_test.get_tests_failed_count();
       }
+      else if(test == "sparse_matrix")
+      {
+         SparseMatrixTest sparse_matrix_test;
+         sparse_matrix_test.run_test_case();
+         message += sparse_matrix_test.get_message();
+         tests_count += sparse_matrix_test.get_tests_count();
+         tests_passed_count += sparse_matrix_test.get_tests_passed_count();
+         tests_failed_count += sparse_matrix_test.get_tests_failed_count();
+      }
       else if(test == "numerical_differentiation")
       {
          NumericalDifferentiationTest test_numerical_differentiation;
@@ -161,15 +164,6 @@ int main(void)
          tests_count += test_numerical_differentiation.get_tests_count();
          tests_passed_count += test_numerical_differentiation.get_tests_passed_count();
          tests_failed_count += test_numerical_differentiation.get_tests_failed_count();
-      }
-      else if(test == "numerical_integration")
-      {
-         NumericalIntegrationTest test_numerical_integration;
-         test_numerical_integration.run_test_case();
-         message += test_numerical_integration.get_message();
-         tests_count += test_numerical_integration.get_tests_count();
-         tests_passed_count += test_numerical_integration.get_tests_passed_count();
-         tests_failed_count += test_numerical_integration.get_tests_failed_count();
       }
 
       //
@@ -203,6 +197,15 @@ int main(void)
          tests_passed_count += missing_values_test.get_tests_passed_count();
          tests_failed_count += missing_values_test.get_tests_failed_count();
       }
+      else if(test == "correlation_analysis")
+      {
+         CorrelationAnalysisTest correlation_analysis_test;
+         correlation_analysis_test.run_test_case();
+         message += correlation_analysis_test.get_message();
+         tests_count += correlation_analysis_test.get_tests_count();
+         tests_passed_count += correlation_analysis_test.get_tests_passed_count();
+         tests_failed_count += correlation_analysis_test.get_tests_failed_count();
+      }
       else if(test == "data_set")
       {
          DataSetTest data_set_test;
@@ -214,50 +217,9 @@ int main(void)
       }
 
       //
-      // M A T H E M A T I C A L   M O D E L   T E S T S
-      // 
-
-      else if(test == "mathematical_model")
-      {
-         MathematicalModelTest mathematical_model_test;
-         mathematical_model_test.run_test_case();
-         message += mathematical_model_test.get_message();
-         tests_count += mathematical_model_test.get_tests_count();
-         tests_passed_count += mathematical_model_test.get_tests_passed_count();
-         tests_failed_count += mathematical_model_test.get_tests_failed_count();
-      }
-      else if(test == "ordinary_differential_equations")
-      {
-         OrdinaryDifferentialEquationsTest ordinary_differential_equations_test;
-         ordinary_differential_equations_test.run_test_case();
-         message += ordinary_differential_equations_test.get_message();
-         tests_count += ordinary_differential_equations_test.get_tests_count();
-         tests_passed_count += ordinary_differential_equations_test.get_tests_passed_count();
-         tests_failed_count += ordinary_differential_equations_test.get_tests_failed_count();
-      }
-      else if(test == "plug_in")
-      {
-         PlugInTest plug_in_test;
-         plug_in_test.run_test_case();
-         message += plug_in_test.get_message();
-         tests_count += plug_in_test.get_tests_count();
-         tests_passed_count += plug_in_test.get_tests_passed_count();
-         tests_failed_count += plug_in_test.get_tests_failed_count();
-      }
-
-      //
       // N E U R A L   N E T W O R K   T E S T S
       // 
 
-      else if(test == "perceptron")
-      {
-         PerceptronTest perceptron_test;
-         perceptron_test.run_test_case();
-         message += perceptron_test.get_message();
-         tests_count += perceptron_test.get_tests_count();
-         tests_passed_count += perceptron_test.get_tests_passed_count();
-         tests_failed_count += perceptron_test.get_tests_failed_count();
-      }
       else if(test == "perceptron_layer")
       {
          PerceptronLayerTest perceptron_layer_test;
@@ -294,6 +256,24 @@ int main(void)
          tests_passed_count += unscaling_layer_test.get_tests_passed_count();
          tests_failed_count += unscaling_layer_test.get_tests_failed_count();
       }
+      else if(test == "inputs_trending_layer")
+      {
+         InputsTrendingLayerTest inputs_trending_layer_test;
+         inputs_trending_layer_test.run_test_case();
+         message += inputs_trending_layer_test.get_message();
+         tests_count += inputs_trending_layer_test.get_tests_count();
+         tests_passed_count += inputs_trending_layer_test.get_tests_passed_count();
+         tests_failed_count += inputs_trending_layer_test.get_tests_failed_count();
+      }
+      else if(test == "outputs_trending_layer")
+      {
+         OutputsTrendingLayerTest outputs_trending_layer_test;
+         outputs_trending_layer_test.run_test_case();
+         message += outputs_trending_layer_test.get_message();
+         tests_count += outputs_trending_layer_test.get_tests_count();
+         tests_passed_count += outputs_trending_layer_test.get_tests_passed_count();
+         tests_failed_count += outputs_trending_layer_test.get_tests_failed_count();
+      }
       else if(test == "bounding_layer")
       {
          BoundingLayerTest bounding_layer_test;
@@ -311,15 +291,6 @@ int main(void)
          tests_count += probabilistic_layer_test.get_tests_count();
          tests_passed_count += probabilistic_layer_test.get_tests_passed_count();
          tests_failed_count += probabilistic_layer_test.get_tests_failed_count();
-      }
-      else if(test == "conditions_layer")
-      {
-        ConditionsLayerTest conditions_layer_test;
-        conditions_layer_test.run_test_case();
-        message += conditions_layer_test.get_message();
-        tests_count += conditions_layer_test.get_tests_count();
-        tests_passed_count += conditions_layer_test.get_tests_passed_count();
-        tests_failed_count += conditions_layer_test.get_tests_failed_count();
       }
       else if(test == "inputs")
       {
@@ -339,15 +310,6 @@ int main(void)
         tests_passed_count += outputs_test.get_tests_passed_count();
         tests_failed_count += outputs_test.get_tests_failed_count();
       }
-      else if(test == "independent_parameters")
-      {
-        IndependentParametersTest independent_parameters_test;
-        independent_parameters_test.run_test_case();
-        message += independent_parameters_test.get_message();
-        tests_count += independent_parameters_test.get_tests_count();
-        tests_passed_count += independent_parameters_test.get_tests_passed_count();
-        tests_failed_count += independent_parameters_test.get_tests_failed_count();
-      }
       else if(test == "neural_network")
       {
         NeuralNetworkTest neural_network_test;
@@ -359,18 +321,9 @@ int main(void)
       }
 
       //
-      // P E R F O R M A N C E   F U N C T I O N A L   T E S T S
+      // LOSS INDEX   T E S T S
       // 
 
-      else if(test == "error_term")
-      {
-        ErrorTermTest error_term_test;
-        error_term_test.run_test_case();
-        message += error_term_test.get_message();
-        tests_count += error_term_test.get_tests_count();
-        tests_passed_count += error_term_test.get_tests_passed_count();
-        tests_failed_count += error_term_test.get_tests_failed_count();
-      }
       else if(test == "sum_squared_error")
       {
         SumSquaredErrorTest sum_squared_error_test;
@@ -388,15 +341,6 @@ int main(void)
         tests_count += mean_squared_error_test.get_tests_count();
         tests_passed_count += mean_squared_error_test.get_tests_passed_count();
         tests_failed_count += mean_squared_error_test.get_tests_failed_count();
-      }
-      else if(test == "root_mean_squared_error")
-      {
-        RootMeanSquaredErrorTest root_mean_squared_error_test;
-        root_mean_squared_error_test.run_test_case();
-        message += root_mean_squared_error_test.get_message();
-        tests_count += root_mean_squared_error_test.get_tests_count();
-        tests_passed_count += root_mean_squared_error_test.get_tests_passed_count();
-        tests_failed_count += root_mean_squared_error_test.get_tests_failed_count();
       }
       else if(test == "normalized_squared_error")
       {
@@ -434,24 +378,6 @@ int main(void)
         tests_passed_count += cross_entropy_error_test.get_tests_passed_count();
         tests_failed_count += cross_entropy_error_test.get_tests_failed_count();
       }
-      else if(test == "neural_parameters_norm")
-      {
-        NeuralParametersNormTest test_neural_parameters_norm;
-        test_neural_parameters_norm.run_test_case();
-        message += test_neural_parameters_norm.get_message();
-        tests_count += test_neural_parameters_norm.get_tests_count();
-        tests_passed_count += test_neural_parameters_norm.get_tests_passed_count();
-        tests_failed_count += test_neural_parameters_norm.get_tests_failed_count();
-      }
-      else if(test == "outputs_integrals")
-      {
-        OutputsIntegralsTest test_outputs_integrals;
-        test_outputs_integrals.run_test_case();
-        message += test_outputs_integrals.get_message();
-        tests_count += test_outputs_integrals.get_tests_count();
-        tests_passed_count += test_outputs_integrals.get_tests_passed_count();
-        tests_failed_count += test_outputs_integrals.get_tests_failed_count();
-      }
       else if(test == "loss_index")
       {
         LossIndexTest loss_index_test;
@@ -466,41 +392,23 @@ int main(void)
       // T R A I N I N G   S T R A T E G Y   T E S T S
       // 
 
-      else if(test == "training_rate_algorithm")
+      else if(test == "learning_rate_algorithm")
       {
-        TrainingRateAlgorithmTest training_rate_algorithm_test;
-        training_rate_algorithm_test.run_test_case();
-        message += training_rate_algorithm_test.get_message();
-        tests_count += training_rate_algorithm_test.get_tests_count();
-        tests_passed_count += training_rate_algorithm_test.get_tests_passed_count();
-        tests_failed_count += training_rate_algorithm_test.get_tests_failed_count();
+        LearningRateAlgorithmTest learning_rate_algorithm_test;
+        learning_rate_algorithm_test.run_test_case();
+        message += learning_rate_algorithm_test.get_message();
+        tests_count += learning_rate_algorithm_test.get_tests_count();
+        tests_passed_count += learning_rate_algorithm_test.get_tests_passed_count();
+        tests_failed_count += learning_rate_algorithm_test.get_tests_failed_count();
       }
-      else if(test == "training_algorithm")
+      else if(test == "optimization_algorithm")
       {
-        TrainingAlgorithmTest training_algorithm_test;
-        training_algorithm_test.run_test_case();
-        message += training_algorithm_test.get_message();
-        tests_count += training_algorithm_test.get_tests_count();
-        tests_passed_count += training_algorithm_test.get_tests_passed_count();
-        tests_failed_count += training_algorithm_test.get_tests_failed_count();
-      }
-      else if(test == "random_search")
-      {
-        RandomSearchTest random_search_test;
-        random_search_test.run_test_case();
-        message += random_search_test.get_message();
-        tests_count += random_search_test.get_tests_count();
-        tests_passed_count += random_search_test.get_tests_passed_count();
-        tests_failed_count += random_search_test.get_tests_failed_count();
-      }
-      else if(test == "evolutionary_algorithm")
-      {
-        EvolutionaryAlgorithmTest evolutionary_algorithm_test;
-        evolutionary_algorithm_test.run_test_case();
-        message += evolutionary_algorithm_test.get_message();
-        tests_count += evolutionary_algorithm_test.get_tests_count();
-        tests_passed_count += evolutionary_algorithm_test.get_tests_passed_count();
-        tests_failed_count += evolutionary_algorithm_test.get_tests_failed_count();
+        OptimizationAlgorithmTest optimization_algorithm_test;
+        optimization_algorithm_test.run_test_case();
+        message += optimization_algorithm_test.get_message();
+        tests_count += optimization_algorithm_test.get_tests_count();
+        tests_passed_count += optimization_algorithm_test.get_tests_passed_count();
+        tests_failed_count += optimization_algorithm_test.get_tests_failed_count();
       }
       else if(test == "gradient_descent")
       {
@@ -510,15 +418,6 @@ int main(void)
         tests_count += gradient_descent_test.get_tests_count();
         tests_passed_count += gradient_descent_test.get_tests_passed_count();
         tests_failed_count += gradient_descent_test.get_tests_failed_count();
-      }
-      else if(test == "newton_method")
-      {
-        NewtonMethodTest Newton_method_test;
-        Newton_method_test.run_test_case();
-        message += Newton_method_test.get_message();
-        tests_count += Newton_method_test.get_tests_count();
-        tests_passed_count += Newton_method_test.get_tests_passed_count();
-        tests_failed_count += Newton_method_test.get_tests_failed_count();
       }
       else if(test == "conjugate_gradient")
       {
@@ -546,6 +445,15 @@ int main(void)
         tests_count += Levenberg_Marquardt_algorithm_test.get_tests_count();
         tests_passed_count += Levenberg_Marquardt_algorithm_test.get_tests_passed_count();
         tests_failed_count += Levenberg_Marquardt_algorithm_test.get_tests_failed_count();
+      }
+      else if(test == "stochastic_gradient_descent")
+      {
+        StochasticGradientDescentTest stochastic_gradient_descent_test;
+        stochastic_gradient_descent_test.run_test_case();
+        message += stochastic_gradient_descent_test.get_message();
+        tests_count += stochastic_gradient_descent_test.get_tests_count();
+        tests_passed_count += stochastic_gradient_descent_test.get_tests_passed_count();
+        tests_failed_count += stochastic_gradient_descent_test.get_tests_failed_count();
       }
       else if(test == "training_strategy")
       {
@@ -685,6 +593,15 @@ int main(void)
           tests_passed_count += matrix_test.get_tests_passed_count();
           tests_failed_count += matrix_test.get_tests_failed_count();
 
+          // sparse matrix
+
+          SparseMatrixTest sparse_matrix_test;
+          sparse_matrix_test.run_test_case();
+          message += sparse_matrix_test.get_message();
+          tests_count += sparse_matrix_test.get_tests_count();
+          tests_passed_count += sparse_matrix_test.get_tests_passed_count();
+          tests_failed_count += sparse_matrix_test.get_tests_failed_count();
+
           // numerical differentiation
 
           NumericalDifferentiationTest test_numerical_differentiation;
@@ -693,15 +610,6 @@ int main(void)
           tests_count += test_numerical_differentiation.get_tests_count();
           tests_passed_count += test_numerical_differentiation.get_tests_passed_count();
           tests_failed_count += test_numerical_differentiation.get_tests_failed_count();
-
-          // numerical integration
-
-          NumericalIntegrationTest test_numerical_integration;
-          test_numerical_integration.run_test_case();
-          message += test_numerical_integration.get_message();
-          tests_count += test_numerical_integration.get_tests_count();
-          tests_passed_count += test_numerical_integration.get_tests_passed_count();
-          tests_failed_count += test_numerical_integration.get_tests_failed_count();
 
           // D A T A   S E T   T E S T S
 
@@ -723,6 +631,15 @@ int main(void)
           tests_passed_count += instances_test.get_tests_passed_count();
           tests_failed_count += instances_test.get_tests_failed_count();
 
+          // correlation analysis
+
+          CorrelationAnalysisTest correlation_analysis_test;
+          correlation_analysis_test.run_test_case();
+          message += correlation_analysis_test.get_message();
+          tests_count += correlation_analysis_test.get_tests_count();
+          tests_passed_count += correlation_analysis_test.get_tests_passed_count();
+          tests_failed_count += correlation_analysis_test.get_tests_failed_count();
+
           // data set
 
           DataSetTest data_set_test;
@@ -732,45 +649,7 @@ int main(void)
           tests_passed_count += data_set_test.get_tests_passed_count();
           tests_failed_count += data_set_test.get_tests_failed_count();
 
-          // M A T H E M A T I C A L   M O D E L   T E S T S
-
-          // mathematical model
-
-          MathematicalModelTest mathematical_model_test;
-          mathematical_model_test.run_test_case();
-          message += mathematical_model_test.get_message();
-          tests_count += mathematical_model_test.get_tests_count();
-          tests_passed_count += mathematical_model_test.get_tests_passed_count();
-          tests_failed_count += mathematical_model_test.get_tests_failed_count();
-
-          // ordinary differential equations
-
-          OrdinaryDifferentialEquationsTest ordinary_differential_equations_test;
-          ordinary_differential_equations_test.run_test_case();
-          message += ordinary_differential_equations_test.get_message();
-          tests_count += ordinary_differential_equations_test.get_tests_count();
-          tests_passed_count += ordinary_differential_equations_test.get_tests_passed_count();
-          tests_failed_count += ordinary_differential_equations_test.get_tests_failed_count();
-
-          // plug in
-
-          PlugInTest plug_in_test;
-          plug_in_test.run_test_case();
-          message += plug_in_test.get_message();
-          tests_count += plug_in_test.get_tests_count();
-          tests_passed_count += plug_in_test.get_tests_passed_count();
-          tests_failed_count += plug_in_test.get_tests_failed_count();
-
           // N E U R A L   N E T W O R K   T E S T S
-
-          // perceptron
-
-          PerceptronTest perceptron_test;
-          perceptron_test.run_test_case();
-          message += perceptron_test.get_message();
-          tests_count += perceptron_test.get_tests_count();
-          tests_passed_count += perceptron_test.get_tests_passed_count();
-          tests_failed_count += perceptron_test.get_tests_failed_count();
 
           // perceptron layer
 
@@ -826,15 +705,6 @@ int main(void)
           tests_passed_count += probabilistic_layer_test.get_tests_passed_count();
           tests_failed_count += probabilistic_layer_test.get_tests_failed_count();
 
-          // conditions layer
-
-          ConditionsLayerTest conditions_layer_test;
-          conditions_layer_test.run_test_case();
-          message += conditions_layer_test.get_message();
-          tests_count += conditions_layer_test.get_tests_count();
-          tests_passed_count += conditions_layer_test.get_tests_passed_count();
-          tests_failed_count += conditions_layer_test.get_tests_failed_count();
-
           // inputs
 
           InputsTest inputs_test;
@@ -853,15 +723,6 @@ int main(void)
           tests_passed_count += outputs_test.get_tests_passed_count();
           tests_failed_count += outputs_test.get_tests_failed_count();
 
-          // independent parameters
-
-          IndependentParametersTest independent_parameters_test;
-          independent_parameters_test.run_test_case();
-          message += independent_parameters_test.get_message();
-          tests_count += independent_parameters_test.get_tests_count();
-          tests_passed_count += independent_parameters_test.get_tests_passed_count();
-          tests_failed_count += independent_parameters_test.get_tests_failed_count();
-
           // neural network
 
           NeuralNetworkTest neural_network_test;
@@ -871,16 +732,7 @@ int main(void)
           tests_passed_count += neural_network_test.get_tests_passed_count();
           tests_failed_count += neural_network_test.get_tests_failed_count();
 
-          // P E R F O R M A N C E   F U N C T I O N A L   T E S T S
-
-          // error term
-
-          ErrorTermTest error_term_test;
-          error_term_test.run_test_case();
-          message += error_term_test.get_message();
-          tests_count += error_term_test.get_tests_count();
-          tests_passed_count += error_term_test.get_tests_passed_count();
-          tests_failed_count += error_term_test.get_tests_failed_count();
+          // L O S S   I N D E X   T E S T S
 
           // sum squared error
 
@@ -899,15 +751,6 @@ int main(void)
           tests_count += mean_squared_error_test.get_tests_count();
           tests_passed_count += mean_squared_error_test.get_tests_passed_count();
           tests_failed_count += mean_squared_error_test.get_tests_failed_count();
-
-          // root mean squared error
-
-          RootMeanSquaredErrorTest root_mean_squared_error_test;
-          root_mean_squared_error_test.run_test_case();
-          message += root_mean_squared_error_test.get_message();
-          tests_count += root_mean_squared_error_test.get_tests_count();
-          tests_passed_count += root_mean_squared_error_test.get_tests_passed_count();
-          tests_failed_count += root_mean_squared_error_test.get_tests_failed_count();
 
           // normalized squared error
 
@@ -936,25 +779,7 @@ int main(void)
           tests_passed_count += cross_entropy_error_test.get_tests_passed_count();
           tests_failed_count += cross_entropy_error_test.get_tests_failed_count();
 
-          // neural parameters norm
-
-          NeuralParametersNormTest test_neural_parameters_norm;
-          test_neural_parameters_norm.run_test_case();
-          message += test_neural_parameters_norm.get_message();
-          tests_count += test_neural_parameters_norm.get_tests_count();
-          tests_passed_count += test_neural_parameters_norm.get_tests_passed_count();
-          tests_failed_count += test_neural_parameters_norm.get_tests_failed_count();
-
-          // outputs integrals
-
-          OutputsIntegralsTest test_outputs_integrals;
-          test_outputs_integrals.run_test_case();
-          message += test_outputs_integrals.get_message();
-          tests_count += test_outputs_integrals.get_tests_count();
-          tests_passed_count += test_outputs_integrals.get_tests_passed_count();
-          tests_failed_count += test_outputs_integrals.get_tests_failed_count();
-
-          // loss functional
+          // loss index
 
           LossIndexTest loss_index_test;
           loss_index_test.run_test_case();
@@ -965,41 +790,23 @@ int main(void)
 
           // T R A I N I N G   S T R A T E G Y   T E S T S
 
-          // training rate algorithm
+          // learning rate algorithm
 
-          TrainingRateAlgorithmTest training_rate_algorithm_test;
-          training_rate_algorithm_test.run_test_case();
-          message += training_rate_algorithm_test.get_message();
-          tests_count += training_rate_algorithm_test.get_tests_count();
-          tests_passed_count += training_rate_algorithm_test.get_tests_passed_count();
-          tests_failed_count += training_rate_algorithm_test.get_tests_failed_count();
+          LearningRateAlgorithmTest learning_rate_algorithm_test;
+          learning_rate_algorithm_test.run_test_case();
+          message += learning_rate_algorithm_test.get_message();
+          tests_count += learning_rate_algorithm_test.get_tests_count();
+          tests_passed_count += learning_rate_algorithm_test.get_tests_passed_count();
+          tests_failed_count += learning_rate_algorithm_test.get_tests_failed_count();
 
-          // training algorithm
+          // optimization algorithm
 
-          TrainingAlgorithmTest training_algorithm_test;
-          training_algorithm_test.run_test_case();
-          message += training_algorithm_test.get_message();
-          tests_count += training_algorithm_test.get_tests_count();
-          tests_passed_count += training_algorithm_test.get_tests_passed_count();
-          tests_failed_count += training_algorithm_test.get_tests_failed_count();
-
-          // random search
-
-          RandomSearchTest random_search_test;
-          random_search_test.run_test_case();
-          message += random_search_test.get_message();
-          tests_count += random_search_test.get_tests_count();
-          tests_passed_count += random_search_test.get_tests_passed_count();
-          tests_failed_count += random_search_test.get_tests_failed_count();
-
-          // evolutionary algorithm
-
-          EvolutionaryAlgorithmTest evolutionary_algorithm_test;
-          evolutionary_algorithm_test.run_test_case();
-          message += evolutionary_algorithm_test.get_message();
-          tests_count += evolutionary_algorithm_test.get_tests_count();
-          tests_passed_count += evolutionary_algorithm_test.get_tests_passed_count();
-          tests_failed_count += evolutionary_algorithm_test.get_tests_failed_count();
+          OptimizationAlgorithmTest optimization_algorithm_test;
+          optimization_algorithm_test.run_test_case();
+          message += optimization_algorithm_test.get_message();
+          tests_count += optimization_algorithm_test.get_tests_count();
+          tests_passed_count += optimization_algorithm_test.get_tests_passed_count();
+          tests_failed_count += optimization_algorithm_test.get_tests_failed_count();
 
           // gradient descent
 
@@ -1009,15 +816,6 @@ int main(void)
           tests_count += gradient_descent_test.get_tests_count();
           tests_passed_count += gradient_descent_test.get_tests_passed_count();
           tests_failed_count += gradient_descent_test.get_tests_failed_count();
-
-          // newton method
-
-          NewtonMethodTest Newton_method_test;
-          Newton_method_test.run_test_case();
-          message += Newton_method_test.get_message();
-          tests_count += Newton_method_test.get_tests_count();
-          tests_passed_count += Newton_method_test.get_tests_passed_count();
-          tests_failed_count += Newton_method_test.get_tests_failed_count();
 
           // conjugate gradient
 
@@ -1045,6 +843,14 @@ int main(void)
           tests_count += Levenberg_Marquardt_algorithm_test.get_tests_count();
           tests_passed_count += Levenberg_Marquardt_algorithm_test.get_tests_passed_count();
           tests_failed_count += Levenberg_Marquardt_algorithm_test.get_tests_failed_count();
+
+
+          StochasticGradientDescentTest stochastic_gradient_descent_test;
+          stochastic_gradient_descent_test.run_test_case();
+          message += stochastic_gradient_descent_test.get_message();
+          tests_count += stochastic_gradient_descent_test.get_tests_count();
+          tests_passed_count += stochastic_gradient_descent_test.get_tests_passed_count();
+          tests_failed_count += stochastic_gradient_descent_test.get_tests_failed_count();
 
           // training_strategy
 
@@ -1155,12 +961,12 @@ int main(void)
 
       else
       {
-         std::cout << "Unknown test: " << test << std::endl;
+         cout << "Unknown test: " << test << endl;
 
          return(1);
       }
 
-      std::cout << message << "\n"
+      cout << message << "\n"
                 << "OpenNN test suite results:\n"
                 << "Tests run: " << tests_count << "\n"
                 << "Tests passed: " << tests_passed_count << "\n"
@@ -1168,18 +974,20 @@ int main(void)
 
       if(tests_failed_count == 0)
       {
-         std::cout << "Test OK" << std::endl;
+         cout << "Test OK" << endl;
       }
       else
       {
-         std::cout << "Test NOT OK. " << tests_failed_count << " tests failed" << std::endl;
+         cout << "Test NOT OK. " << tests_failed_count << " tests failed" << endl;
       }
+
+
 
       return(0);
    }
-   catch(std::exception& e)
+   catch(exception& e)
    {
-      std::cout << e.what() << std::endl;		 
+      cerr << e.what() << endl;		 
 
       return(1);
    }
@@ -1187,7 +995,7 @@ int main(void)
 
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (C) 2005-2015 Roberto Lopez
+// Copyright (C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

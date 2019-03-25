@@ -5,9 +5,8 @@
 /*                                                                                                              */
 /*   U N I T   T E S T I N G   C L A S S   H E A D E R                                                          */
 /*                                                                                                              */
-/*   Roberto Lopez                                                                                              */ 
-/*   Artelnics - Making intelligent use of data                                                                 */
-/*   robertolopez@artelnics.com                                                                                 */
+/*   Artificial Intelligence Techniques SL                                                                      */
+/*   artelnics@artelnics.com                                                                                    */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
@@ -36,26 +35,26 @@ public:
 
    // DEFAULT CONSTRUCTOR
 
-   explicit UnitTesting(void);
+   explicit UnitTesting();
 
    // DESTRUCTOR
 
-   virtual ~UnitTesting(void);
+   virtual ~UnitTesting();
 
    // METHODS
 
    // Get methods
 
-   size_t get_tests_count(void) const;
-   size_t get_tests_passed_count(void) const;
-   size_t get_tests_failed_count(void) const;
+   size_t get_tests_count() const;
+   size_t get_tests_passed_count() const;
+   size_t get_tests_failed_count() const;
 
-   bool get_numerical_differentiation_tests(void) const;
-   size_t get_random_tests_number(void) const;
+   bool get_numerical_differentiation_tests() const;
+   size_t get_random_tests_number() const;
 
-   std::string& get_message(void);
+   string& get_message();
 
-   const bool& get_display(void) const;
+   const bool& get_display() const;
 
    // Set methods
 
@@ -66,22 +65,22 @@ public:
    void set_numerical_differentiation_tests(const bool&);
    void set_random_tests_number(const size_t&);
 
-   void set_message(const std::string&);
+   void set_message(const string&);
 
    void set_display(const bool&);
 
    // Unit testing methods
 
-   void assert_true(const bool&, const std::string&);
-   void assert_false(const bool&, const std::string&);
+   void assert_true(const bool&, const string&);
+   void assert_false(const bool&, const string&);
    
    // Test case methods
 
    /// This method runs all the methods contained in the test case. 
 
-   virtual void run_test_case(void) = 0;
+   virtual void run_test_case() = 0;
 
-   void print_results(void);
+   void print_results();
 
 protected:
 
@@ -107,7 +106,7 @@ protected:
 
    // String with the test case information.
 
-   std::string message;
+   string message;
 
    // True if messages from this class are to be displayed, false otherwise. 
 
@@ -117,7 +116,7 @@ protected:
 #endif
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (C) 2005-2016 Roberto Lopez.
+// Copyright (C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

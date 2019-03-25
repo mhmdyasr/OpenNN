@@ -1,139 +1,61 @@
+# Specify the minimum version for CMake
 
+cmake_minimum_required(VERSION 2.8.10)
 
+# Project's name
 
+project(opennn)
 
-set(OPENNN_HDRS
-variables.h 
-    instances.h 
-    missing_values.h 
-    data_set.h 
-    plug_in.h 
-    ordinary_differential_equations.h 
-    mathematical_model.h 
-    inputs.h 
-    outputs.h 
-    unscaling_layer.h 
-    scaling_layer.h 
-    probabilistic_layer.h 
-    perceptron_layer.h 
-    perceptron.h 
-    neural_network.h 
-    multilayer_perceptron.h 
-    independent_parameters.h 
-    conditions_layer.h 
-    bounding_layer.h 
-    sum_squared_error.h 
-    root_mean_squared_error.h 
-    error_term.h 
-    regularization_term.h 
-    loss_index.h 
-    outputs_integrals.h 
-    normalized_squared_error.h 
-    neural_parameters_norm.h 
-    minkowski_error.h 
-    mean_squared_error.h 
-    weighted_squared_error.h 
-    roc_area_error.h 
-    cross_entropy_error.h 
-    training_strategy.h 
-    training_algorithm.h 
-    training_rate_algorithm.h 
-    random_search.h 
-    quasi_newton_method.h 
-    newton_method.h 
-    levenberg_marquardt_algorithm.h 
-    gradient_descent.h 
-    evolutionary_algorithm.h 
-    conjugate_gradient.h 
-    model_selection.h 
-    order_selection_algorithm.h 
-    incremental_order.h 
-    golden_section_order.h 
-    simulated_annealing_order.h 
-    inputs_selection_algorithm.h 
-    growing_inputs.h 
-    pruning_inputs.h 
-    genetic_algorithm.h 
-    testing_analysis.h 
-    vector.h 
-    matrix.h 
-    numerical_integration.h 
-    numerical_differentiation.h 
-    opennn.h 
-    principal_components_layer.h 
-    threshold_selection_algorithm.h 
-    f1_score_optimization_threshold.h 
-    matthew_correlation_optimization_threshold.h 
-    youden_index_optimization_threshold.h 
-    kappa_coefficient_optimization_threshold.h 
-    roc_curve_optimization_threshold.h 
-    selective_pruning.h
-)
+add_library(opennn
+adaptive_moment_estimation.cpp
+association_rules.cpp
+bounding_layer.cpp
+conjugate_gradient.cpp
+correlation_analysis.cpp
+cross_entropy_error.cpp
+data_set.cpp
+file_utilities.cpp
+genetic_algorithm.cpp
+golden_section_order.cpp
+gradient_descent.cpp
+growing_inputs.cpp
+incremental_order.cpp
+inputs.cpp
+inputs_selection_algorithm.cpp
+inputs_trending_layer.cpp
+instances.cpp
+k_nearest_neighbors.cpp
+learning_rate_algorithm.cpp
+levenberg_marquardt_algorithm.cpp
+loss_index.cpp
+mean_squared_error.cpp
+minkowski_error.cpp
+missing_values.cpp
+model_selection.cpp
+multilayer_perceptron.cpp
+neural_network.cpp
+normalized_squared_error.cpp
+numerical_differentiation.cpp
+numerical_integration.cpp
+optimization_algorithm.cpp
+order_selection_algorithm.cpp
+outputs.cpp
+outputs_trending_layer.cpp
+perceptron_layer.cpp
+principal_components_layer.cpp
+probabilistic_layer.cpp
+pruning_inputs.cpp
+quasi_newton_method.cpp
+scaling_layer.cpp
+selective_pruning.cpp
+simulated_annealing_order.cpp
+stochastic_gradient_descent.cpp
+sum_squared_error.cpp
+testing_analysis.cpp
+text_analytics.cpp
+tinyxml2.cpp
+training_strategy.cpp
+unscaling_layer.cpp
+variables.cpp
+weighted_squared_error.cpp)
 
-set(OPENNN_SRCS
-variables.cpp 
-    instances.cpp 
-    missing_values.cpp 
-    data_set.cpp 
-    plug_in.cpp 
-    ordinary_differential_equations.cpp 
-    mathematical_model.cpp 
-    inputs.cpp 
-    outputs.cpp 
-    unscaling_layer.cpp 
-    scaling_layer.cpp 
-    probabilistic_layer.cpp 
-    perceptron_layer.cpp 
-    perceptron.cpp 
-    neural_network.cpp 
-    multilayer_perceptron.cpp 
-    independent_parameters.cpp 
-    conditions_layer.cpp 
-    bounding_layer.cpp 
-    sum_squared_error.cpp 
-    root_mean_squared_error.cpp 
-    error_term.cpp 
-    regularization_term.cpp 
-    loss_index.cpp 
-    outputs_integrals.cpp 
-    normalized_squared_error.cpp 
-    neural_parameters_norm.cpp 
-    minkowski_error.cpp 
-    mean_squared_error.cpp 
-    weighted_squared_error.cpp 
-    roc_area_error.cpp 
-    cross_entropy_error.cpp 
-    training_strategy.cpp 
-    training_algorithm.cpp 
-    training_rate_algorithm.cpp 
-    random_search.cpp 
-    quasi_newton_method.cpp 
-    newton_method.cpp 
-    levenberg_marquardt_algorithm.cpp 
-    gradient_descent.cpp 
-    evolutionary_algorithm.cpp 
-    conjugate_gradient.cpp 
-    model_selection.cpp 
-    order_selection_algorithm.cpp 
-    incremental_order.cpp 
-    golden_section_order.cpp 
-    simulated_annealing_order.cpp 
-    inputs_selection_algorithm.cpp 
-    growing_inputs.cpp 
-    pruning_inputs.cpp 
-    genetic_algorithm.cpp 
-    testing_analysis.cpp 
-    numerical_integration.cpp 
-    numerical_differentiation.cpp 
-    principal_components_layer.cpp 
-    threshold_selection_algorithm.cpp 
-    f1_score_optimization_threshold.cpp 
-    matthew_correlation_optimization_threshold.cpp 
-    youden_index_optimization_threshold.cpp 
-    kappa_coefficient_optimization_threshold.cpp 
-    roc_curve_optimization_threshold.cpp 
-    selective_pruning.cpp
-        )
-
-add_library(opennn ${OPENNN_SRCS})
-target_link_libraries(opennn tinyxml2)

@@ -5,9 +5,8 @@
 /*                                                                                                              */
 /*   S I M P L E   F U N C T I O N   R E G R E S S I O N   A P P L I C A T I O N                                */
 /*                                                                                                              */
-/*   Roberto Lopez                                                                                              */
-/*   Artelnics - Making intelligent use of data                                                                 */
-/*   robertolopez@artelnics.com                                                                                 */
+/*   Artificial Intelligence Techniques SL (Artelnics)                                                          */
+/*   artelnics@artelnics.com                                                                                    */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
@@ -24,179 +23,115 @@
 
 #include "../../opennn/opennn.h"
 
+using namespace std;
 using namespace OpenNN;
 
 int main(void)
 {
     try
     {
-        int rank = 0;
+        cout << "OpenNN. Simple Function Regression Application." << endl;
 
-#ifdef __OPENNN_MPI__
-
-        int size = 1;
-
-        MPI_Init(NULL,NULL);
-
-        MPI_Comm_size(MPI_COMM_WORLD, &size);
-
-        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-#endif
-
-        if(rank == 0)
-        {
-            std::cout << "OpenNN. Simple Function Regression Application." << std::endl;
-        }
-
-        srand( (unsigned)time( NULL ) );
-
-        // Global variables
-
-        DataSet data_set;
-
-        NeuralNetwork neural_network;
-
-        LossIndex loss_index;
-
-        TrainingStrategy training_strategy;
-
-        // Local variables
-
-        DataSet local_data_set;
-
-        NeuralNetwork local_neural_network;
-
-        LossIndex local_loss_index;
-
-        TrainingStrategy local_training_strategy;
+        srand( static_cast<unsigned>(time(nullptr)) );
 
         // Data set
 
-        if(rank == 0)
-        {
-            data_set.set_data_file_name("../data/simplefunctionregression.dat");
+        DataSet data_set;
 
-            data_set.load_data();
+        data_set.set_data_file_name("../data/simplefunctionregression.dat");
 
-            Variables* variables_pointer = data_set.get_variables_pointer();
+        data_set.load_data();
 
-            variables_pointer->set_use(0, Variables::Input);
-            variables_pointer->set_use(1, Variables::Target);
+        Variables* variables_pointer = data_set.get_variables_pointer();
 
-            variables_pointer->set_name(0, "x");
-            variables_pointer->set_name(1, "y");
+        variables_pointer->set_use(0, "Input");
+        variables_pointer->set_use(1, "Target");
 
-            Matrix<std::string> inputs_information = variables_pointer->arrange_inputs_information();
-            Matrix<std::string> targets_information = variables_pointer->arrange_targets_information();
+        variables_pointer->set_name(0, "x");
+        variables_pointer->set_name(1, "y");
 
-            Instances* instances_pointer = data_set.get_instances_pointer();
+        const vector<string> inputs_name = variables_pointer->get_inputs_name_std();
 
-            instances_pointer->set_training();
+        const Matrix<string> inputs_information = variables_pointer->get_inputs_information();
+        const Matrix<string> targets_information = variables_pointer->get_targets_information();
 
-            Vector< Statistics<double> > inputs_statistics = data_set.scale_inputs_minimum_maximum();
-            Vector< Statistics<double> > targets_statistics = data_set.scale_targets_minimum_maximum();
+        Instances* instances_pointer = data_set.get_instances_pointer();
 
-            // Neural network
+        instances_pointer->set_training();
 
-            neural_network.set(1, 15, 1);
+        const Vector< Statistics<double> > inputs_statistics = data_set.scale_inputs_minimum_maximum();
+        const Vector< Statistics<double> > targets_statistics = data_set.scale_targets_minimum_maximum();
 
-            Inputs* inputs_pointer = neural_network.get_inputs_pointer();
-            inputs_pointer->set_information(inputs_information);
+        // Neural network        
 
-            Outputs* outputs_pointer = neural_network.get_outputs_pointer();
-            outputs_pointer->set_information(targets_information);
+        NeuralNetwork neural_network(1, 2, 1);
 
-            neural_network.construct_scaling_layer();
-            ScalingLayer* scaling_layer_pointer = neural_network.get_scaling_layer_pointer();
-            scaling_layer_pointer->set_statistics(inputs_statistics);
-            scaling_layer_pointer->set_scaling_method(ScalingLayer::NoScaling);
+        Inputs* inputs_pointer = neural_network.get_inputs_pointer();
+        inputs_pointer->set_information(inputs_information);
 
-            neural_network.construct_unscaling_layer();
-            UnscalingLayer* unscaling_layer_pointer = neural_network.get_unscaling_layer_pointer();
-            unscaling_layer_pointer->set_statistics(targets_statistics);
-            unscaling_layer_pointer->set_unscaling_method(UnscalingLayer::NoUnscaling);
+        Outputs* outputs_pointer = neural_network.get_outputs_pointer();
+        outputs_pointer->set_information(targets_information);
 
-            // Loss index
+        neural_network.construct_scaling_layer();
+        ScalingLayer* scaling_layer_pointer = neural_network.get_scaling_layer_pointer();
+        scaling_layer_pointer->set_statistics(inputs_statistics);
+        scaling_layer_pointer->set_scaling_methods(ScalingLayer::NoScaling);
 
-            loss_index.set_data_set_pointer(&data_set);
-            loss_index.set_neural_network_pointer(&neural_network);
+        neural_network.construct_unscaling_layer();
+        UnscalingLayer* unscaling_layer_pointer = neural_network.get_unscaling_layer_pointer();
+        unscaling_layer_pointer->set_statistics(targets_statistics);
+        unscaling_layer_pointer->set_unscaling_method(UnscalingLayer::NoUnscaling);                
 
-            // Training strategy
+        SumSquaredError sum_squared_error(&neural_network, &data_set);
 
-            training_strategy.set(&loss_index);
+        Vector<size_t> indices(0, 1, instances_pointer->get_instances_number()-1);
 
-            QuasiNewtonMethod* quasi_Newton_method_pointer = training_strategy.get_quasi_Newton_method_pointer();
+//        cout << sum_squared_error.calculate_error(indices) << endl;
+//        cout << sum_squared_error.calculate_error_gradient(indices) << endl;
+/*
+        // Training strategy
 
-            quasi_Newton_method_pointer->set_minimum_loss_increase(1.0e-3);
-        }
+        TrainingStrategy training_strategy(&neural_network, &data_set);
 
-#ifdef __OPENNN_MPI__
-        MPI_Barrier(MPI_COMM_WORLD);
+        training_strategy.set_loss_method(TrainingStrategy::LossMethod::SUM_SQUARED_ERROR);
+        cout << "Error method: " << training_strategy.get_sum_squared_error_pointer()->write_error_term_type() << endl;
+        QuasiNewtonMethod* quasi_Newton_method_pointer = training_strategy.get_quasi_Newton_method_pointer();
 
-        local_data_set.set_MPI(&data_set);
+        quasi_Newton_method_pointer->set_epochs_number(1000);
 
-        local_neural_network.set_MPI(&neural_network);
+        quasi_Newton_method_pointer->set_training_initial_batch_size(11);
 
-        local_loss_index.set_MPI(&local_data_set,&local_neural_network,&loss_index);
+        quasi_Newton_method_pointer->set_display_period(10);
 
-        local_training_strategy.set_MPI(&local_loss_index,&training_strategy);
+        quasi_Newton_method_pointer->set_maximum_iterations_number(1000);
 
-        MPI_Barrier(MPI_COMM_WORLD);
+        const TrainingStrategy::Results training_strategy_results = training_strategy.perform_training();
+/*
+        // Testing analysis
 
-        TrainingStrategy::Results training_strategy_results = local_training_strategy.perform_training();
-#else
-        TrainingStrategy::Results training_strategy_results = training_strategy.perform_training();
-#endif
+//        instances_pointer->set_testing();
 
-        if(rank == 0)
-        {
-#ifdef __OPENNN_MPI__
-            neural_network.set_multilayer_perceptron_pointer(local_neural_network.get_multilayer_perceptron_pointer());
-#endif
-            // Testing analysis
+//        TestingAnalysis testing_analysis(&neural_network, &data_set);
 
-            Instances* instances_pointer = data_set.get_instances_pointer();
+//        TestingAnalysis::LinearRegressionResults linear_regression_results = testing_analysis.perform_linear_regression_analysis();
 
-            instances_pointer->set_testing();
+        // Save results
 
-            TestingAnalysis testing_analysis(&neural_network, &data_set);
+//        data_set.save("../data/data_set.xml");
 
-            TestingAnalysis::LinearRegressionResults linear_regression_results = testing_analysis.perform_linear_regression_analysis();
+//        neural_network.save("../data/neural_network.xml");
+//        neural_network.save_expression("../data/expression.txt");
 
-            // Save results
+//        training_strategy.save("../data/training_strategy.xml");
+//        training_strategy_results.save("../data/training_strategy_results.dat");
 
-            ScalingLayer* scaling_layer_pointer = neural_network.get_scaling_layer_pointer();
-            UnscalingLayer* unscaling_layer_pointer = neural_network.get_unscaling_layer_pointer();
-
-            scaling_layer_pointer->set_scaling_method(ScalingLayer::MinimumMaximum);
-            unscaling_layer_pointer->set_unscaling_method(UnscalingLayer::MinimumMaximum);
-
-            data_set.save("../data/data_set.xml");
-
-            neural_network.save("../data/neural_network.xml");
-            neural_network.save_expression("../data/expression.txt");
-
-            loss_index.save("../data/loss_index.xml");
-
-            training_strategy.save("../data/training_strategy.xml");
-            training_strategy_results.save("../data/training_strategy_results.dat");
-
-            linear_regression_results.save("../data/linear_regression_analysis_results.dat");
-        }
-
-#ifdef __OPENNN_MPI__
-
-        MPI_Barrier(MPI_COMM_WORLD);
-
-        MPI_Finalize();
-
-#endif
+//        linear_regression_results.save("../data/linear_regression_analysis_results.dat");
+*/
         return(0);
     }
-    catch(std::exception& e)
+    catch(exception& e)
     {
-        std::cerr << e.what() << std::endl;
+        cerr << e.what() << endl;
 
         return(1);
     }
@@ -204,7 +139,7 @@ int main(void)
 
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (C) 2005-2015 Roberto Lopez
+// Copyright (C) 2005-2018 Artificial Intelligence Techniques SL
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

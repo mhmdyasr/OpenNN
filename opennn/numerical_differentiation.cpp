@@ -5,9 +5,9 @@
 /*                                                                                                              */
 /*   N U M E R I C A L   D I F F E R E N T I A T I O N   C L A S S                                              */
 /*                                                                                                              */
-/*   Roberto Lopez                                                                                              */ 
-/*   Artelnics - Making intelligent use of data                                                                 */
-/*   robertolopez@artelnics.com                                                                                 */
+
+/*   Artificial Intelligence Techniques SL                                                                      */
+/*   artelnics@artelnics.com                                                                                    */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
@@ -23,7 +23,7 @@ namespace OpenNN
 /// Default constructor. 
 /// It creates a numerical differentiation object with the default members. 
 
-NumericalDifferentiation::NumericalDifferentiation(void)
+NumericalDifferentiation::NumericalDifferentiation()
 { 
    set_default();
 }
@@ -43,7 +43,7 @@ NumericalDifferentiation::NumericalDifferentiation(const NumericalDifferentiatio
 
 /// Destructor.
 
-NumericalDifferentiation::~NumericalDifferentiation(void)
+NumericalDifferentiation::~NumericalDifferentiation()
 {
 
 }
@@ -51,7 +51,6 @@ NumericalDifferentiation::~NumericalDifferentiation(void)
 
 // ASSIGNMENT OPERATOR
 
-// NumericalDifferentiation& operator = (const NumericalDifferentiation&) method
 
 /// Assignment operator.
 /// This operator sets the members of this object with the members of another object. 
@@ -74,7 +73,6 @@ NumericalDifferentiation& NumericalDifferentiation::operator = (const NumericalD
 
 // EQUAL TO OPERATOR
 
-// bool operator == (const NumericalDifferentiation&) const method
 
 /// Equal to operator. 
 /// This operator compares another object to this object. 
@@ -98,21 +96,18 @@ bool NumericalDifferentiation::operator == (const NumericalDifferentiation& othe
 
 // METHODS
 
-// const NumericalDifferentiationMethod& get_numerical_differentiation_method(void) const method
 
-/// Returns the method used for numerical differentiation (forward differences or central differences).
+/// Returns the method used for numerical differentiation(forward differences or central differences).
 
-const NumericalDifferentiation::NumericalDifferentiationMethod& NumericalDifferentiation::get_numerical_differentiation_method(void) const
+const NumericalDifferentiation::NumericalDifferentiationMethod& NumericalDifferentiation::get_numerical_differentiation_method() const
 {
    return(numerical_differentiation_method);                           
 }
 
 
-// std::string write_numerical_differentiation_method(void) const method
-
 /// Returns a string with the name of the method to be used for numerical differentiation. 
 
-std::string NumericalDifferentiation::write_numerical_differentiation_method(void) const
+string NumericalDifferentiation::write_numerical_differentiation_method() const
 {
    switch(numerical_differentiation_method)
    {
@@ -120,50 +115,36 @@ std::string NumericalDifferentiation::write_numerical_differentiation_method(voi
       {
          return("ForwardDifferences");
 	  }
-	  break;
 
       case CentralDifferences:
       {
          return("CentralDifferences");
  	  }
-	  break;
 
-      default:
-      {
-         std::ostringstream buffer;
-
-         buffer << "OpenNN Exception: NumericalDifferentiation class.\n"
-                << "std::string write_numerical_differentiation_method(void) const method.\n"
-                << "Unknown numerical differentiation method.\n";
- 
-         throw std::logic_error(buffer.str());
-	  }
-	  break;
+//      default: throw logic_error("Error: string NumericalDifferentiation::write_numerical_differentiation_method() const");
    }
+
+   // Default
+
+   throw logic_error("Error: string NumericalDifferentiation::write_numerical_differentiation_method() const");
 }
 
 
-// const size_t& get_precision_digits(void) const method
-
 /// Returns the number of precision digits required for the derivatives. 
 
-const size_t& NumericalDifferentiation::get_precision_digits(void) const
+const size_t& NumericalDifferentiation::get_precision_digits() const
 {
    return(precision_digits);
 }
 
 
-// const bool& get_display(void) const method
-
 /// Returns the flag used by this class for displaying or not displaying warnings.
 
-const bool& NumericalDifferentiation::get_display(void) const
+const bool& NumericalDifferentiation::get_display() const
 {
    return(display);
 }
 
-
-// void set(const NumericalDifferentiation&) method
 
 /// Sets the members of this object to be equal to those of another object. 
 /// @param other_numerical_differentiation Numerical differentiation object to be copied. 
@@ -179,9 +160,7 @@ void NumericalDifferentiation::set(const NumericalDifferentiation& other_numeric
 }
 
 
-// void set_numerical_differentiation_method(const NumericalDifferentiationMethod&)
-
-/// Sets the method to be used for numerical differentiation (forward differences or central differences).
+/// Sets the method to be used for numerical differentiation(forward differences or central differences).
 /// @param new_numerical_differentiation_method New numerical differentiation method.
 
 void NumericalDifferentiation::set_numerical_differentiation_method
@@ -191,13 +170,11 @@ void NumericalDifferentiation::set_numerical_differentiation_method
 }
 
 
-// void set_numerical_differentiation_method(const std::string&) method
-
 /// Sets the method to be used for the numerical differentiation.
 /// The argument is a string with the name of the numerical differentiation method. 
 /// @param new_numerical_differentiation_method Numerical differentiation method name string.
 
-void NumericalDifferentiation::set_numerical_differentiation_method(const std::string& new_numerical_differentiation_method)
+void NumericalDifferentiation::set_numerical_differentiation_method(const string& new_numerical_differentiation_method)
 {
    if(new_numerical_differentiation_method == "ForwardDifferences")
    {
@@ -209,18 +186,16 @@ void NumericalDifferentiation::set_numerical_differentiation_method(const std::s
    }
    else
    {
-      std::ostringstream buffer;
+      ostringstream buffer;
 
       buffer << "OpenNN Exception: NumericalDifferentiation class.\n"
-             << "void set_numerical_differentiation_method(const std::string&) method.\n"
+             << "void set_numerical_differentiation_method(const string&) method.\n"
 			 << "Unknown numerical differentiation method: " << new_numerical_differentiation_method << ".\n";
 
-      throw std::logic_error(buffer.str());
+      throw logic_error(buffer.str());
    }	
 }
 
-
-// void set_display(const bool&) method
 
 /// Sets a new flag for displaying warnings from this class or not. 
 /// @param new_display Display flag. 
@@ -231,8 +206,6 @@ void NumericalDifferentiation::set_display(const bool& new_display)
 }
 
 
-// void set_precision_digits(const size_t&) method
-
 /// Sets a new number of precision digits required for the derivatives. 
 /// @param new_precision_digits Number of precision digits. 
 
@@ -242,8 +215,6 @@ void NumericalDifferentiation::set_precision_digits(const size_t& new_precision_
 }
 
 
-// void set_default(void) method
-
 /// Sets default values for the members of this object:
 /// <ul> 
 /// <li> Numerical differentiation method: Central differences.
@@ -251,7 +222,7 @@ void NumericalDifferentiation::set_precision_digits(const size_t& new_precision_
 /// <li> Display: true.
 /// </ul>
 
-void NumericalDifferentiation::set_default(void)
+void NumericalDifferentiation::set_default()
 {
    numerical_differentiation_method = CentralDifferences;
 
@@ -261,27 +232,23 @@ void NumericalDifferentiation::set_default(void)
 }
 
 
-// double calculate_h(const double&) const  method
-
 /// Calculates a proper step size for computing the derivatives, as a function of the inputs point value. 
 /// @param x Input value. 
 
 double NumericalDifferentiation::calculate_h(const double& x) const
 {
-   const double eta = pow(10.0, (int)(-1*precision_digits));
+   const double eta = pow(10.0,-1*static_cast<int>(precision_digits));
 
    return(sqrt(eta)*(1.0 + fabs(x)));
 }
 
-
-// Vector<double> calculate_h(const Vector<double>&) const method
 
 /// Calculates a vector of step sizes for computing the derivatives, as a function of a vector of inputs. 
 /// @param x Input vector. 
 
 Vector<double> NumericalDifferentiation::calculate_h(const Vector<double>& x) const
 {
-   const double eta = pow(10.0, (int)(-1*precision_digits));
+   const double eta = pow(10.0,-1*static_cast<int>(precision_digits));
 
    const size_t n = x.size();
 
@@ -296,18 +263,68 @@ Vector<double> NumericalDifferentiation::calculate_h(const Vector<double>& x) co
 }
 
 
-// tinyxml2::XMLDocument* to_XML(void) const method
+Vector<double> NumericalDifferentiation::calculate_backward_differences_derivatives(const Vector<double>& x, const Vector<double>& y) const
+{
+    // Control sentence(if debug)
+
+    #ifdef __OPENNN_DEBUG__
+
+    const size_t x_size = x.size();
+    const size_t y_size = y.size();
+
+    if(x_size != y_size)
+    {
+       ostringstream buffer;
+
+       buffer << "OpenNN Exception: NumericalDifferentiation class.\n"
+              << "Vector<double> calculate_backward_differences_derivatives(const Vector<double>&, const Vector<double>&) const method.\n"
+              << "Size of independent variable must be equal to size of dependent variable.\n";
+
+       throw logic_error(buffer.str());
+    }
+
+    #endif
+
+    const size_t size = x.size();
+
+    Vector<double> derivatives(size);
+    derivatives[0] = 0.0;
+
+    for(size_t i = 1; i < size; i++)
+    {
+        const double numerator = y[i] - y[i-1];
+        const double denominator = x[i] - x[i-1];
+
+        if(denominator != 0.0)
+        {
+            derivatives[i] = numerator/denominator;
+        }
+        else
+        {
+            ostringstream buffer;
+
+            buffer << "OpenNN Exception: NumericalDifferentiation class.\n"
+                   << "Vector<double> calculate_backward_differences_derivatives(const Vector<double>&, const Vector<double>&) const method.\n"
+                   << "Denominator is equal to 0.\n";
+
+            throw logic_error(buffer.str());
+        }
+    }
+
+    return derivatives;
+}
+
 
 /// Serializes this numerical differentiation object into a XML document-> 
 
-tinyxml2::XMLDocument* NumericalDifferentiation::to_XML(void) const  
+tinyxml2::XMLDocument* NumericalDifferentiation::to_XML() const  
 {
    tinyxml2::XMLDocument* document = new tinyxml2::XMLDocument;
 /*
-   tinyxml2::XMLElement* element = NULL;
-   tinyxml2::XMLText* text = NULL;
+   tinyxml2::XMLElement* element = nullptr;
+   tinyxml2::XMLText* text = nullptr;
 
-   std::ostringstream buffer;
+   ostringstream buffer;
 
    // Numerical differentiation
 
@@ -349,8 +366,6 @@ tinyxml2::XMLDocument* NumericalDifferentiation::to_XML(void) const
 }
 
 
-// void write_XML(tinyxml2::XMLPrinter&) const method
-
 /// Serializes the numerical differentiation object into a XML document of the TinyXML library without keep the DOM tree in memory.
 /// See the OpenNN manual for more information about the format of this document.
 
@@ -359,8 +374,6 @@ void NumericalDifferentiation::write_XML(tinyxml2::XMLPrinter&) const
 
 }
 
-
-// void from_XML(const tinyxml2::XMLDocument&) method
 
 /// Deserializes the object from a XML document.
 /// @param document TinyXML document with the member data.
@@ -371,13 +384,13 @@ void NumericalDifferentiation::from_XML(const tinyxml2::XMLDocument& document)
 
     if(!root_element)
     {
-        std::ostringstream buffer;
+        ostringstream buffer;
 
         buffer << "OpenNN Exception: NumericalDifferentiation class.\n"
                << "void from_XML(const tinyxml2::XMLDocument&) method.\n"
-               << "Numerical differentiation element is NULL.\n";
+               << "Numerical differentiation element is nullptr.\n";
 
-        throw std::logic_error(buffer.str());
+        throw logic_error(buffer.str());
     }
 
   // Numerical differentiation method
@@ -386,15 +399,15 @@ void NumericalDifferentiation::from_XML(const tinyxml2::XMLDocument& document)
 
      if(element)
      {
-        const std::string new_numerical_differentiation_method = element->GetText();
+        const string new_numerical_differentiation_method = element->GetText();
 
         try
         {
            set_numerical_differentiation_method(new_numerical_differentiation_method);
         }
-        catch(const std::logic_error& e)
+        catch(const logic_error& e)
         {
-           std::cout << e.what() << std::endl;
+           cerr << e.what() << endl;
         }
      }
   }
@@ -405,15 +418,15 @@ void NumericalDifferentiation::from_XML(const tinyxml2::XMLDocument& document)
 
      if(element)
      {
-        const size_t new_precision_digits = atoi(element->GetText());
+        const size_t new_precision_digits = static_cast<size_t>(atoi(element->GetText()));
 
         try
         {
            set_precision_digits(new_precision_digits);
         }
-        catch(const std::logic_error& e)
+        catch(const logic_error& e)
         {
-           std::cout << e.what() << std::endl;
+           cerr << e.what() << endl;
         }
      }
   }
@@ -425,15 +438,15 @@ void NumericalDifferentiation::from_XML(const tinyxml2::XMLDocument& document)
 
      if(element)
      {
-        const std::string new_display = element->GetText();
+        const string new_display = element->GetText();
 
         try
         {
            set_display(new_display != "0");
         }
-        catch(const std::logic_error& e)
+        catch(const logic_error& e)
         {
-           std::cout << e.what() << std::endl;
+           cerr << e.what() << endl;
         }
      }
   }
@@ -442,7 +455,7 @@ void NumericalDifferentiation::from_XML(const tinyxml2::XMLDocument& document)
 }
 
 // OpenNN: Open Neural Networks Library.
-// Copyright (c) 2005-2016 Roberto Lopez.
+// Copyright(C) 2005-2018 Artificial Intelligence Techniques, SL.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

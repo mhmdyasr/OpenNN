@@ -1,160 +1,121 @@
-/****************************************************************************************************************/
-/*                                                                                                              */
-/*   OpenNN: Open Neural Networks Library                                                                       */
-/*   www.opennn.net                                                                                             */
-/*                                                                                                              */
-/*   P R U N I N G   I N P U T S   T E S T   C L A S S   H E A D E R                                            */
-/*                                                                                                              */
-/*   Fernando Gomez                                                                                             */
-/*   Artificial Intelligence Techniques SL                                                                      */
-/*   fernandogomez@artelnics.com                                                                                */
-/*                                                                                                              */
-/****************************************************************************************************************/
-
-
-// Unit testing includes
+//   OpenNN: Open Neural Networks Library
+//   www.opennn.net
+//
+//   P R U N I N G   I N P U T S   T E S T   C L A S S   H E A D E R       
+//
+//   Artificial Intelligence Techniques SL
+//   artelnics@artelnics.com                                           
 
 #include "pruning_inputs_test.h"
 
-
-using namespace OpenNN;
-
-
-// CONSTRUCTOR
 
 PruningInputsTest::PruningInputsTest() : UnitTesting()
 {
 }
 
 
-// DESTRUCTOR
-
 PruningInputsTest::~PruningInputsTest()
 {
 }
 
-// METHODS
-
-// Constructor and destructor methods
 
 void PruningInputsTest::test_constructor()
 {
-    message += "test_constructor\n";
+    cout << "test_constructor\n";
 
-    TrainingStrategy ts;
+    NeuralNetwork nn;
+    DataSet ds;
 
-    PruningInputs pi1(&ts);
+    TrainingStrategy training_strategy(&nn, &ds);
+
+    PruningInputs pi1(&training_strategy);
 
     assert_true(pi1.has_training_strategy(), LOG);
 
     PruningInputs pi2;
 
     assert_true(!pi2.has_training_strategy(), LOG);
+
 }
+
 
 void PruningInputsTest::test_destructor()
 {
-    message += "test_destructor\n";
+    cout << "test_destructor\n";
 
     PruningInputs* pi = new PruningInputs;
 
     delete pi;
 }
 
-// Set methods
 
 void PruningInputsTest::test_set_default()
 {
-    message += "test_set_default\n";
+    cout << "test_set_default\n";
 }
 
-// Input selection methods
-
-
-// @todo
 
 void PruningInputsTest::test_perform_inputs_selection()
 {
-//    message += "test_perform_inputs_selection\n";
+    cout << "test_perform_inputs_selection\n";
 
-//    DataSet ds;
+    DataSet data_set;
 
-//    Matrix<double> data;
+    Matrix<double> data;
 
-//    NeuralNetwork nn;
+    NeuralNetwork neural_network;
 
-//    SumSquaredError sse(&nn,&ds);
+    SumSquaredError sum_squared_error(&neural_network, &data_set);
 
-//    TrainingStrategy ts(&sse);
+    PruningInputs::PruningInputsResults* pir;
 
-//    PruningInputs pi(&ts);
+    // Test
 
-//    PruningInputs::PruningInputsResults* pir;
+    data_set.generate_inputs_selection_data(40,3);
 
-//    // Test
+    data_set.split_instances_random();
 
-//    data.set(20,3);
+    neural_network.set(NeuralNetwork::Approximation,{2,6,1});
 
-//    for (size_t i = 0; i < 20; i++)
-//    {
-//        data(i,0) = (double)i;
-//        data(i,1) = 10.0;
-//        data(i,2) = (double)i;
-//    }
+    TrainingStrategy ts(&neural_network, &data_set);
 
-//    ds.set(data);
+    PruningInputs pi(&ts);
 
-//    nn.set(2,6,1);
+    ts.set_display(false);
 
-//    ts.set_display(false);
+    pi.set_display(false);
 
-//    pi.set_display(false);
+    pi.set_approximation(true);
 
-//    pi.set_approximation(true);
+    pir = pi.perform_inputs_selection();
 
-//    pir = pi.perform_inputs_selection();
+    ///@todo improve test
 
-//    assert_true(pir->optimal_inputs[0] == 1, LOG);
+//    assert_true(pir->optimal_inputs_indices[0] == 0, LOG);
 
-//    pi.delete_selection_history();
-//    pi.delete_parameters_history();
-//    pi.delete_loss_history();
+    pi.delete_selection_history();
+    pi.delete_parameters_history();
+    pi.delete_loss_history();
 
-//    // Test
+    // Test
 
-//    size_t j = -10;
+    data_set.generate_sum_data(40,3);
 
-//    for (size_t i = 0; i < 10; i++)
-//    {
-//        data(i,0) = (double)i;
-//        data(i,1) = rand();
-//        data(i,2) = 1.0;
-//        j+=1;
-//    }
-//    for (size_t i = 10; i < 20; i++)
-//    {
-//        data(i,0) = (double)i;
-//        data(i,1) = rand();
-//        data(i,2) = 0.0;
-//    }
+    neural_network.set(NeuralNetwork::Approximation,{2,6,1});
 
-//    ds.set(data);
+    ts.set_display(false);
 
-//    nn.set(2,6,1);
+    pi.set_display(false);
 
-//    ts.set_display(false);
+    pi.set_approximation(false);
 
-//    pi.set_display(false);
+    pir = pi.perform_inputs_selection();
 
-//    pi.set_approximation(false);
+//    assert_true(pir->optimal_inputs_indices[0] == 0, LOG);
 
-//    pir = pi.perform_inputs_selection();
-
-//    assert_true(pir->optimal_inputs[0] == 1, LOG);
-
-//    pi.delete_selection_history();
-//    pi.delete_parameters_history();
-//    pi.delete_loss_history();
+    pi.delete_selection_history();
+    pi.delete_parameters_history();
+    pi.delete_loss_history();
 
 }
 
@@ -162,7 +123,7 @@ void PruningInputsTest::test_perform_inputs_selection()
 
 void PruningInputsTest::test_to_XML()
 {
-    message += "test_to_XML\n";
+    cout << "test_to_XML\n";
 
     PruningInputs pi;
 
@@ -174,7 +135,7 @@ void PruningInputsTest::test_to_XML()
 
 void PruningInputsTest::test_from_XML()
 {
-    message += "test_from_XML\n";
+    cout << "test_from_XML\n";
 
     PruningInputs pi;
 
@@ -188,7 +149,7 @@ void PruningInputsTest::test_from_XML()
 
 void PruningInputsTest::run_test_case()
 {
-    message += "Running pruning input test case...\n";
+    cout << "Running pruning input test case...\n";
 
     // Constructor and destructor methods
 
@@ -209,5 +170,5 @@ void PruningInputsTest::run_test_case()
 
     test_from_XML();
 
-    message += "End of pruning input test case.\n";
+    cout << "End of pruning input test case.\n";
 }
